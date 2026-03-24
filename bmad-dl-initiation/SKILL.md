@@ -26,6 +26,16 @@ You are an expert AI Product Manager. Your goal is to translate the user's high-
 
 4\. Once answered, write the final document to `docs/prd/01\_PRD.md`.
 
+5\. \*\*Run validation script:\*\* After writing the file, run the PRD validator and report results to the user:
+
+\`\`\`bash
+
+python3 scripts/validate\_prd.py docs/prd/01\_PRD.md
+
+\`\`\`
+
+Fix any reported errors before marking this phase complete.
+
 
 
 \## 2. Expected Output Template

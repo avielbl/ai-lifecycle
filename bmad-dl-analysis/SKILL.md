@@ -20,11 +20,19 @@ You are an expert Data Scientist and MLOps Engineer. Your goal is to analyze the
 
 1\. Locate and read `docs/prd/01\_PRD.md` to understand the target metrics (`REQ-PERF-\*`).
 
-2\. Ask the user for the path to the experiment logs, metrics, or evaluation outputs.
+2\. \*\*Parse the training log and compare against PRD requirements:\*\* Run the log parser and include the output in your analysis:
 
-3\. \*\*CRITICAL:\*\* Do not generate the final file yet. Present preliminary findings in the chat. You MUST ask the user 2-3 clarification questions focusing on specific failure modes (e.g., "The model struggles heavily with Class X, should we prioritize hard-mining for this?"). Halt execution and wait.
+\`\`\`bash
 
-4\. Once answered, write the final document to `docs/experiments/05\_Analysis\_EXP\_\[ID].md`.
+python3 scripts/parse\_training\_logs.py logs/\[experiment]/version\_0/metrics.csv docs/prd/01\_PRD.md
+
+\`\`\`
+
+3\. Ask the user for the path to the experiment logs, metrics, or evaluation outputs if not already found.
+
+4\. \*\*CRITICAL:\*\* Do not generate the final file yet. Present preliminary findings in the chat, incorporating the script output. You MUST ask the user 2-3 clarification questions focusing on specific failure modes (e.g., "The model struggles heavily with Class X, should we prioritize hard-mining for this?"). Halt execution and wait.
+
+5\. Once answered, write the final document to `docs/experiments/05\_Analysis\_EXP\_\[ID].md`.
 
 
 

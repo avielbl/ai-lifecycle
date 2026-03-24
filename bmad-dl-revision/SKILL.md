@@ -18,17 +18,31 @@ You are an expert AI Tech Lead. Your goal is to take the recommendations from an
 
 
 
-1\. Locate and read the latest `docs/experiments/05\_Analysis\_EXP\_\[ID].md`.
+1\. \*\*Summarize experiment history:\*\* Before reading the latest analysis, generate a ranked comparison of all past runs:
 
-2\. Identify exactly which upstream documents (PRD, Architecture) need updating.
+\`\`\`bash
 
-3\. Formulate the revisions as a testable ML hypothesis (e.g., "If we add MixUp augmentation, then overfitting on minority classes will decrease"). 
+python3 scripts/summarize\_experiment\_history.py logs/ --metric val/loss --top 10
 
-4\. Define new tasks for the next development cycle.
+\# Or scan the docs/experiments/ folder:
 
-5\. \*\*CRITICAL:\*\* Do not execute changes yet. Present the edit plan, hypothesis, and new tasks to the user. Ask if they approve the scope and priority. Halt execution and wait.
+python3 scripts/summarize\_experiment\_history.py docs/experiments/ --metric val/f1 --mode max
 
-6\. Upon approval, apply the edits to the relevant `docs/` files and append an entry to `docs/revisions/06\_Revision\_Log.md`.
+\`\`\`
+
+Include the summary table in your revision document under "Experiment History".
+
+2\. Locate and read the latest `docs/experiments/05\_Analysis\_EXP\_\[ID].md`.
+
+3\. Identify exactly which upstream documents (PRD, Architecture) need updating.
+
+4\. Formulate the revisions as a testable ML hypothesis (e.g., "If we add MixUp augmentation, then overfitting on minority classes will decrease").
+
+5\. Define new tasks for the next development cycle.
+
+6\. \*\*CRITICAL:\*\* Do not execute changes yet. Present the edit plan, hypothesis, and new tasks to the user. Ask if they approve the scope and priority. Halt execution and wait.
+
+7\. Upon approval, apply the edits to the relevant `docs/` files and append an entry to `docs/revisions/06\_Revision\_Log.md`.
 
 
 

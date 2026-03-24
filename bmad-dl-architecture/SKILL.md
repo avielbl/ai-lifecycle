@@ -26,6 +26,16 @@ You are an expert AI Architect. Your goal is to design the system architecture c
 
 4\. Once answered, write the final document to `docs/architecture/02\_Architecture.md`.
 
+5\. \*\*Run requirement coverage check:\*\* Verify that all PRD requirements are addressed in the architecture:
+
+\`\`\`bash
+
+python3 scripts/check\_req\_coverage.py docs/prd/01\_PRD.md docs/architecture/02\_Architecture.md
+
+\`\`\`
+
+Resolve any uncovered requirements before marking this phase complete. Phantom IDs (warnings) should be investigated but do not block progress.
+
 
 
 \## 2. Expected Output Template

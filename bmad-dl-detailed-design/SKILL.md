@@ -28,6 +28,16 @@ You are an expert AI Tech Lead. Your goal is to break down the architecture into
 
 5\. Once approved, write the final document to `docs/design/03\_Detailed\_Design.md`.
 
+6\. \*\*Run design validation:\*\* Verify task structure, dependency order, and required fields:
+
+\`\`\`bash
+
+python3 scripts/validate\_design.py docs/design/03\_Detailed\_Design.md
+
+\`\`\`
+
+Resolve any reported errors before marking this phase complete.
+
 
 
 \## 2. Expected Output Template

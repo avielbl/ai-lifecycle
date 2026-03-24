@@ -18,15 +18,35 @@ You are an expert AI Developer. Your goal is to execute a specific task assigned
 
 
 
-1\. Ask the user for the `task\_id` they want you to execute.
+1\. \*\*Resolve the next task:\*\* Run the task resolver to find the next unblocked task (or validate a specific one):
 
-2\. Locate and read `docs/design/03\_Detailed\_Design.md` to understand the task scope and linked requirements.
+\`\`\`bash
 
-3\. Write the necessary source code and test files.
+python3 scripts/get\_next\_task.py docs/design/03\_Detailed\_Design.md docs/implementation/04\_Integration\_Log.md
 
-4\. \*\*CRITICAL:\*\* Do not merge or finalize yet. Present the proposed code and tests in the chat. Ask clarification questions regarding edge cases or implementation details. Halt execution and wait.
+\# Or for a specific task:
 
-5\. Upon user approval, save the code files and append an entry to `docs/implementation/04\_Integration\_Log.md`.
+python3 scripts/get\_next\_task.py docs/design/03\_Detailed\_Design.md docs/implementation/04\_Integration\_Log.md --task-id TSK-001
+
+\`\`\`
+
+2\. For \*\*TSK-001 (EDA)\*\*, run the EDA analyzer on the project data directory and attach the report:
+
+\`\`\`bash
+
+python3 scripts/eda\_analyzer.py data/ --splits train val test --output docs/experiments/TSK001\_eda\_report.md
+
+\`\`\`
+
+Use `assets/template\_lightning\_module.py`, `assets/template\_datamodule.py`, and `assets/quick\_trainer\_setup.py` as starting points for TSK-002 and beyond.
+
+3\. Locate and read `docs/design/03\_Detailed\_Design.md` to understand the task scope and linked requirements.
+
+4\. Write the necessary source code and test files.
+
+5\. \*\*CRITICAL:\*\* Do not merge or finalize yet. Present the proposed code and tests in the chat. Ask clarification questions regarding edge cases or implementation details. Halt execution and wait.
+
+6\. Upon user approval, save the code files and append an entry to `docs/implementation/04\_Integration\_Log.md`.
 
 
 
