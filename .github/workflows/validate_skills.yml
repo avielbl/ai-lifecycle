@@ -1,0 +1,138 @@
+name: Validate Skills
+
+on:
+  pull_request:
+    paths:
+      - 'bmad-dl-*/SKILL.md'
+      - 'bmad-dl-*/bmad-manifest.json'
+      - 'module.yaml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          FAILED=0
+          for skill_dir in bmad-dl-*/; do
+            skill_file="$skill_dir/SKILL.md"
+            if [ ! -f "$skill_file" ]; then
+              echo "❌ Missing SKILL.md in $skill_dir"
+              FAILED=1
+              continue
+            fi
+
+            # Check frontmatter has name field
+            if ! grep -q "^name:" "$skill_file" && ! grep -q "^\\\\---" "$skill_file"; then
+              echo "❌ $skill_file: missing 'name' in frontmatter"
+              FAILED=1
+            fi
+
+            # Check frontmatter has description field
+            if ! grep -q "^description:" "$skill_file"; then
+              echo "❌ $skill_file: missing 'description' in frontmatter"
+              FAILED=1
+            fi
+
+            # Check description is not vague (must be > 60 chars after the colon)
+            desc=$(grep "^description:" "$skill_file" | sed 's/^description: *//')
+            if [ ${#desc} -lt 60 ]; then
+              echo "⚠️  $skill_file: description may be too vague (${#desc} chars). Include specific trigger conditions."
+            fi
+
+            echo "✅ $skill_file"
+          done
+          exit $FAILED
+
+      - name: Validate bmad-manifest.json structure
+        run: |
+          FAILED=0
+          for skill_dir in bmad-dl-*/; do
+            manifest="$skill_dir/bmad-manifest.json"
+            if [ ! -f "$manifest" ]; then
+              echo "⚠️  No bmad-manifest.json in $skill_dir (optional for universal tools)"
+              continue
+            fi
+
+            # Validate JSON is parseable
+            if ! python3 -c "import json,sys; json.load(open('$manifest'))" 2>/dev/null; then
+              echo "❌ $manifest: invalid JSON"
+              FAILED=1
+              continue
+            fi
+
+            # Check required fields
+            for field in module-code capabilities; do
+              if ! python3 -c "import json,sys; d=json.load(open('$manifest')); assert '$field' in d" 2>/dev/null; then
+                echo "❌ $manifest: missing required field '$field'"
+                FAILED=1
+              fi
+            done
+
+            # Check capabilities have phase-name
+            missing=$(python3 -c "
+          import json, sys
+          d = json.load(open('$manifest'))
+          missing = []
+          for cap in d.get('capabilities', []):
+              if 'phase-name' not in cap:
+                  missing.append(cap.get('name', 'unnamed'))
+          print(' '.join(missing))
+          " 2>/dev/null)
+            if [ -n "$missing" ]; then
+              echo "❌ $manifest: capability missing 'phase-name': $missing"
+              FAILED=1
+            fi
+
+            echo "✅ $manifest"
+          done
+          exit $FAILED
+
+      - name: Check analysis documents have Failed Attempts section
+        run: |
+          FAILED=0
+          # Check Analysis SKILL.md template
+          if grep -q "Failed Attempts" bmad-dl-analysis/SKILL.md; then
+            echo "✅ bmad-dl-analysis/SKILL.md: Failed Attempts section present"
+          else
+            echo "❌ bmad-dl-analysis/SKILL.md: missing mandatory 'Failed Attempts' section"
+            FAILED=1
+          fi
+
+          # Check Implementation SKILL.md template
+          if grep -q "Failed Attempts" bmad-dl-implementation/SKILL.md; then
+            echo "✅ bmad-dl-implementation/SKILL.md: Failed Attempts section present"
+          else
+            echo "❌ bmad-dl-implementation/SKILL.md: missing mandatory 'Failed Attempts' section"
+            FAILED=1
+          fi
+
+          # Check any retrospective files in docs/knowledge/ if they exist
+          for retro in docs/knowledge/RETRO_*.md; do
+            if [ -f "$retro" ]; then
+              if grep -q "Failed Attempts\|What Failed" "$retro"; then
+                echo "✅ $retro: failure documentation present"
+              else
+                echo "❌ $retro: retrospective missing 'Failed Attempts' section — incomplete knowledge capture"
+                FAILED=1
+              fi
+            fi
+          done
+
+          exit $FAILED
+
+      - name: Validate module.yaml version format
+        run: |
+          if [ ! -f "module.yaml" ]; then
+            echo "❌ module.yaml not found"
+            exit 1
+          fi
+          version=$(grep "^version:" module.yaml | awk '{print $2}')
+          if echo "$version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "✅ module.yaml: version $version is valid semver"
+          else
+            echo "❌ module.yaml: version '$version' is not valid semver (expected X.Y.Z)"
+            exit 1
+          fi

@@ -4,10 +4,10 @@
     {
       "name": "implementation",
       "menu-code": "DLM",
-      "description": "Executes a task and appends to integration log.",
+      "description": "Executes a task and appends to integration log with mandatory failure documentation.",
       "supports-headless": true,
       "phase-name": "5-implementation",
-      "after": ["bmad-dl-detailed-design"],
+      "after": ["bmad-dl-techspec"],
       "before": ["bmad-dl-analysis"],
       "is-required": true,
       "output-location": "{output_folder}"

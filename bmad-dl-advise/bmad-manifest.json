@@ -1,0 +1,14 @@
+{
+  "module-code": "bmad-dl-lifecycle",
+  "capabilities": [
+    {
+      "name": "advise",
+      "menu-code": "DLV",
+      "description": "Searches past experiments, retrospectives, and TECHSPECs to surface validated parameters and failure warnings before starting new work. Run before any new experiment or EDA cycle.",
+      "supports-headless": true,
+      "phase-name": "universal",
+      "is-required": false,
+      "output-location": null
+    }
+  ]
+}

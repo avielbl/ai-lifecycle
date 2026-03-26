@@ -1,0 +1,14 @@
+{
+  "module-code": "bmad-dl-lifecycle",
+  "capabilities": [
+    {
+      "name": "retrospective",
+      "menu-code": "DLX",
+      "description": "Captures session learnings as a structured knowledge document. Run at the end of any implementation or analysis session to preserve what worked, what failed, and exact parameters for future /bmad-dl-advise discovery.",
+      "supports-headless": false,
+      "phase-name": "universal",
+      "is-required": false,
+      "output-location": "{output_folder}/knowledge"
+    }
+  ]
+}

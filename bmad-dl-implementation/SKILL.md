@@ -18,7 +18,11 @@ You are an expert AI Developer. Your goal is to execute a specific task assigned
 
 
 
-1\. **Resolve the next task:** Run the task resolver to find the next unblocked task (or validate a specific one):
+1\. **Run the advisor first:** `/bmad-dl-advise` — describe the task you're about to implement. Surface any relevant past implementations, known errors, or validated parameter configs before writing a single line of code.
+
+
+
+2\. **Resolve the next task:** Run the task resolver to find the next unblocked task (or validate a specific one):
 
 \`\`\`bash
 
@@ -31,7 +35,7 @@ python3 scripts/get_next_task.py docs/design/04_Detailed_Design.md docs/implemen
 
 
 
-2\. **Read context documents:**
+3\. **Read context documents:**
 
    \- `docs/00_Research_Thesis.md` — understand the research goal and constraints
    \- `docs/eda/02_EDA_Report.md` — apply EDA findings (class weights, augmentation strategy, split sizes)
@@ -39,7 +43,7 @@ python3 scripts/get_next_task.py docs/design/04_Detailed_Design.md docs/implemen
 
 
 
-3\. Use assets as starting points for model and training code:
+4\. Use assets as starting points for model and training code:
 
    \- `assets/template_lightning_module.py` — LightningModule boilerplate
    \- `assets/template_datamodule.py` — LightningDataModule with train/val/test splits
@@ -51,15 +55,19 @@ python3 scripts/get_next_task.py docs/design/04_Detailed_Design.md docs/implemen
 
 
 
-4\. Write the necessary source code and test files.
+5\. Write the necessary source code and test files.
 
 
 
-5\. **CRITICAL:** Do not merge or finalize yet. Present the proposed code and tests in the chat. Ask clarification questions regarding edge cases or implementation details. Halt execution and wait.
+6\. **CRITICAL:** Do not merge or finalize yet. Present the proposed code and tests in the chat. Ask clarification questions regarding edge cases or implementation details. Halt execution and wait.
 
 
 
-6\. Upon user approval, save the code files and append an entry to `docs/implementation/05_Integration_Log.md`.
+7\. Upon user approval, save the code files and append an entry to `docs/implementation/05_Integration_Log.md`.
+
+
+
+8\. **At the end of the session:** `/bmad-dl-retrospective` — capture what you tried, what broke, and the exact parameters that worked.
 
 
 
@@ -79,7 +87,18 @@ When appending to `05_Integration_Log.md`, adhere strictly to this format:
     \* `tests/...`
 \* \*\*Validation:\*\* [e.g., Pytest results]
 
+\### Failed Attempts ❌ — MANDATORY
 
+**Do not skip.** Every non-trivial task produces dead ends. If this section is empty, it means either the task was trivial or the failures weren't documented — state which.
+
+| Approach Tried | Symptom / Error | Root Cause | Fix or Lesson |
+| :--- | :--- | :--- | :--- |
+| [What was attempted] | [What broke] | [Why it broke] | [What worked instead] |
+
+\*\*Copy-paste ready final configuration:\*\*
+\`\`\`python
+\# Exact code or parameter block that was merged — not vague prose
+\`\`\`
 
 \### Clarification & Decision Log
 

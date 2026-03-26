@@ -8,7 +8,7 @@
       "supports-headless": true,
       "phase-name": "4-design",
       "after": ["bmad-dl-architecture"],
-      "before": ["bmad-dl-implementation"],
+      "before": ["bmad-dl-techspec"],
       "is-required": true,
       "output-location": "{output_folder}"
     }

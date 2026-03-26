@@ -18,7 +18,11 @@ You are an expert Data Scientist and MLOps Engineer. Your goal is to analyze the
 
 
 
-1\. **Read the Research Thesis first:** Locate and read `docs/00_Research_Thesis.md`.
+1\. **Run the advisor first** (strongly recommended): `/bmad-dl-advise` — surface what past experiments revealed about this hypothesis before interpreting results. This prevents confirming a finding that a previous experiment already falsified.
+
+
+
+2\. **Read the Research Thesis:** Locate and read `docs/00_Research_Thesis.md`.
 
    \- What is the active hypothesis being tested? (Section II)
    \- What are the domain-specific failure mode costs? (Section III)
@@ -27,7 +31,9 @@ You are an expert Data Scientist and MLOps Engineer. Your goal is to analyze the
 
 
 
-2\. Locate and read `docs/prd/01_PRD.md` to understand the target metrics (`REQ-PERF-*`).
+3\. Locate and read `docs/prd/01_PRD.md` to understand the target metrics (`REQ-PERF-*`).
+
+   Also read `docs/techspecs/TECHSPEC_EXP_[ID].md` if it exists — evaluate results against the **pre-committed** tiered success criteria, not post-hoc judgment.
 
 
 
@@ -48,11 +54,11 @@ python3 scripts/plot_confusion_matrix.py predictions.csv --output-dir docs/exper
 
 
 
-4\. Ask the user for the path to experiment logs, metrics, or evaluation outputs if not found.
+5\. Ask the user for the path to experiment logs, metrics, or evaluation outputs if not found.
 
 
 
-5\. **CRITICAL:** Do not generate the final file yet. Present preliminary findings in the chat. You MUST ask **3–4 clarification questions** that address:
+6\. **CRITICAL:** Do not generate the final file yet. Present preliminary findings in the chat. You MUST ask **3–4 clarification questions** that address:
 
    \- Hypothesis verdict: "The active hypothesis was [X]. Based on results, it appears [supported/falsified/inconclusive] because [evidence]. Do you agree with this interpretation?"
    \- Domain interpretation of failure modes: "The model shows highest confusion between Class A and Class B. In your domain, what is the real-world consequence of this specific error?"
@@ -62,7 +68,9 @@ python3 scripts/plot_confusion_matrix.py predictions.csv --output-dir docs/exper
 
 
 
-6\. Once answered, write the final document to `docs/experiments/06_Analysis_EXP_[ID].md`.
+7\. Once answered, write the final document to `docs/experiments/06_Analysis_EXP_[ID].md`.
+
+8\. **Run a retrospective at the end of this session:** `/bmad-dl-retrospective` — capture all findings, failed approaches, and exact parameters to the knowledge base.
 
 
 
@@ -96,7 +104,17 @@ When writing the final `06_Analysis_EXP_[ID].md` file, adhere strictly to this f
 
 
 
-\### D. Error Analysis & Interpretability
+\### D. Failed Attempts ❌ — MANDATORY
+
+**This section must be completed even if no approaches failed.** A log with no failure documentation is considered incomplete. "No failures" is only valid if every attempted configuration produced acceptable results — which must be stated explicitly.
+
+| Approach / Configuration | Symptom | Root Cause | Lesson Learned |
+| :--- | :--- | :--- | :--- |
+| [What was tried] | [Observable outcome] | [Why it happened] | [What to do instead, or never try again] |
+
+
+
+\### E. Error Analysis & Interpretability
 
 \* \*\*Common Failure Modes:\*\* [Confusion matrix hotspots, specific edge cases]
 \* \*\*Domain Cost of Failures:\*\* [Applying failure costs from Thesis Section III to actual error counts]
@@ -104,19 +122,27 @@ When writing the final `06_Analysis_EXP_[ID].md` file, adhere strictly to this f
 
 
 
-\### E. Diagnostics & Insights
+\### F. TECHSPEC Evaluation
+
+\* \*\*Pre-committed success tier reached:\*\* [Best case / Realistic / Worst case / Failure — from TECHSPEC_EXP_[ID].md]
+\* \*\*Verdict vs. budget:\*\* [Did results arrive within the committed compute budget?]
+\* \*\*Goalpost assessment:\*\* [Were any success criteria reinterpreted after seeing results? Document honestly.]
+
+
+
+\### G. Diagnostics & Insights
 
 \* [Analysis of training curves, overfitting/underfitting dynamics]
 
 
 
-\### F. Recommendations for Revision
+\### H. Recommendations for Revision
 
 \* [Suggested architecture changes, hyperparameter tuning, or data augmentation]
 \* [New hypothesis to test in next cycle]
 
 
 
-\### G. Clarification & Decision Log
+\### I. Clarification & Decision Log
 
 \* \*\*Q1:\*\* [Your question] -> \*\*User Decision:\*\* [User's answer]
