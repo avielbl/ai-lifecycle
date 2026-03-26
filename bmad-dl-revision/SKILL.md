@@ -2,19 +2,21 @@
 
 name: bmad-dl-revision
 
-description: Acts as a Domain Expert and AI Tech Lead to formulate the next experiment hypothesis, update the Research Thesis, and generate tasks for the next development cycle.
+description: Acts as a Domain Expert and AI Tech Lead to formulate the next hypothesis, explicitly amend all upstream documents (Thesis, PRD, Architecture, Detailed Design) that need updating, and generate the task set for the next experiment cycle.
 
 \---
 
 
 
-\# BMAD Workflow 07: Iterative Revision Cycle
+\# BMAD Workflow 08: Iterative Revision Cycle
 
 
 
 \## 1. Operating Instructions
 
-You are the Domain Expert and AI Tech Lead working together in this phase. The Domain Expert drives the *why* (what domain insight leads to the next hypothesis), while the Tech Lead drives the *what* (what concrete changes to make). Your primary output is an updated `docs/00_Research_Thesis.md` and a structured revision plan.
+You are the Domain Expert and AI Tech Lead. The Domain Expert drives *why* (what domain insight leads to the next hypothesis), while the Tech Lead drives *what* (which documents change and how).
+
+A revision is not just a hypothesis update. It is a **document audit**: every upstream document that no longer accurately reflects what was learned must be explicitly amended. The next experiment cycle starts from corrected documents, not from documents that have drifted from reality.
 
 
 
@@ -22,61 +24,64 @@ You are the Domain Expert and AI Tech Lead working together in this phase. The D
 
 \`\`\`bash
 
-\# Ranked comparison of all past runs
 python3 scripts/summarize_experiment_history.py docs/experiments/ --metric val/f1 --mode max
-
-\# Or scan training logs directly:
-python3 scripts/summarize_experiment_history.py logs/ --metric val/loss --top 10
+\# Also scan logs:
+python3 scripts/summarize_experiment_history.py logs/ --metric val/loss --top 10 2>/dev/null || true
 
 \`\`\`
 
-Include the summary table in the revision document.
+
+
+2\. **Read in order:**
+
+   \- `docs/00_Research_Thesis.md` — active hypothesis, hypothesis history, domain constraints
+   \- `docs/experiments/07_Analysis_EXP_[ID].md` — hypothesis verdict, TECHSPEC evaluation, recommendations
+   \- `docs/techspecs/TECHSPEC_EXP_[ID].md` — which tier was committed and reached
+   \- `docs/prd/01_PRD.md` — are any requirements outdated by what was learned?
+   \- `docs/architecture/03_Architecture.md` — are any architectural decisions invalidated?
+   \- `docs/design/04_Detailed_Design.md` — which tasks need to be added, changed, or removed?
 
 
 
-2\. **Read the Research Thesis:** Locate and read `docs/00_Research_Thesis.md`.
+3\. **Conduct the document audit.** For each upstream document, state one of:
 
-   \- What was the active hypothesis? (Section II)
-   \- What did past experiments reveal? (Section V — Hypothesis History)
-   \- What domain constraints still hold? (Section III)
-
-
-
-3\. Locate and read the latest `docs/experiments/06_Analysis_EXP_[ID].md`.
-
-   \- Was the hypothesis supported, falsified, or inconclusive?
-   \- What does the Domain Expert's interpretation reveal about the next direction?
+   \- **No change needed** — with explicit reason why
+   \- **Amendment needed** — with the exact proposed change
 
 
 
-4\. Identify exactly which upstream documents (PRD, Architecture) need updating.
+4\. **Formulate the next hypothesis** as a domain-grounded, testable statement:
+
+   \- Format: "Using [specific change] will improve [metric] from [current baseline] to [target] because [domain or statistical reasoning from this experiment's results]."
+   \- The hypothesis must be falsifiable. State what result would disprove it.
 
 
 
-5\. **Formulate the next hypothesis** as a testable, domain-grounded statement:
+5\. **Generate new tasks** for the next cycle using the correct namespace:
 
-   \- Format: "Using [specific change] will improve [metric] from [current] to [target] because [domain or statistical reasoning]."
-   \- The hypothesis must reference domain knowledge, not just "try a bigger model."
+   \- New infrastructure tasks → `INF-0XX` (if architecture changes require new infrastructure)
+   \- New experiment tasks → `EXP-0XX` (increment from last used EXP number)
 
-
-
-6\. **CRITICAL:** Do not execute changes yet. Present the following to the user and halt:
-
-   \- Experiment history summary table
-   \- Hypothesis verdict from the last analysis
-   \- Proposed next hypothesis (with domain reasoning)
-   \- Document edit plan (which files change and how)
-   \- New task list for the next development cycle
-
-   Ask for approval and any Domain Expert corrections. Wait.
+   Note: if the hypothesis was falsified and only a parameter change is needed, only EXP tasks are required. If the architecture must change, new INF tasks may be needed first.
 
 
 
-7\. Upon approval:
+6\. **CRITICAL:** Do not execute any changes yet. Present the full revision plan to the user:
 
-   \- Apply edits to relevant `docs/` files
-   \- **Update `docs/00_Research_Thesis.md`**: add the new hypothesis to Section II, move the old hypothesis to Section V (Hypothesis History) with its verdict
-   \- Append an entry to `docs/revisions/07_Revision_Log.md`
+   \- Experiment history table
+   \- Hypothesis verdict
+   \- Document audit (each doc: change or no change, with detail)
+   \- New hypothesis with domain reasoning
+   \- New task list
+
+   Ask: "Does this amendment plan accurately capture the conclusions? Are there domain insights from this experiment I haven't included?" Halt and wait.
+
+
+
+7\. Upon approval, execute all changes:
+
+   \- Apply all document amendments (in order: Thesis → PRD → Architecture → Detailed Design)
+   \- Append to `docs/revisions/08_Revision_Log.md`
 
 
 
@@ -84,51 +89,58 @@ Include the summary table in the revision document.
 
 
 
-\### Template A: Updates to `docs/00_Research_Thesis.md`
+\### Template A: Document Amendment to `docs/00_Research_Thesis.md`
 
-When updating the Thesis, apply these changes:
-
-\- Section II: Replace the active hypothesis with the new one, mark status as "Untested"
-\- Section V: Append the previous hypothesis with its experiment ID and outcome:
+\- Section II: Replace active hypothesis. Set status to "Untested — pending next experiment."
+\- Section V: Append the previous hypothesis row:
 
 \`\`\`markdown
-
-| H-00N | "[Previous hypothesis]" | EXP-00X | [SUPPORTED/FALSIFIED/INCONCLUSIVE — one sentence] | [Name / Date] |
-
+| H-00N | "[Previous hypothesis]" | EXP-00X | [SUPPORTED/FALSIFIED/INCONCLUSIVE — one sentence] | [Domain Expert] / [Date] |
 \`\`\`
 
 
 
-\### Template B: Append to `docs/revisions/07_Revision_Log.md`
+\### Template B: Append to `docs/revisions/08_Revision_Log.md`
 
 \`\`\`markdown
 
-\### Revision Cycle: [Date / Cycle Number]
+\### Revision Cycle [N]: [Date]
 
-\* \*\*Triggered By:\*\* [Experiment ID]
+\* \*\*Triggered By:\*\* EXP-[ID]
 \* \*\*Previous Hypothesis Verdict:\*\* [SUPPORTED / FALSIFIED / INCONCLUSIVE]
-\* \*\*Domain Expert Assessment:\*\* [Domain Expert's interpretation of why the hypothesis outcome occurred]
+\* \*\*TECHSPEC Tier Reached:\*\* [Tier name]
+\* \*\*Domain Expert Assessment:\*\* [Why the hypothesis outcome occurred, in domain terms]
 
 \### New Hypothesis
 
-\* \*\*H-00N:\*\* "[New hypothesis statement with domain reasoning]"
-\* \*\*Rationale:\*\* [Domain Expert reasoning + statistical evidence from analysis]
+\* \*\*H-00N:\*\* "[New hypothesis — domain-grounded, falsifiable]"
+\* \*\*Rationale:\*\* [Domain expert reasoning + statistical evidence]
+\* \*\*Falsification condition:\*\* [What result would disprove this hypothesis]
 
-\### Document Edit Plan
+\### Document Amendment Log
 
-\* \*\*`docs/00_Research_Thesis.md`:\*\* Updated active hypothesis and Hypothesis History
-\* \*\*`docs/prd/01_PRD.md`:\*\* [Changes made, if any]
-\* \*\*`docs/architecture/03_Architecture.md`:\*\* [Changes made, if any]
+\#### `docs/00_Research_Thesis.md`
+\* Section II updated: new hypothesis set, old hypothesis archived to Section V
+
+\#### `docs/prd/01_PRD.md`
+\* [AMENDED: specific change] OR [No change — existing requirements still accurate]
+
+\#### `docs/architecture/03_Architecture.md`
+\* [AMENDED: specific change] OR [No change — architecture still valid for next experiment]
+
+\#### `docs/design/04_Detailed_Design.md`
+\* [AMENDED: tasks added/removed — with IDs] OR [No change — existing task set sufficient]
 
 \### New Task Generation
 
-| New Task ID | Assigned Agent | Task Description | Linked Requirement |
-| :--- | :--- | :--- | :--- |
-| \`REV-001\` | [Agent] | [Description] | [REQ-ID] |
+| Task ID | Assigned Agent | Description | Linked Req | Depends On |
+| :--- | :--- | :--- | :--- | :--- |
+| \`EXP-0XX\` | [Agent] | [Training run with new hypothesis] | [REQ-ID] | TECHSPEC_EXP_[N+1] |
+| \`INF-0XX\` | [Agent] | [New infra if architecture changed] | [REQ-ID] | None |
 
 \### Clarification & Decision Log
 
 \* \*\*Q1:\*\* [Your question] -> \*\*User Decision:\*\* [User's answer]
-\* \*\*Status:\*\* [Approved — Ready for Workflow 05 Implementation]
+\* \*\*Status:\*\* [Approved — ready for bmad-dl-techspec then bmad-dl-experiment]
 
 \`\`\`

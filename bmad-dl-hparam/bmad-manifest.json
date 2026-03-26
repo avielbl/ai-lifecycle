@@ -1,0 +1,16 @@
+{
+  "module-code": "bmad-dl-lifecycle",
+  "capabilities": [
+    {
+      "name": "hparam",
+      "menu-code": "DLH",
+      "description": "Runs structured hyperparameter optimization (Optuna, W&B Sweeps, Ray Tune, ClearML HPO) after a baseline architecture is confirmed. Conditional stage — run only after Analysis confirms the baseline meets the TECHSPEC minimum viable tier.",
+      "supports-headless": true,
+      "phase-name": "7.5-hparam",
+      "after": ["bmad-dl-analysis"],
+      "before": ["bmad-dl-experiment"],
+      "is-required": false,
+      "output-location": "{output_folder}/techspecs"
+    }
+  ]
+}

@@ -2,147 +2,184 @@
 
 name: bmad-dl-analysis
 
-description: Acts as a Data Scientist to analyze DL training experiment logs, perform error analysis, and compare against PRD requirements and Research Thesis.
+description: Acts as a Data Scientist to analyze experiment results from the tracking tool (W&B/MLflow/ClearML) and local logs, evaluate against the pre-committed TECHSPEC, verify the hypothesis verdict, and produce a structured analysis report with mandatory failure documentation.
 
 \---
 
 
 
-\# BMAD Workflow 06: Experiment Analysis
+\# BMAD Workflow 07: Experiment Analysis
 
 
 
 \## 1. Operating Instructions
 
-You are an expert Data Scientist and MLOps Engineer. Your goal is to analyze the results of the latest training run, going beyond top-level metrics to understand model behavior. You work with the Domain Expert to interpret findings in domain terms — raw numbers become meaningful only through their lens.
+You are an expert Data Scientist and MLOps Engineer. Your goal is to analyze the results of the latest training runs, evaluate them against the pre-committed TECHSPEC, assess the hypothesis verdict, and surface all failure modes. You work with the Domain Expert to interpret findings in domain terms.
+
+**Key discipline:** Results are evaluated against `docs/techspecs/TECHSPEC_EXP_[ID].md` as it was written before training. You do not reinterpret success criteria after seeing results.
 
 
 
-1\. **Run the advisor first** (strongly recommended): `/bmad-dl-advise` — surface what past experiments revealed about this hypothesis before interpreting results. This prevents confirming a finding that a previous experiment already falsified.
+1\. **Run the advisor first:** `/bmad-dl-advise` — surface what past experiments revealed before interpreting these results.
 
 
 
-2\. **Read the Research Thesis:** Locate and read `docs/00_Research_Thesis.md`.
+2\. **Read in order:**
 
-   \- What is the active hypothesis being tested? (Section II)
-   \- What are the domain-specific failure mode costs? (Section III)
-   \- What architectural constraints came from EDA? (Section IV)
-   \- Frame your analysis against the hypothesis — was it supported or falsified?
-
-
-
-3\. Locate and read `docs/prd/01_PRD.md` to understand the target metrics (`REQ-PERF-*`).
-
-   Also read `docs/techspecs/TECHSPEC_EXP_[ID].md` if it exists — evaluate results against the **pre-committed** tiered success criteria, not post-hoc judgment.
+   \- `docs/00_Research_Thesis.md` — active hypothesis (Section II), failure costs (Section III), data characterization (Section IV)
+   \- `docs/techspecs/TECHSPEC_EXP_[ID].md` — pre-committed success tiers (Section E), known risks (Section F)
+   \- `docs/experiments/06_Experiment_Log.md` — run summary and tracking URLs
 
 
 
-3\. **Parse the training log and compare against PRD requirements:**
+3\. **Pull experiment data from the tracking tool:**
+
+\`\`\`python
+
+\# ── W&B ──────────────────────────────────────────────────────────────────────
+import wandb
+api = wandb.Api()
+runs = api.runs(f"{ENTITY}/{PROJECT_NAME}", filters={"tags": {"$in": [f"EXP-{exp_id}"]}})
+for run in runs:
+    print(run.name, run.summary.get("val/f1"), run.summary.get("val/loss"))
+    history = run.history(keys=["val/f1", "val/loss", "train/loss"])
+
+\# ── MLflow ───────────────────────────────────────────────────────────────────
+import mlflow
+client = mlflow.MlflowClient(tracking_uri="./mlruns")
+experiment = client.get_experiment_by_name(PROJECT_NAME)
+runs = client.search_runs(
+    experiment_ids=[experiment.experiment_id],
+    filter_string=f"tags.exp_id = 'EXP-{exp_id}'"
+)
+for run in runs:
+    print(run.info.run_name, run.data.metrics)
+
+\# ── ClearML ──────────────────────────────────────────────────────────────────
+from clearml import Task
+tasks = Task.get_tasks(
+    project_name=PROJECT_NAME,
+    task_filter={"tags": [f"EXP-{exp_id}"]},
+)
+for task in tasks:
+    scalars = task.get_reported_scalars()
+    print(task.name, scalars.get("val", {}).get("f1", {}).get("y", [])[-1])
+
+\`\`\`
+
+   Also run local log parsers as fallback:
 
 \`\`\`bash
 
-\# Parse metrics and compare against REQ-PERF targets
 python3 scripts/parse_training_logs.py logs/[experiment]/version_0/metrics.csv docs/prd/01_PRD.md
-
-\# Plot training curves (loss + metric panels, best epoch annotated)
 python3 scripts/plot_training_curves.py logs/[experiment]/version_0/metrics.csv --output docs/experiments/training_curves.png
-
-\# Plot confusion matrix and per-class metrics
 python3 scripts/plot_confusion_matrix.py predictions.csv --output-dir docs/experiments/
 
 \`\`\`
 
 
 
-5\. Ask the user for the path to experiment logs, metrics, or evaluation outputs if not found.
+4\. **Evaluate against TECHSPEC tiers** (Section E). State explicitly which tier was reached: Best case / Realistic / Worst case alive / Failure. This is not a judgment call — it is a comparison against pre-committed thresholds.
 
 
 
-6\. **CRITICAL:** Do not generate the final file yet. Present preliminary findings in the chat. You MUST ask **3–4 clarification questions** that address:
+5\. **CRITICAL:** Do not generate the final file yet. Present preliminary findings. Ask **3–4 domain interpretation questions:**
 
-   \- Hypothesis verdict: "The active hypothesis was [X]. Based on results, it appears [supported/falsified/inconclusive] because [evidence]. Do you agree with this interpretation?"
-   \- Domain interpretation of failure modes: "The model shows highest confusion between Class A and Class B. In your domain, what is the real-world consequence of this specific error?"
-   \- Unexpected behaviors: [Anything that deviates from EDA predictions or the hypothesis]
+   \- Hypothesis verdict: "The active hypothesis appears [supported/falsified/inconclusive] because [evidence]. The TECHSPEC tier reached is [tier]. Do you agree?"
+   \- Domain failure cost: "The model confused Class A with Class B in N% of cases. Given the failure costs in the Thesis (Section III), what is the real-world impact of this error rate?"
+   \- Unexpected behaviors: [anything not predicted by EDA or the hypothesis]
+   \- Next direction: "Based on these results, what is your domain intuition for the next hypothesis?"
 
-   Halt execution and wait.
+   Halt and wait.
 
 
 
-7\. Once answered, write the final document to `docs/experiments/06_Analysis_EXP_[ID].md`.
+6\. Once answered, write the final document to `docs/experiments/07_Analysis_EXP_[ID].md`.
 
-8\. **Run a retrospective at the end of this session:** `/bmad-dl-retrospective` — capture all findings, failed approaches, and exact parameters to the knowledge base.
+
+
+7\. **Run `/bmad-dl-retrospective`** at the end of this session.
 
 
 
 \## 2. Expected Output Template
 
-When writing the final `06_Analysis_EXP_[ID].md` file, adhere strictly to this format:
-
-
+\`\`\`markdown
 
 \### A. Experiment Overview
 
-\* \*\*Experiment ID:\*\* [ID]
-\* \*\*Configuration:\*\* [Key hyperparameters, architecture variant]
-\* \*\*Thesis Reference:\*\* Active hypothesis from `docs/00_Research_Thesis.md` — "[quote the hypothesis]"
+\* \*\*Experiment ID:\*\* EXP-[ID]
+\* \*\*Run Type:\*\* [Baseline / Tuned / Ablation]
+\* \*\*Tracking Tool:\*\* [W&B / MLflow / ClearML] — [link to experiment/project]
+\* \*\*Active Hypothesis:\*\* "[Exact quote from docs/00_Research_Thesis.md Section II]"
+\* \*\*TECHSPEC:\*\* `docs/techspecs/TECHSPEC_EXP_[ID].md`
 
 
 
-\### B. Hypothesis Verdict
+\### B. TECHSPEC Evaluation (pre-committed criteria)
+
+| TECHSPEC Tier | Threshold | Achieved | Verdict |
+| :--- | :--- | :--- | :--- |
+| Best case | F1 ≥ 0.95 | [actual] | [REACHED / NOT REACHED] |
+| Realistic | F1 ≥ 0.92 | [actual] | [REACHED / NOT REACHED] |
+| Worst case (alive) | F1 0.85–0.92 | [actual] | [REACHED / NOT REACHED] |
+| **Failure** | F1 < 0.85 | [actual] | [REACHED / NOT REACHED] |
+
+\* \*\*Tier reached:\*\* [Tier name]
+\* \*\*Goalpost integrity:\*\* [Were criteria evaluated as committed? Any post-hoc reinterpretation? Document honestly.]
+\* \*\*HPO eligible:\*\* [Yes — baseline works, proceed to bmad-dl-hparam / No — revise architecture first]
+
+
+
+\### C. Hypothesis Verdict
 
 \* \*\*Status:\*\* [SUPPORTED / FALSIFIED / INCONCLUSIVE]
 \* \*\*Evidence:\*\* [Specific metrics and behaviors that confirm or deny the hypothesis]
-\* \*\*Domain Expert Interpretation:\*\* [What the Domain Expert said about the verdict]
+\* \*\*Domain Expert Interpretation:\*\* [What the Domain Expert said about the verdict and next direction]
 
 
 
-\### C. Requirement Verification
+\### D. Requirement Verification
 
-| Linked Requirement | PRD Target | Actual Achieved | Validation Status |
+| Linked Requirement | PRD Target | Actual Achieved | Status |
 | :--- | :--- | :--- | :--- |
 | \`REQ-PERF-01\` | [Target] | [Actual] | [PASS/FAIL] |
 
 
 
-\### D. Failed Attempts ❌ — MANDATORY
+\### E. Failed Attempts ❌ — MANDATORY
 
-**This section must be completed even if no approaches failed.** A log with no failure documentation is considered incomplete. "No failures" is only valid if every attempted configuration produced acceptable results — which must be stated explicitly.
-
-| Approach / Configuration | Symptom | Root Cause | Lesson Learned |
+| Approach / Config | Symptom | Root Cause | Lesson Learned |
 | :--- | :--- | :--- | :--- |
-| [What was tried] | [Observable outcome] | [Why it happened] | [What to do instead, or never try again] |
+| [What was tried] | [Observable outcome] | [Why] | [What to do differently] |
 
 
 
-\### E. Error Analysis & Interpretability
+\### F. Error Analysis & Domain Cost
 
-\* \*\*Common Failure Modes:\*\* [Confusion matrix hotspots, specific edge cases]
-\* \*\*Domain Cost of Failures:\*\* [Applying failure costs from Thesis Section III to actual error counts]
-\* \*\*Data/Feature Behavior:\*\* [Feature importance, gradient issues, data distribution effects]
-
-
-
-\### F. TECHSPEC Evaluation
-
-\* \*\*Pre-committed success tier reached:\*\* [Best case / Realistic / Worst case / Failure — from TECHSPEC_EXP_[ID].md]
-\* \*\*Verdict vs. budget:\*\* [Did results arrive within the committed compute budget?]
-\* \*\*Goalpost assessment:\*\* [Were any success criteria reinterpreted after seeing results? Document honestly.]
+\* \*\*Common Failure Modes:\*\* [Confusion matrix hotspots, per-class breakdown]
+\* \*\*Domain Cost of Failures:\*\* [Apply failure costs from Thesis Section III to actual error counts — e.g., "38 false negatives × $50K cost = $1.9M potential recall cost"]
+\* \*\*Data/Feature Behavior:\*\* [Feature importance, gradient issues, distribution effects]
 
 
 
 \### G. Diagnostics & Insights
 
-\* [Analysis of training curves, overfitting/underfitting dynamics]
+\* [Training curve analysis: overfitting, underfitting, convergence behavior]
+\* [Comparison to EDA predictions: did the data behave as expected?]
 
 
 
-\### H. Recommendations for Revision
+\### H. Recommendations for Next Step
 
-\* [Suggested architecture changes, hyperparameter tuning, or data augmentation]
-\* [New hypothesis to test in next cycle]
+\* [If HPO eligible: specific parameter ranges to sweep based on results]
+\* [If revision needed: which upstream documents need changing and why]
+\* [New hypothesis candidate with domain reasoning]
 
 
 
 \### I. Clarification & Decision Log
 
 \* \*\*Q1:\*\* [Your question] -> \*\*User Decision:\*\* [User's answer]
+
+\`\`\`

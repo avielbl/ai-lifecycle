@@ -4,7 +4,7 @@
     {
       "name": "detailed-design",
       "menu-code": "DLD",
-      "description": "Produces granular task breakdown from architecture and EDA constraints.",
+      "description": "Produces INF-* infrastructure tasks and EXP-* experiment tasks from architecture and EDA constraints.",
       "supports-headless": true,
       "phase-name": "4-design",
       "after": ["bmad-dl-architecture"],

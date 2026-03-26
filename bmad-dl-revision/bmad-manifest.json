@@ -4,12 +4,12 @@
     {
       "name": "revision",
       "menu-code": "DLR",
-      "description": "Updates Research Thesis with new hypothesis and produces revision plan from Domain Expert + Tech Lead.",
+      "description": "Conducts document audit across Thesis, PRD, Architecture and Detailed Design; formulates next hypothesis with Domain Expert; generates new INF-* and EXP-* tasks for next cycle.",
       "supports-headless": true,
-      "phase-name": "7-revision",
+      "phase-name": "8-revision",
       "after": ["bmad-dl-analysis"],
-      "before": ["bmad-dl-implementation"],
-      "output-location": "{output_folder}"
+      "before": ["bmad-dl-techspec"],
+      "output-location": "{output_folder}/revisions"
     }
   ]
 }

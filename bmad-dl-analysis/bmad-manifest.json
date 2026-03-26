@@ -4,13 +4,13 @@
     {
       "name": "analysis",
       "menu-code": "DLN",
-      "description": "Analyzes experiment results against Research Thesis hypothesis and PRD requirements.",
+      "description": "Analyzes experiment results from tracking tool (W&B/MLflow/ClearML), evaluates against TECHSPEC tiers, verifies hypothesis verdict with Domain Expert.",
       "supports-headless": true,
-      "phase-name": "6-analysis",
-      "after": ["bmad-dl-implementation"],
-      "before": ["bmad-dl-revision"],
+      "phase-name": "7-analysis",
+      "after": ["bmad-dl-experiment"],
+      "before": ["bmad-dl-hparam", "bmad-dl-revision"],
       "is-required": true,
-      "output-location": "{output_folder}"
+      "output-location": "{output_folder}/experiments"
     }
   ]
 }

@@ -4,13 +4,10 @@
     {
       "name": "implementation",
       "menu-code": "DLM",
-      "description": "Executes a task and appends to integration log with mandatory failure documentation.",
-      "supports-headless": true,
-      "phase-name": "5-implementation",
-      "after": ["bmad-dl-techspec"],
-      "before": ["bmad-dl-analysis"],
-      "is-required": true,
-      "output-location": "{output_folder}"
+      "description": "DEPRECATED in v2.0.0. Use bmad-dl-infra for INF-* tasks and bmad-dl-experiment for EXP-* tasks.",
+      "supports-headless": false,
+      "phase-name": "deprecated",
+      "output-location": null
     }
   ]
 }
