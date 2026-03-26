@@ -70,6 +70,15 @@ python3 _bmad/bmad-dl-lifecycle/bmad-dl-implementation/scripts/get_next_task.py 
 
    **b. Training Loop** — LightningModule or equivalent, checkpoint strategy, metric logging hooks
 
+   **Required standards — every training loop must include:**
+   - **GPU validation:** print device name + VRAM at startup; print explicit `WARNING` if falling back to CPU
+   - **TensorBoard logger (required, not optional)** with `version=` set to a run/fold identifier so runs never overwrite each other’s logs; add `CSVLogger` alongside as plain-text backup
+   - `LearningRateMonitor(logging_interval="epoch")` in callbacks
+   - `log_every_n_steps=10` in `Trainer` (Lightning’s default of 50 is too coarse for most DL datasets)
+   - `gpu/memory_allocated_gb` logged each training step (to TensorBoard, not prog_bar)
+
+   Use `assets/quick_trainer_setup.build_trainer()` — these standards are already embedded.
+
    Use assets as starting points:
    \- `assets/template_lightning_module.py` — LightningModule with train/val/test steps
    \- `assets/template_datamodule.py` — LightningDataModule with auto split detection

@@ -94,6 +94,7 @@ def debug_trainer() -> "L.Trainer":
 def single_gpu_trainer(
     max_epochs: int = 100,
     experiment_name: str = "experiment",
+    version: str | None = None,
     log_dir: str | Path = "logs/",
     monitor: str = "val/loss",
     monitor_mode: str = "min",
@@ -120,11 +121,14 @@ def single_gpu_trainer(
     if RichProgressBar is not None:
         callbacks.append(RichProgressBar())
 
-    loggers = [pl_loggers.CSVLogger(save_dir=str(log_dir), name=experiment_name)]
-    try:
-        loggers.append(pl_loggers.TensorBoardLogger(save_dir=str(log_dir), name=experiment_name))
-    except Exception:
-        pass
+    # TensorBoard required — version= prevents fold/run log collision
+    loggers = [
+        pl_loggers.TensorBoardLogger(save_dir=str(log_dir), name=experiment_name, version=version),
+        pl_loggers.CSVLogger(save_dir=str(log_dir), name=experiment_name, version=version),
+    ]
+    log_path = Path(log_dir) / experiment_name / (version or "version_0")
+    print(f"GPU: {__import__('torch').cuda.get_device_name(0) if __import__('torch').cuda.is_available() else 'WARNING: No GPU detected'}")
+    print(f"Logs → {log_path}/   run: tensorboard --logdir={log_dir}")
 
     return L.Trainer(
         max_epochs=max_epochs,

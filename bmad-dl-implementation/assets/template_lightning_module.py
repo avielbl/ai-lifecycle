@@ -122,7 +122,11 @@ class YourModel(LightningModule):
     # ── Lightning hooks (do not rename these) ─────────────────────────────────
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
-        return self._shared_step(batch, "train")
+        loss = self._shared_step(batch, "train")
+        if torch.cuda.is_available():
+            self.log("gpu/memory_allocated_gb", torch.cuda.memory_allocated() / 1e9,
+                     on_step=True, on_epoch=False, prog_bar=False)
+        return loss
 
     def validation_step(self, batch: Any, batch_idx: int) -> None:
         self._shared_step(batch, "val")

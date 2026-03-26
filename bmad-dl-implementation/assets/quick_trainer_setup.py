@@ -53,21 +53,28 @@ except ImportError:
 
 
 def _detect_accelerator() -> tuple[str, int]:
-    """Return (accelerator, devices) based on available hardware."""
+    """Return (accelerator, devices) based on available hardware, with explicit status output."""
     try:
         import torch
         if torch.cuda.is_available():
+            device_name = torch.cuda.get_device_name(0)
+            vram_gb = torch.cuda.get_device_properties(0).total_memory / 1e9
+            print(f"GPU: {device_name} ({vram_gb:.1f} GB VRAM) — using CUDA")
             return "gpu", torch.cuda.device_count()
         if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            print("GPU: Apple MPS — using Metal Performance Shaders")
             return "mps", 1
     except ImportError:
         pass
+    print("WARNING: No GPU detected — training will run on CPU and be significantly slower.")
+    print("         If you expected a GPU, check your CUDA installation and driver.")
     return "cpu", 1
 
 
 def build_trainer(
     max_epochs: int = 50,
     experiment_name: str = "experiment",
+    version: str | None = None,
     log_dir: str | Path = "logs/",
     monitor_metric: str = "val/loss",
     monitor_mode: str = "min",
@@ -81,7 +88,9 @@ def build_trainer(
 
     Args:
         max_epochs: Maximum training epochs.
-        experiment_name: Name used for checkpoint dir and CSV log subdir.
+        experiment_name: Name used for checkpoint dir and log subdir.
+        version: Run identifier appended to log path (e.g. "fold_0", "run_001").
+                 Prevents different runs from overwriting each other's TensorBoard logs.
         log_dir: Root directory for logs and checkpoints.
         monitor_metric: Metric to monitor for early stopping and checkpointing.
         monitor_mode: "min" (for loss) or "max" (for accuracy/F1).
@@ -129,19 +138,19 @@ def build_trainer(
         callbacks.append(RichProgressBar())
 
     # ── Loggers ───────────────────────────────────────────────────────────────
-    csv_logger = CSVLogger(save_dir=str(log_dir), name=experiment_name)
+    # TensorBoard is required — install with: uv add tensorboard
+    # version= keeps each fold/run in its own subdir so they never overwrite each other
+    if LIGHTNING_PKG == "lightning":
+        from lightning.pytorch.loggers import TensorBoardLogger
+    else:
+        from pytorch_lightning.loggers import TensorBoardLogger
 
-    loggers = [csv_logger]
+    tb_logger = TensorBoardLogger(save_dir=str(log_dir), name=experiment_name, version=version)
+    csv_logger = CSVLogger(save_dir=str(log_dir), name=experiment_name, version=version)
+    loggers = [tb_logger, csv_logger]
 
-    # Optional: TensorBoard logger
-    try:
-        if LIGHTNING_PKG == "lightning":
-            from lightning.pytorch.loggers import TensorBoardLogger
-        else:
-            from pytorch_lightning.loggers import TensorBoardLogger
-        loggers.append(TensorBoardLogger(save_dir=str(log_dir), name=experiment_name))
-    except (ImportError, Exception):
-        pass  # TensorBoard not required
+    log_path = Path(log_dir) / experiment_name / (version or f"version_{tb_logger.version}")
+    print(f"Logs → {log_path}/   run: tensorboard --logdir={log_dir}")
 
     # ── Precision ─────────────────────────────────────────────────────────────
     # Fall back to 32-bit on CPU (mixed precision not supported)
