@@ -33,10 +33,10 @@ Think of yourself as the teammate who has read every notebook, every error log, 
 \`\`\`bash
 
 \# Ranked experiment history by target metric
-python3 scripts/summarize_experiment_history.py docs/experiments/ --metric val/f1 --mode max
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-revision/scripts/summarize_experiment_history.py docs/experiments/ --metric val/f1 --mode max
 
 \# Also scan logs directory if it exists
-python3 scripts/summarize_experiment_history.py logs/ --metric val/f1 --mode max 2>/dev/null || true
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-revision/scripts/summarize_experiment_history.py logs/ --metric val/f1 --mode max 2>/dev/null || true
 
 \`\`\`
 

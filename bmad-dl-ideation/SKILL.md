@@ -87,7 +87,7 @@ uv init --name {project_name} --no-readme
 
 \`\`\`bash
 
-python3 scripts/validate_prd.py docs/prd/01_PRD.md
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-ideation/scripts/validate_prd.py docs/prd/01_PRD.md
 
 \`\`\`
 

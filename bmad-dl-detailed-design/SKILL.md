@@ -49,7 +49,7 @@ You are an expert AI Tech Lead. Your goal is to break down the architecture into
 
 \`\`\`bash
 
-python3 scripts/validate_design.py docs/design/04_Detailed_Design.md
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-detailed-design/scripts/validate_design.py docs/design/04_Detailed_Design.md
 
 \`\`\`
 

@@ -35,16 +35,16 @@ You are an expert Data Scientist. Your goal is to deeply understand the data bef
 \`\`\`bash
 
 \# Structural EDA: class distributions, splits, data quality
-python3 scripts/eda_analyzer.py data/ --splits train val test --output docs/eda/02_EDA_Report.md
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-eda/scripts/eda_analyzer.py data/ --splits train val test --output docs/eda/02_EDA_Report.md
 
 \# Baseline classifier: establishes performance floor for PRD REQ-PERF targets
-python3 scripts/baseline_classifier.py data/features.csv docs/prd/01_PRD.md --label-col label
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-eda/scripts/baseline_classifier.py data/features.csv docs/prd/01_PRD.md --label-col label
 
 \# Class weights: required if imbalanced dataset detected
-python3 scripts/class_weights_calculator.py data/ --output docs/eda/02_class_weights.md
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-eda/scripts/class_weights_calculator.py data/ --output docs/eda/02_class_weights.md
 
 \# Optional: unsupervised clustering (useful for unlabeled or semi-supervised data)
-python3 scripts/clustering_explorer.py data/features.csv --find-k --plot docs/eda/02_clusters.png
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-eda/scripts/clustering_explorer.py data/features.csv --find-k --plot docs/eda/02_clusters.png
 
 \`\`\`
 

@@ -24,9 +24,9 @@ A revision is not just a hypothesis update. It is a **document audit**: every up
 
 \`\`\`bash
 
-python3 scripts/summarize_experiment_history.py docs/experiments/ --metric val/f1 --mode max
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-revision/scripts/summarize_experiment_history.py docs/experiments/ --metric val/f1 --mode max
 \# Also scan logs:
-python3 scripts/summarize_experiment_history.py logs/ --metric val/loss --top 10 2>/dev/null || true
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-revision/scripts/summarize_experiment_history.py logs/ --metric val/loss --top 10 2>/dev/null || true
 
 \`\`\`
 

@@ -50,7 +50,7 @@ Never use `pip install`. All package management goes through `uv`.
 
 \`\`\`bash
 
-python3 scripts/get_next_task.py docs/design/04_Detailed_Design.md docs/implementation/05_Infra_Log.md --task-prefix INF
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-implementation/scripts/get_next_task.py docs/design/04_Detailed_Design.md docs/implementation/05_Infra_Log.md --task-prefix INF
 
 \`\`\`
 
@@ -168,7 +168,8 @@ uv run pytest tests/test_infra_smoke.py -v
 uv run python -c "from src.tracking import make_[wandb|mlflow|clearml]_logger; print('tracking OK')"
 
 \# Verify ONNX export (if applicable)
-uv run python scripts/export_onnx.py --checkpoint path/to/dummy.ckpt --output /tmp/smoke_test.onnx
+# NOTE: src/export_onnx.py must be created in step 5e above — it does not exist as a skill asset.
+uv run python src/export_onnx.py --checkpoint path/to/dummy.ckpt --output /tmp/smoke_test.onnx
 
 \`\`\`
 

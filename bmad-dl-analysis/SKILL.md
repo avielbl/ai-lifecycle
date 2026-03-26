@@ -71,9 +71,9 @@ for task in tasks:
 
 \`\`\`bash
 
-python3 scripts/parse_training_logs.py logs/[experiment]/version_0/metrics.csv docs/prd/01_PRD.md
-python3 scripts/plot_training_curves.py logs/[experiment]/version_0/metrics.csv --output docs/experiments/training_curves.png
-python3 scripts/plot_confusion_matrix.py predictions.csv --output-dir docs/experiments/
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-analysis/scripts/parse_training_logs.py logs/[experiment]/version_0/metrics.csv docs/prd/01_PRD.md
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-analysis/scripts/plot_training_curves.py logs/[experiment]/version_0/metrics.csv --output docs/experiments/training_curves.png
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-analysis/scripts/plot_confusion_matrix.py predictions.csv --output-dir docs/experiments/
 
 \`\`\`
 

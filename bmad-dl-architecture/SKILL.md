@@ -49,7 +49,7 @@ You are an expert AI Architect. Your goal is to design the system architecture c
 
 \`\`\`bash
 
-python3 scripts/check_req_coverage.py docs/prd/01_PRD.md docs/architecture/03_Architecture.md
+python3 _bmad/bmad-dl-lifecycle/bmad-dl-architecture/scripts/check_req_coverage.py docs/prd/01_PRD.md docs/architecture/03_Architecture.md
 
 \`\`\`
 
