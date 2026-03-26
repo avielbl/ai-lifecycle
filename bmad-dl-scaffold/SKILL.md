@@ -83,10 +83,12 @@ python3 _bmad/bmad-dl-lifecycle/bmad-dl-scaffold/scripts/init_project.py \
 
 
 
-5\. **Tell the user how to invoke Stage 1** based on their IDE:
+5\. **Tell the user how to proceed:**
 
-   \- Antigravity / Claude Code: `/bmad-dl-ideation`
-   \- Cline / Cursor: "Tell the AI: follow the workflow in `_bmad/bmad-dl-lifecycle/bmad-dl-ideation/SKILL.md`"
+   \- Run `/bmad-help` — the BMAD help system reads `_bmad/_config/bmad-help.csv` and routes to the next required stage automatically.
+   \- Or go directly to Stage 1:
+     \- Antigravity / Claude Code: `/bmad-dl-ideation`
+     \- Cline / Cursor: "Follow the workflow in `_bmad/bmad-dl-lifecycle/bmad-dl-ideation/SKILL.md`"
 
 
 

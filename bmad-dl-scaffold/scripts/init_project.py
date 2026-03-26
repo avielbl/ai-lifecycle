@@ -340,6 +340,35 @@ def write_llm_config(root: Path, skill_dir: Path) -> None:
         print(f"  Wrote: configs/llm_config.yaml (minimal fallback — template not found)")
 
 
+def register_in_bmad_help(root: Path, skill_dir: Path) -> None:
+    """
+    Register all bmad-dl-lifecycle skills in _bmad/_config/bmad-help.csv.
+
+    bmad-help.csv is the routing table that /bmad-help reads to tell users
+    what to do next. If the CSV already has bmad-dl-lifecycle rows they are
+    replaced with the current ones (handles upgrades and renames).
+    """
+    csv_path = root / "_bmad" / "_config" / "bmad-help.csv"
+    if not csv_path.exists():
+        print(f"  Skipped: {csv_path} not found (not a BMAD project root?)")
+        return
+
+    # Our canonical rows live next to this script's parent dir
+    our_csv = skill_dir.parent.parent / "bmad-dl-lifecycle.csv"
+    if not our_csv.exists():
+        print(f"  Skipped: bmad-dl-lifecycle.csv not found in module root")
+        return
+
+    existing = csv_path.read_text(encoding="utf-8")
+    our_rows = our_csv.read_text(encoding="utf-8").strip()
+
+    # Remove any existing bmad-dl-lifecycle rows, then append current ones
+    kept = [line for line in existing.splitlines() if not line.startswith("bmad-dl-lifecycle,")]
+    updated = "\n".join(kept).rstrip() + "\n" + our_rows + "\n"
+    csv_path.write_text(updated, encoding="utf-8")
+    print(f"  Updated: _bmad/_config/bmad-help.csv (bmad-dl-lifecycle rows replaced)")
+
+
 def copy_claude_skills(root: Path, skill_dir: Path) -> None:
     """
     Copy all bmad-dl SKILL.md + bmad-manifest.json files into .claude/skills/
@@ -438,6 +467,9 @@ def main() -> None:
     print("Writing LLM config...")
     script_dir = Path(__file__).parent
     write_llm_config(root, script_dir)
+
+    print("Registering skills in bmad-help.csv...")
+    register_in_bmad_help(root, script_dir)
 
     if args.ide == "claude-code":
         print("Copying skills to .claude/skills/ (enables slash commands)...")

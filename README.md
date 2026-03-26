@@ -37,7 +37,12 @@ python3 _bmad/bmad-dl-lifecycle/bmad-dl-scaffold/scripts/init_project.py \
 
 **No packages are installed.** `pyproject.toml` is written with an empty `dependencies = []`.
 
-### Step 3 — Invoke skills (IDE-specific)
+### Step 3 — Let BMAD route you
+
+After scaffolding, run `/bmad-help` in your IDE. It reads `_bmad/_config/bmad-help.csv`
+(updated by `init_project.py`) and tells you exactly what to do next.
+
+### Step 4 — Invoke skills (IDE-specific)
 
 How you trigger each lifecycle stage depends on your IDE:
 
