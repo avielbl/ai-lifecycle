@@ -8,10 +8,26 @@ This package provides thirteen structured AI workflow skills covering the full l
 
 ## Getting Started
 
-### Step 1 — Install the package
+### Step 0 — Install BMAD (prerequisite)
+
+This package is a **BMAD Method module** and requires a BMAD installation to function.
+BMAD provides the `_bmad/` project structure, the `/bmad-help` routing skill, and the
+`_bmad/_config/bmad-help.csv` file that drives workflow navigation.
+
+Follow the [BMAD Method setup guide](https://github.com/bmad-code-org/bmad-method) for your IDE.
+After setup your project root should contain an `_bmad/` folder with at minimum:
+
+```
+_bmad/
+├── _config/
+│   └── bmad-help.csv      ← workflow routing table
+└── module.yaml
+```
+
+### Step 1 — Install this package
 
 ```bash
-# From your project root — add as a git submodule (keeps skills updatable)
+# From your project root (where _bmad/ lives) — add as a git submodule
 git submodule add https://github.com/avielbl/bmad-dl-lifecycle _bmad/bmad-dl-lifecycle
 git submodule update --init
 ```
@@ -211,10 +227,12 @@ Team knowledge base — accumulated via `/bmad-dl-retrospective`. Each entry con
 
 ## Prerequisites
 
-- [BMAD Method](https://github.com/bmad-code-org/bmad-method) installed (`_bmad/` folder present)
-- An AI IDE: Claude Code, Antigravity, or VSCode + Cline
-- Recommended model: Claude Sonnet 4.5+ or equivalent
-- [uv](https://docs.astral.sh/uv/) installed (`pip install uv` or `curl -LsSf https://astral.sh/uv/install.sh | sh`)
+| Requirement | Why |
+|-------------|-----|
+| [BMAD Method](https://github.com/bmad-code-org/bmad-method) | **Required.** Provides `_bmad/` project structure, `/bmad-help` routing, and `bmad-help.csv`. Install before this package. |
+| An AI IDE | Claude Code, Antigravity, or VSCode + Cline / Cursor |
+| Claude Sonnet 4.5+ or equivalent | Recommended model for all lifecycle skills |
+| [uv](https://docs.astral.sh/uv/) | Python package manager used throughout (`curl -LsSf https://astral.sh/uv/install.sh \| sh`) |
 
 ---
 
