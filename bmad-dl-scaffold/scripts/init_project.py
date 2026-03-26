@@ -232,7 +232,7 @@ def create_dirs(root: Path, project_name: str) -> None:
     for init_dir in [f"src/{project_name}", "tests"]:
         init_file = root / init_dir / "__init__.py"
         if not init_file.exists():
-            init_file.write_text("")
+            init_file.write_text("", encoding='utf-8')
 
 
 def write_clinerules(root: Path, ide: str, tracking_tool: str) -> None:
@@ -240,18 +240,18 @@ def write_clinerules(root: Path, ide: str, tracking_tool: str) -> None:
     if ide == "claude-code":
         out = root / ".claude" / "CLAUDE.md"
         out.parent.mkdir(exist_ok=True)
-        out.write_text(CLAUDE_MD_TEMPLATE.format(tracking_tool=tracking_tool))
+        out.write_text(CLAUDE_MD_TEMPLATE.format(tracking_tool=tracking_tool), encoding='utf-8')
         print(f"  Wrote: .claude/CLAUDE.md")
     else:
         out = root / ".clinerules"
-        out.write_text(content)
+        out.write_text(content, encoding='utf-8')
         print(f"  Wrote: .clinerules")
 
 
 def write_gitignore(root: Path) -> None:
     gi = root / ".gitignore"
     if not gi.exists():
-        gi.write_text(GITIGNORE)
+        gi.write_text(GITIGNORE, encoding='utf-8')
         print(f"  Wrote: .gitignore")
     else:
         print(f"  Skipped: .gitignore (already exists)")
@@ -263,7 +263,7 @@ def write_pyproject(root: Path, project_name: str, python_version: str) -> None:
         pf.write_text(PYPROJECT_TEMPLATE.format(
             project_name=project_name,
             python_version=python_version,
-        ))
+        ), encoding='utf-8')
         print(f"  Wrote: pyproject.toml (no dependencies — added in Stage 1)")
     else:
         print(f"  Skipped: pyproject.toml (already exists)")
@@ -272,7 +272,7 @@ def write_pyproject(root: Path, project_name: str, python_version: str) -> None:
 def write_python_version(root: Path, python_version: str) -> None:
     pv = root / ".python-version"
     if not pv.exists():
-        pv.write_text(python_version + "\n")
+        pv.write_text(python_version + "\n", encoding='utf-8')
         print(f"  Wrote: .python-version ({python_version})")
 
 
@@ -335,7 +335,8 @@ def write_llm_config(root: Path, skill_dir: Path) -> None:
             "base_url: ~\n"
             "api_key_env: ANTHROPIC_API_KEY\n"
             "max_tokens: 8192\n"
-            "temperature: 0.0\n"
+            "temperature: 0.0\n",
+            encoding='utf-8',
         )
         print(f"  Wrote: configs/llm_config.yaml (minimal fallback — template not found)")
 
