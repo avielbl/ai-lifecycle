@@ -9,7 +9,6 @@ No packages are installed. Dependency selection happens in bmad-dl-ideation
 (Stage 1); installations run in bmad-dl-infra (Stage 5) via `uv sync`.
 """
 
-import argparse
 import os
 import shutil
 import subprocess
@@ -431,39 +430,57 @@ def copy_scripts(root: Path, skill_dir: Path) -> None:
         print(f"  No utility scripts found to copy (run from skill directory)")
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="bmad-dl-scaffold: scaffold a new DL project")
-    parser.add_argument("--project-name", required=True, help="Snake_case project name")
-    parser.add_argument("--project-dir", default=".", help="Parent directory for the project")
-    parser.add_argument("--ide", default="cline",
-                        choices=["claude-code", "antigravity", "cline", "cursor"],
-                        help="IDE determines which config file is written")
-    parser.add_argument("--tracking-tool", default="undecided",
-                        choices=["wandb", "mlflow", "clearml", "undecided"],
-                        help="Experiment tracking tool (can be changed in Architecture stage)")
-    parser.add_argument("--python-version", default="3.11", help="Python version (default: 3.11)")
-    parser.add_argument("--no-copy-scripts", action="store_true",
-                        help="Skip copying utility scripts from skill dirs")
-    args = parser.parse_args()
+def _ask(prompt: str, default: str, choices: list[str] | None = None) -> str:
+    """Prompt the user for input, showing the default and optional choices."""
+    if choices:
+        options = "/".join(
+            f"[{c}]" if c == default else c for c in choices
+        )
+        display = f"{prompt} ({options}): "
+    else:
+        display = f"{prompt} [{default}]: "
+    try:
+        answer = input(display).strip()
+    except (EOFError, KeyboardInterrupt):
+        print()
+        sys.exit(0)
+    return answer if answer else default
 
-    project_name = args.project_name.replace("-", "_").replace(" ", "_")
-    root = Path(args.project_dir).expanduser().resolve() / project_name
+
+def main() -> None:
+    # Project name and root: always scaffold into the current working directory.
+    root = Path.cwd()
+    project_name = root.name.replace("-", "_").replace(" ", "_")
 
     print(f"\nbmad-dl-scaffold: Scaffolding '{project_name}' in {root}\n")
 
-    root.mkdir(parents=True, exist_ok=True)
+    # Interactive Q&A for all options
+    ide = _ask(
+        "IDE",
+        "cline",
+        choices=["claude-code", "cline", "cursor", "antigravity"],
+    )
+    tracking_tool = _ask(
+        "Experiment tracking tool (can be changed in Architecture stage)",
+        "undecided",
+        choices=["wandb", "mlflow", "clearml", "undecided"],
+    )
+    python_version = _ask("Python version", "3.11")
+    copy_scripts_flag = _ask("Copy bmad-dl utility scripts?", "yes", choices=["yes", "no"])
+
+    print()
 
     print("Creating directory structure...")
     create_dirs(root, project_name)
 
     print("Writing config files...")
-    write_clinerules(root, args.ide, args.tracking_tool)
+    write_clinerules(root, ide, tracking_tool)
     write_gitignore(root)
-    write_python_version(root, args.python_version)
+    write_python_version(root, python_version)
 
     print("Initialising uv project...")
     run_uv_init(root, project_name)
-    write_pyproject(root, project_name, args.python_version)
+    write_pyproject(root, project_name, python_version)
 
     print("Writing LLM config...")
     script_dir = Path(__file__).parent
@@ -472,36 +489,33 @@ def main() -> None:
     print("Registering skills in bmad-help.csv...")
     register_in_bmad_help(root, script_dir)
 
-    if args.ide == "claude-code":
+    if ide == "claude-code":
         print("Copying skills to .claude/skills/ (enables slash commands)...")
         copy_claude_skills(root, script_dir)
 
-    if not args.no_copy_scripts:
+    if copy_scripts_flag != "no":
         print("Copying bmad-dl utility scripts...")
         copy_scripts(root, script_dir)
 
     # IDE-specific next-step instructions
-    if args.ide in ("cline", "cursor"):
+    if ide in ("cline", "cursor"):
         stage1_instruction = (
             '  Open your IDE and tell the AI:\n'
             '  "Follow the workflow in: _bmad/bmad-dl-lifecycle/bmad-dl-ideation/SKILL.md"\n'
             '  (All skill paths are listed in .clinerules for quick reference)'
         )
-    elif args.ide == "claude-code":
-        stage1_instruction = "  Use slash command: /bmad-dl-ideation"
-    else:  # antigravity
+    else:
         stage1_instruction = "  Use slash command: /bmad-dl-ideation"
 
     print(f"""
 ✓ Project scaffolded at: {root}
 
 Next steps:
-  1. cd {root}
-  2. Set up environment: uv venv && source .venv/bin/activate  (or use uv run)
-  3. Start Stage 1 — Domain Expert frames the problem:
+  1. Set up environment: uv venv && source .venv/bin/activate  (or use uv run)
+  2. Start Stage 1 — Domain Expert frames the problem:
 {stage1_instruction}
      The agent determines required packages and writes them to pyproject.toml.
-  4. Stage 5 (bmad-dl-infra) runs: uv sync  ← FIRST package installation.
+  3. Stage 5 (bmad-dl-infra) runs: uv sync  ← FIRST package installation.
 
 Do NOT run `uv sync` or `uv add` before Stage 5.
 """)
