@@ -83,7 +83,18 @@ uv init --name {project_name} --no-readme
 
 
 
-6\. **Run validation script:** After writing the PRD, validate it:
+6\. **Commit the draft documents:**
+
+\`\`\`bash
+
+git add docs/00_Research_Thesis.md docs/prd/01_PRD.md pyproject.toml
+git commit -m "docs(ideation): draft Research Thesis and PRD -- pending review"
+
+\`\`\`
+
+
+
+7\. **Run validation script:** After writing the PRD, validate it:
 
 \`\`\`bash
 
@@ -95,7 +106,7 @@ Fix any reported errors before proceeding.
 
 
 
-7. **CRITICAL — Halt and request review:** Present both output documents to the user for review:
+8. **CRITICAL — Halt and request review:** Present both output documents to the user for review:
 
    > "Both documents have been written and validation passed. Please review:
    > - `docs/00_Research_Thesis.md` — research framing, hypothesis, domain context
@@ -107,10 +118,17 @@ Fix any reported errors before proceeding.
 
 
 
-8. Upon user approval, update `docs/prd/01_PRD.md` Section E:
+9. Upon user approval, update `docs/prd/01_PRD.md` Section E:
 
    - Change `[ ] Approved for EDA (Stage 02)` to `[x] Approved for EDA (Stage 02)`
    - The next stage is `/bmad-dl-eda`.
+
+\`\`\`bash
+
+git add docs/prd/01_PRD.md
+git commit -m "docs(ideation): PRD approved for EDA (Stage 02)"
+
+\`\`\`
 
 
 

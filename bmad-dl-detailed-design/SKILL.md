@@ -55,6 +55,13 @@ python3 _bmad/bmad-dl-lifecycle/bmad-dl-detailed-design/scripts/validate_design.
 
 Resolve any reported errors before marking this phase complete.
 
+\`\`\`bash
+
+git add docs/design/04_Detailed_Design.md
+git commit -m "docs(detailed-design): task breakdown INF-* and EXP-* with definitions of done"
+
+\`\`\`
+
 
 
 \## 2. Expected Output Template

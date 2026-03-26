@@ -55,6 +55,13 @@ python3 _bmad/bmad-dl-lifecycle/bmad-dl-architecture/scripts/check_req_coverage.
 
 Resolve any uncovered requirements before marking this phase complete.
 
+\`\`\`bash
+
+git add docs/architecture/03_Architecture.md
+git commit -m "docs(architecture): system architecture design with requirement traceability"
+
+\`\`\`
+
 
 
 \## 2. Expected Output Template

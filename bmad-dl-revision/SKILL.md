@@ -83,6 +83,13 @@ python3 _bmad/bmad-dl-lifecycle/bmad-dl-revision/scripts/summarize_experiment_hi
    \- Apply all document amendments (in order: Thesis → PRD → Architecture → Detailed Design)
    \- Append to `docs/revisions/08_Revision_Log.md`
 
+\`\`\`bash
+
+git add docs/00_Research_Thesis.md docs/prd/01_PRD.md docs/architecture/ docs/design/ docs/revisions/08_Revision_Log.md
+git commit -m "docs(revision): cycle [N] -- new hypothesis H-00N, amended upstream docs"
+
+\`\`\`
+
 
 
 \## 2. Expected Output Templates

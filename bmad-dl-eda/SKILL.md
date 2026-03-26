@@ -64,6 +64,17 @@ python3 _bmad/bmad-dl-lifecycle/bmad-dl-eda/scripts/clustering_explorer.py data/
 
 
 
+6\. **Commit the EDA artifacts:**
+
+\`\`\`bash
+
+git add docs/eda/ docs/00_Research_Thesis.md
+git commit -m "docs(eda): EDA report, class weights, and Research Thesis data characterization"
+
+\`\`\`
+
+
+
 \## 2. Expected Output Templates
 
 

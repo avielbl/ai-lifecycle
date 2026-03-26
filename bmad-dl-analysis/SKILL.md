@@ -96,6 +96,13 @@ python3 _bmad/bmad-dl-lifecycle/bmad-dl-analysis/scripts/plot_confusion_matrix.p
 
 6\. Once answered, write the final document to `docs/experiments/07_Analysis_EXP_[ID].md`.
 
+\`\`\`bash
+
+git add docs/experiments/07_Analysis_EXP_[ID].md
+git commit -m "docs(analysis): experiment analysis EXP-[ID] -- hypothesis [SUPPORTED/FALSIFIED/INCONCLUSIVE]"
+
+\`\`\`
+
 
 
 7\. **Run `/bmad-dl-retrospective`** at the end of this session.

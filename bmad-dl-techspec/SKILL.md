@@ -53,6 +53,13 @@ A TECHSPEC governs one experiment cycle (one or more closely related training ru
 
    Mark the linked tasks in `docs/design/04_Detailed_Design.md` as "TECHSPEC Approved."
 
+\`\`\`bash
+
+git add docs/techspecs/TECHSPEC_EXP_[ID].md docs/design/04_Detailed_Design.md
+git commit -m "docs(techspec): pre-experiment contract EXP-[ID] -- success criteria locked"
+
+\`\`\`
+
 
 
 \## 2. Expected Output Template

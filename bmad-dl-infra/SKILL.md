@@ -181,6 +181,15 @@ uv run python src/export_onnx.py --checkpoint path/to/dummy.ckpt --output /tmp/s
 
 8\. Upon user approval, save files and append an entry to `docs/implementation/05_Infra_Log.md`.
 
+\`\`\`bash
+
+git add src/ tests/ configs/ docs/implementation/05_Infra_Log.md
+git commit -m "feat(infra): complete [INF-ID] -- [component name], smoke test PASS"
+
+\`\`\`
+
+Repeat steps 3–8 for each subsequent INF task until all are complete.
+
 
 
 9\. **Run `/bmad-dl-retrospective`** at the end of the session.

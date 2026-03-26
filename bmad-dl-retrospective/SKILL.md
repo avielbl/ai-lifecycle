@@ -43,6 +43,13 @@ The most valuable sentence in any retrospective is: **"I tried X and it broke be
 
 3\. **Upon approval**, write the retrospective to `docs/knowledge/RETRO_EXP_[ID]_[short-descriptor].md`.
 
+\`\`\`bash
+
+git add docs/knowledge/
+git commit -m "docs(retro): session retrospective EXP-[ID] -- [short-descriptor]"
+
+\`\`\`
+
    Use today's date and the experiment ID (or "SESSION" if no experiment ID is active) in the filename.
 
 

@@ -79,11 +79,22 @@ python3 _bmad/bmad-dl-lifecycle/bmad-dl-scaffold/scripts/init_project.py \
 
 
 
-4\. **CRITICAL — no package installations yet.** Package requirements are determined in **Stage 1 (bmad-dl-ideation)**. Installations run in **Stage 5 (bmad-dl-infra)** via `uv sync`.
+4\. **Commit the scaffold:**
+
+\`\`\`bash
+
+git add .
+git commit -m "chore: scaffold project structure for {project_name}"
+
+\`\`\`
 
 
 
-5\. **Tell the user how to proceed:**
+5\. **CRITICAL — no package installations yet.** Package requirements are determined in **Stage 1 (bmad-dl-ideation)**. Installations run in **Stage 5 (bmad-dl-infra)** via `uv sync`.
+
+
+
+6\. **Tell the user how to proceed:**
 
    \- Run `/bmad-help` — the BMAD help system reads `_bmad/_config/bmad-help.csv` and routes to the next required stage automatically.
    \- Or go directly to Stage 1:

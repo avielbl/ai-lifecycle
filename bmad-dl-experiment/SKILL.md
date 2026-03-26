@@ -101,6 +101,13 @@ print("Task URL:", task.get_output_log_web_page())
 
 7\. Append results to `docs/experiments/06_Experiment_Log.md`.
 
+\`\`\`bash
+
+git add docs/experiments/06_Experiment_Log.md
+git commit -m "docs(experiment): log EXP-[ID] results -- best run [run_name], val/f1=[score]"
+
+\`\`\`
+
 
 
 8\. **Run `/bmad-dl-retrospective`** at the end of the session.

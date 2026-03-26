@@ -169,6 +169,13 @@ best_params = top_exps[0].get_parameters()
 
 6\. Upon confirmation, write `docs/techspecs/HPARAM_EXP_[ID].md` with the validated best configuration and update the TECHSPEC for the next tuned run.
 
+\`\`\`bash
+
+git add docs/techspecs/HPARAM_EXP_[ID].md docs/techspecs/TECHSPEC_EXP_[ID].md
+git commit -m "docs(hparam): validated best config for EXP-[ID] -- best val/f1=[score]"
+
+\`\`\`
+
 
 
 \## 2. Expected Output Template
