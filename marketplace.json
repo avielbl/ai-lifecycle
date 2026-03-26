@@ -2,10 +2,23 @@
   "module": {
     "code": "bmad-dl-lifecycle",
     "name": "bmad-dl-lifecycle",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "Agentic workflows for the Deep Learning development lifecycle."
   },
   "skills": [
+    {
+      "skill": "bmad-dl-scaffold",
+      "name": "init",
+      "menu-code": "DLI0",
+      "phase": "0-init",
+      "description": "Scaffolds a new DL project \u2014 creates folder structure, .clinerules, and initializes a uv project with a skeleton pyproject.toml. Run once before any other bmad-dl skill. No packages are installed at this stage.",
+      "after": [],
+      "before": [
+        "bmad-dl-ideation"
+      ],
+      "supports-headless": true,
+      "is-required": false
+    },
     {
       "skill": "bmad-dl-ideation",
       "name": "initiation",
