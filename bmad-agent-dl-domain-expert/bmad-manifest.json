@@ -1,0 +1,51 @@
+{
+  "name": "bmad-agent-dl-domain-expert",
+  "description": "Variation of vanilla 'Analyst'. Deeply understands the problem domain, frames research questions, and defines real-world success criteria. Capable of deep domain research via web and internal sources.",
+  "module-code": "bmad-dl-lifecycle",
+  "has-memory": true,
+  "capabilities": [
+    {
+      "name": "domain-research",
+      "menu-code": "DLDR",
+      "description": "Gathers domain knowledge via web and internal sources.",
+      "supports-headless": false,
+      "phase-name": "1-ideation",
+      "before": ["ideation"],
+      "is-required": true,
+      "prompt": "domain-research.md",
+      "output-location": "{output_folder}/research"
+    },
+    {
+      "name": "ideation",
+      "menu-code": "DLI",
+      "description": "Produces Research Thesis and PRD.",
+      "supports-headless": true,
+      "phase-name": "1-ideation",
+      "after": ["domain-research"],
+      "before": ["architecture"],
+      "is-required": true,
+      "prompt": "ideation.md",
+      "output-location": "{output_folder}"
+    },
+    {
+      "name": "revision-audit",
+      "menu-code": "DLRA",
+      "description": "Audits and amends all upstream docs.",
+      "supports-headless": false,
+      "phase-name": "8-revision",
+      "after": ["analysis"],
+      "is-required": true,
+      "prompt": "revision-audit.md",
+      "output-location": "{output_folder}/revisions"
+    },
+    {
+      "name": "advise",
+      "menu-code": "DLAD",
+      "description": "Searches past experiments and retrospectives for validated parameters.",
+      "supports-headless": true,
+      "phase-name": "anytime",
+      "prompt": "advise.md",
+      "output-location": "{output_folder}/advisory"
+    }
+  ]
+}

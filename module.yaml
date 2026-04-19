@@ -1,7 +1,13 @@
 code: bmad-dl-lifecycle
 name: bmad-dl-lifecycle
-description: Agentic workflows for the Deep Learning development lifecycle.
-version: 2.1.0
+description: Agentic team for the Deep Learning development lifecycle.
+version: 3.0.0
 type: custom-module
-author: AI Tech Lead
+author: AI Team
 skills_dir: .
+agents:
+  - bmad-agent-dl-domain-expert
+  - bmad-agent-dl-ai-researcher
+  - bmad-agent-dl-data-engineer
+  - bmad-agent-dl-ai-engineer
+  - bmad-agent-dl-ai-developer

@@ -1,0 +1,53 @@
+{
+  "name": "bmad-agent-dl-ai-researcher",
+  "description": "Variation of 'Architect' + 'Scrum Master'. In charge of architectural decisions, experiment result analysis, and team leadership.",
+  "module-code": "bmad-dl-lifecycle",
+  "has-memory": true,
+  "capabilities": [
+    {
+      "name": "architecture",
+      "menu-code": "DLA",
+      "description": "Designs the model architecture and experiment stack.",
+      "supports-headless": true,
+      "phase-name": "3-architecture",
+      "after": ["eda"],
+      "before": ["detailed-design"],
+      "is-required": true,
+      "prompt": "architecture.md",
+      "output-location": "{output_folder}/architecture"
+    },
+    {
+      "name": "detailed-design",
+      "menu-code": "DLDD",
+      "description": "Breaks down architecture into INF-* and EXP-* tasks.",
+      "supports-headless": true,
+      "phase-name": "4-design",
+      "after": ["architecture"],
+      "before": ["techspec"],
+      "is-required": true,
+      "prompt": "detailed-design.md",
+      "output-location": "{output_folder}/design"
+    },
+    {
+      "name": "analysis",
+      "menu-code": "DLAN",
+      "description": "Analyzes experiment results against TECHSPEC tiers.",
+      "supports-headless": true,
+      "phase-name": "7-analysis",
+      "after": ["experiment"],
+      "before": ["revision-audit"],
+      "is-required": true,
+      "prompt": "analysis.md",
+      "output-location": "{output_folder}/experiments"
+    },
+    {
+      "name": "retrospective",
+      "menu-code": "DLRET",
+      "description": "Captures session learnings into the team knowledge base.",
+      "supports-headless": false,
+      "phase-name": "anytime",
+      "prompt": "retrospective.md",
+      "output-location": "{output_folder}/knowledge"
+    }
+  ]
+}
