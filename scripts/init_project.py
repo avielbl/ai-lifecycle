@@ -31,23 +31,23 @@ CLINERULES_TEMPLATE = """\
 
 ## Lifecycle Agents (invoke in order)
 
-- Stage 1   — Domain research:        _bmad/ai-lifecycle/ai-agent-domain-expert/SKILL.md  (capability: domain-research)
-- Stage 1.5 — Ideation / PRD:         _bmad/ai-lifecycle/ai-agent-domain-expert/SKILL.md  (capability: ideation)
-- Stage 2   — EDA:                    _bmad/ai-lifecycle/ai-agent-data-engineer/SKILL.md   (capability: eda)
-- Stage 3   — Architecture:           _bmad/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: architecture)
-- Stage 4   — Detailed Design:        _bmad/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: detailed-design)
-- Stage 4.5 — TECHSPEC:               _bmad/ai-lifecycle/ai-agent-developer/SKILL.md       (capability: techspec)
-- Stage 5   — Infrastructure:         _bmad/ai-lifecycle/ai-agent-developer/SKILL.md       (capability: infra)
-- Stage 6   — Experiment:             _bmad/ai-lifecycle/ai-agent-engineer/SKILL.md        (capability: experiment)
-- Stage 7   — Analysis:               _bmad/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: analysis)
-- Stage 7.5 — HPO (conditional):      _bmad/ai-lifecycle/ai-agent-engineer/SKILL.md        (capability: hparam)
-- Stage 8   — Revision:               _bmad/ai-lifecycle/ai-agent-domain-expert/SKILL.md   (capability: revision-audit)
+- Stage 1   — Domain research:        .claude/skills/ai-lifecycle/ai-agent-domain-expert/SKILL.md  (capability: domain-research)
+- Stage 1.5 — Ideation / PRD:         .claude/skills/ai-lifecycle/ai-agent-domain-expert/SKILL.md  (capability: ideation)
+- Stage 2   — EDA:                    .claude/skills/ai-lifecycle/ai-agent-data-engineer/SKILL.md   (capability: eda)
+- Stage 3   — Architecture:           .claude/skills/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: architecture)
+- Stage 4   — Detailed Design:        .claude/skills/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: detailed-design)
+- Stage 4.5 — TECHSPEC:               .claude/skills/ai-lifecycle/ai-agent-developer/SKILL.md       (capability: techspec)
+- Stage 5   — Infrastructure:         .claude/skills/ai-lifecycle/ai-agent-developer/SKILL.md       (capability: infra)
+- Stage 6   — Experiment:             .claude/skills/ai-lifecycle/ai-agent-engineer/SKILL.md        (capability: experiment)
+- Stage 7   — Analysis:               .claude/skills/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: analysis)
+- Stage 7.5 — HPO (conditional):      .claude/skills/ai-lifecycle/ai-agent-engineer/SKILL.md        (capability: hparam)
+- Stage 8   — Revision:               .claude/skills/ai-lifecycle/ai-agent-domain-expert/SKILL.md   (capability: revision-audit)
 
 ## Universal Tools (invoke anytime)
 
-- Advise (surface past findings):     _bmad/ai-lifecycle/ai-agent-domain-expert/SKILL.md   (capability: advise)
-- Retrospective (capture learnings):  _bmad/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: retrospective)
-- Inference pipeline:                 _bmad/ai-lifecycle/ai-agent-developer/SKILL.md        (capability: inference-pipeline)
+- Advise (surface past findings):     .claude/skills/ai-lifecycle/ai-agent-domain-expert/SKILL.md   (capability: advise)
+- Retrospective (capture learnings):  .claude/skills/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: retrospective)
+- Inference pipeline:                 .claude/skills/ai-lifecycle/ai-agent-developer/SKILL.md        (capability: inference-pipeline)
 
 ## Experiment Tracking
 
@@ -484,7 +484,7 @@ def main() -> None:
     if ide in ("cline", "cursor"):
         stage1_instruction = (
             '  Open your IDE and tell the AI:\n'
-            '  "Follow the workflow in: _bmad/ai-lifecycle/ai-agent-domain-expert/SKILL.md"\n'
+            '  "Follow the workflow in: .claude/skills/ai-lifecycle/ai-agent-domain-expert/SKILL.md"\n'
             '  Tell it to activate the domain-research capability.\n'
             '  (All agent paths are listed in .clinerules for quick reference)'
         )
