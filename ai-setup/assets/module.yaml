@@ -1,0 +1,91 @@
+code: ai
+name: AI Lifecycle
+description: Agentic team for the full AI/ML project lifecycle — from domain research through production inference. Covers deep learning, classical ML, gradient boosting, transformers, and beyond.
+version: 4.0.0
+
+module_greeting: |
+  AI Lifecycle is installed! Your agentic ML team is ready.
+
+  Start a new project: ai-setup new-project
+  Or dive straight into research: ai-agent-domain-expert domain-research
+
+  Run /bmad-help anytime to navigate the lifecycle.
+
+agents:
+  - code: domain-expert
+    name: Alex
+    title: AI Domain Expert
+    description: Deeply understands the problem domain via active research, frames research questions, and defines real-world success criteria.
+  - code: data-engineer
+    name: Sam
+    title: AI Data Engineer
+    description: Performs EDA, data cleaning, and builds pipelines from raw data to model-ready format.
+  - code: researcher
+    name: Maya
+    title: AI Researcher
+    description: In charge of architectural decisions, experiment result analysis, and team leadership.
+  - code: developer
+    name: Kai
+    title: AI Developer
+    description: Writes pre-experiment contracts, builds training/fit pipelines and eval harnesses, and creates production inference pipelines.
+  - code: engineer
+    name: Jordan
+    title: AI Engineer
+    description: Executes model training runs and HPO across any paradigm — epoch-based DL, boosting rounds, or fit/predict loops.
+
+variables:
+  - key: ai_output_folder
+    prompt: Where should lifecycle documents be saved? (relative to project root, e.g. "docs")
+    default: docs
+    result_template: "{project-root}/{value}"
+    user_setting: false
+
+  - key: ai_llm_provider
+    prompt: LLM provider for analysis scripts?
+    type: single-select
+    options:
+      - value: anthropic
+        label: Anthropic (Claude)
+      - value: openai-compatible
+        label: OpenAI-compatible
+    default: anthropic
+    user_setting: false
+
+  - key: ai_llm_model
+    prompt: Default model name for analysis scripts?
+    default: claude-sonnet-4-6
+    user_setting: false
+
+  - key: ai_experiment_tracker
+    prompt: Experiment tracking platform?
+    type: single-select
+    options:
+      - value: none
+        label: None
+      - value: wandb
+        label: Weights & Biases
+      - value: mlflow
+        label: MLflow
+      - value: clearml
+        label: ClearML
+    default: none
+    user_setting: false
+
+directories:
+  - "{ai_output_folder}"
+  - "{ai_output_folder}/research"
+  - "{ai_output_folder}/eda"
+  - "{ai_output_folder}/architecture"
+  - "{ai_output_folder}/design"
+  - "{ai_output_folder}/techspecs"
+  - "{ai_output_folder}/experiments"
+  - "{ai_output_folder}/implementation"
+  - "{ai_output_folder}/advisory"
+  - "{ai_output_folder}/revisions"
+  - "{ai_output_folder}/knowledge"
+
+post_install_notes: |
+  Next steps:
+  - Run 'ai-setup new-project' to scaffold a new AI project, OR
+  - Invoke 'ai-agent-domain-expert' directly on an existing project
+  - Use '/bmad-help' anytime for lifecycle navigation
