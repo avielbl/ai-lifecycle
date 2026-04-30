@@ -1,0 +1,15 @@
+ai,0-scaffold,AI Scaffold,AIS0,5,skill:ai-setup,new-project,false,,,,,,Scaffolds a new AI/ML project. Run ai-setup new-project from shell for new projects.,output_folder,project structure
+ai,1-research,AI Domain Research,AIDR,10,agent:ai-agent-domain-expert,domain-research,true,,,,,,Gathers domain knowledge via web and internal sources.,output_folder/research,Domain Knowledge Base
+ai,1.5-ideation,AI Ideation,AII,15,agent:ai-agent-domain-expert,ideation,true,,,,,,Produces Research Thesis and PRD.,output_folder,Research Thesis + PRD
+ai,2-eda,AI EDA,AIEDA,20,agent:ai-agent-data-engineer,eda,true,,,,,,Performs exploratory data analysis and establishes a baseline.,output_folder/eda,EDA Report
+ai,3-architecture,AI Architecture,AIA,30,agent:ai-agent-researcher,architecture,true,,,,,,Selects the modelling paradigm and designs the experiment stack.,output_folder/architecture,Architecture document
+ai,4-design,AI Detailed Design,AIDD,40,agent:ai-agent-researcher,detailed-design,true,,,,,,Breaks down architecture into INF-* and EXP-* tasks.,output_folder/design,Detailed Design document
+ai,4.5-techspec,AI TECHSPEC,AITS,45,agent:ai-agent-developer,techspec,true,,,,,,Writes the pre-experiment contract (TECHSPEC).,output_folder/techspecs,TECHSPEC document
+ai,5-infra,AI Infrastructure,AIINF,50,agent:ai-agent-developer,infra,true,,,,,,Builds data pipelines training/fit loops and eval harness.,output_folder/implementation,Infra Log
+ai,6-experiment,AI Experiment,AIEXP,60,agent:ai-agent-engineer,experiment,true,,,,,,Executes training/fit runs against the TECHSPEC.,output_folder/experiments,Experiment Log
+ai,7-analysis,AI Analysis,AIAN,70,agent:ai-agent-researcher,analysis,true,,,,,,Analyzes experiment results against TECHSPEC tiers.,output_folder/experiments,Analysis report
+ai,7.5-hparam,AI HPO,AIHPO,75,agent:ai-agent-engineer,hparam,false,,,,,,Runs hyperparameter optimization.,output_folder/experiments,HPO report
+ai,8-revision,AI Revision,AIRA,80,agent:ai-agent-domain-expert,revision-audit,false,,,,,,Audits and amends all upstream docs.,output_folder/revisions,Revision Log
+ai,anytime,AI Advise,AIAD,,agent:ai-agent-domain-expert,advise,false,,,,,,Searches past experiments for validated parameters.,output_folder/advisory,Advisory report
+ai,anytime,AI Retrospective,AIRET,,agent:ai-agent-researcher,retrospective,false,,,,,,Captures session learnings.,output_folder/knowledge,Retrospective document
+ai,anytime,AI Inference,AIIP,,agent:ai-agent-developer,inference-pipeline,false,,,,,,Adapts model for production and V&V.,output_folder/implementation,Inference Report

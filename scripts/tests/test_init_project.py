@@ -62,7 +62,7 @@ def test_write_clinerules_cline(tmp_root):
     cr = tmp_root / ".clinerules"
     assert cr.exists()
     content = cr.read_text()
-    assert "bmad-dl-ideation" in content
+    assert "ai-agent-domain-expert" in content
     assert "wandb" in content
     assert "uv sync" in content
 
@@ -73,7 +73,7 @@ def test_write_clinerules_claude_code(tmp_root):
     md = tmp_root / ".claude" / "CLAUDE.md"
     assert md.exists()
     content = md.read_text()
-    assert "bmad-dl-ideation" in content
+    assert "ai-agent-domain-expert" in content
     assert "mlflow" in content
     assert "uv sync" in content
     assert "uv add" in content

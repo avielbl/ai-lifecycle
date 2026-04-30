@@ -1,13 +1,13 @@
-code: bmad-dl-lifecycle
-name: bmad-dl-lifecycle
-description: Agentic team for the Deep Learning development lifecycle.
-version: 3.0.0
+code: ai
+name: AI Lifecycle
+description: Agentic team for the full AI/ML project lifecycle — from domain research through production inference. Covers deep learning, classical ML, gradient boosting, transformers, and beyond.
+version: 4.0.0
 type: custom-module
-author: AI Team
+author: Aviel
 skills_dir: .
 agents:
-  - bmad-agent-dl-domain-expert
-  - bmad-agent-dl-ai-researcher
-  - bmad-agent-dl-data-engineer
-  - bmad-agent-dl-ai-engineer
-  - bmad-agent-dl-ai-developer
+  - ai-agent-domain-expert
+  - ai-agent-data-engineer
+  - ai-agent-researcher
+  - ai-agent-engineer
+  - ai-agent-developer
