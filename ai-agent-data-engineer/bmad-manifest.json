@@ -1,13 +1,13 @@
 {
-  "name": "bmad-agent-dl-data-engineer",
-  "description": "Data Specialist. Performs Exploratory Data Analysis (EDA), data cleaning, and builds pipelines from raw data to tensors.",
-  "module-code": "bmad-dl-lifecycle",
-  "has-memory": true,
+  "name": "ai-agent-data-engineer",
+  "description": "Data Specialist. Performs Exploratory Data Analysis (EDA), characterises datasets, and establishes baselines across any modelling paradigm.",
+  "module-code": "ai",
+  "has-memory": false,
   "capabilities": [
     {
       "name": "eda",
-      "menu-code": "DLEDA",
-      "description": "Performs exploratory data analysis and baseline establishes.",
+      "menu-code": "AIEDA",
+      "description": "Performs exploratory data analysis and establishes a baseline.",
       "supports-headless": true,
       "phase-name": "2-eda",
       "after": ["ideation"],

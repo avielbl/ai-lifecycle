@@ -1,13 +1,13 @@
 {
-  "name": "bmad-agent-dl-ai-researcher",
-  "description": "Variation of 'Architect' + 'Scrum Master'. In charge of architectural decisions, experiment result analysis, and team leadership.",
-  "module-code": "bmad-dl-lifecycle",
+  "name": "ai-agent-researcher",
+  "description": "Strategic AI Researcher. In charge of model/paradigm selection, architectural decisions, experiment result analysis, and team leadership.",
+  "module-code": "ai",
   "has-memory": true,
   "capabilities": [
     {
       "name": "architecture",
-      "menu-code": "DLA",
-      "description": "Designs the model architecture and experiment stack.",
+      "menu-code": "AIA",
+      "description": "Selects the modelling paradigm and designs the experiment stack.",
       "supports-headless": true,
       "phase-name": "3-architecture",
       "after": ["eda"],
@@ -18,7 +18,7 @@
     },
     {
       "name": "detailed-design",
-      "menu-code": "DLDD",
+      "menu-code": "AIDD",
       "description": "Breaks down architecture into INF-* and EXP-* tasks.",
       "supports-headless": true,
       "phase-name": "4-design",
@@ -30,7 +30,7 @@
     },
     {
       "name": "analysis",
-      "menu-code": "DLAN",
+      "menu-code": "AIAN",
       "description": "Analyzes experiment results against TECHSPEC tiers.",
       "supports-headless": true,
       "phase-name": "7-analysis",
@@ -42,7 +42,7 @@
     },
     {
       "name": "retrospective",
-      "menu-code": "DLRET",
+      "menu-code": "AIRET",
       "description": "Captures session learnings into the team knowledge base.",
       "supports-headless": false,
       "phase-name": "anytime",

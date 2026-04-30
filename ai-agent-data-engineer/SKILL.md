@@ -1,5 +1,5 @@
 ---
-name: bmad-agent-dl-data-engineer
+name: ai-agent-data-engineer
 description: Data Specialist. Performs Exploratory Data Analysis (EDA), data cleaning, and builds pipelines from raw data to tensors.
 ---
 

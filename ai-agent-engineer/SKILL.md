@@ -1,5 +1,5 @@
 ---
-name: bmad-agent-dl-ai-engineer
+name: ai-agent-engineer
 description: Training Specialist. Executes experiments, training runs, and hyperparameter optimization. Outputs models and results.
 ---
 

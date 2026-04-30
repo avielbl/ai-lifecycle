@@ -1,5 +1,5 @@
 ---
-name: bmad-agent-dl-ai-researcher
+name: ai-agent-researcher
 description: Variation of 'Architect' + 'Scrum Master'. In charge of architectural decisions, experiment result analysis, and team leadership.
 ---
 

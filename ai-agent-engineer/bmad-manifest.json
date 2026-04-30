@@ -1,13 +1,13 @@
 {
-  "name": "bmad-agent-dl-ai-engineer",
-  "description": "Training Specialist. Executes experiments, training runs, and hyperparameter optimization. Outputs models and results.",
-  "module-code": "bmad-dl-lifecycle",
-  "has-memory": true,
+  "name": "ai-agent-engineer",
+  "description": "Training Specialist. Executes experiments and hyperparameter optimization against TECHSPEC contracts. Works across paradigms: epoch-based DL, boosting rounds, fit/predict loops.",
+  "module-code": "ai",
+  "has-memory": false,
   "capabilities": [
     {
       "name": "experiment",
-      "menu-code": "DLEXP",
-      "description": "Executes training runs against the TECHSPEC.",
+      "menu-code": "AIEXP",
+      "description": "Executes training/fit runs against the TECHSPEC.",
       "supports-headless": true,
       "phase-name": "6-experiment",
       "after": ["infra"],
@@ -18,7 +18,7 @@
     },
     {
       "name": "hparam",
-      "menu-code": "DLHPO",
+      "menu-code": "AIHPO",
       "description": "Runs hyperparameter optimization (Optuna/W&B/Ray/ClearML).",
       "supports-headless": true,
       "phase-name": "7.5-hparam",

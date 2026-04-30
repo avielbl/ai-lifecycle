@@ -1,12 +1,12 @@
 {
-  "name": "bmad-agent-dl-ai-developer",
-  "description": "Variation of vanilla 'Developer'. Adapts models to constraints, creates inference pipelines, and handles optimization/V&V.",
-  "module-code": "bmad-dl-lifecycle",
+  "name": "ai-agent-developer",
+  "description": "Senior AI/ML Engineer and MLOps Specialist. Owns the infrastructure layer: data pipelines, training/fit loops, eval harness, TECHSPEC contracts, and production inference.",
+  "module-code": "ai",
   "has-memory": true,
   "capabilities": [
     {
       "name": "techspec",
-      "menu-code": "DLTS",
+      "menu-code": "AITS",
       "description": "Writes the pre-experiment contract (TECHSPEC).",
       "supports-headless": true,
       "phase-name": "4.5-techspec",
@@ -18,14 +18,23 @@
     },
     {
       "name": "infra",
-      "menu-code": "DLINF",
-      "description": "Builds data pipelines, training loops, and eval harness.",
+      "menu-code": "AIINF",
+      "description": "Builds data pipelines, training/fit loops, and eval harness.",
       "supports-headless": true,
       "phase-name": "5-infra",
       "after": ["techspec"],
       "before": ["experiment"],
       "is-required": true,
       "prompt": "infra.md",
+      "output-location": "{output_folder}/implementation"
+    },
+    {
+      "name": "inference-pipeline",
+      "menu-code": "AIIP",
+      "description": "Adapts model for production and V&V.",
+      "supports-headless": false,
+      "phase-name": "anytime",
+      "prompt": "inference-pipeline.md",
       "output-location": "{output_folder}/implementation"
     }
   ]

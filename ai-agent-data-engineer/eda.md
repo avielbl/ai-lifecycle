@@ -15,4 +15,4 @@ This capability allows the agent to deeply understand the data before any archit
 6. **Update Thesis:** Update Section IV of `docs/00_Research_Thesis.md` with the findings.
 
 ## Output Template
-(Refer to the template in the original bmad-dl-eda documentation for `02_EDA_Report.md`)
+(Refer to the template in the original ai-lifecycle EDA documentation for `02_EDA_Report.md`)

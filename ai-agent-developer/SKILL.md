@@ -1,5 +1,5 @@
 ---
-name: bmad-agent-dl-ai-developer
+name: ai-agent-developer
 description: Variation of vanilla 'Developer'. Adapts models to constraints, creates inference pipelines, and handles optimization/V&V.
 ---
 
