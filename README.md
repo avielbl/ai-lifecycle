@@ -1,220 +1,194 @@
-# ai-lifecycle
+# AI Lifecycle
 
-> Agentic team for the full AI/ML project lifecycle — a custom [BMAD Method](https://github.com/bmad-code-org) module.
+> A structured agentic team for the full AI/ML project lifecycle — a [BMad Method](https://github.com/bmad-code-org/bmad-method) module.
 
-Five specialist agents covering the complete lifecycle of any AI/ML project: domain research, data exploration, model selection and architecture, infrastructure engineering, experiment execution, hyperparameter optimization, analysis, and iterative revision. Works across paradigms — deep learning, gradient boosting (XGBoost/LightGBM), transformers, classical ML, and hybrid approaches.
+Five specialist agents guide you from raw domain research through production inference. Works across paradigms — deep learning, gradient boosting (XGBoost/LightGBM), transformers, fine-tuning, classical ML, and hybrid approaches.
+
+---
+
+## Meet the Team
+
+| Agent | Name | Role |
+|-------|------|------|
+| `ai-agent-domain-expert` | **Alex** | Researches the problem domain, frames the Research Thesis, writes the PRD, and audits upstream docs after each experiment cycle. |
+| `ai-agent-data-engineer` | **Sam** | Performs EDA, characterizes data quality and distribution, and establishes a model-agnostic performance baseline. |
+| `ai-agent-researcher` | **Maya** | Selects the modelling paradigm and architecture, designs the experiment strategy, evaluates results against TECHSPEC tiers, and captures learnings. |
+| `ai-agent-developer` | **Kai** | Writes TECHSPEC contracts, builds data and training pipelines, and adapts trained models for production deployment. |
+| `ai-agent-engineer` | **Jordan** | Executes training and fit runs, logs everything to the experiment tracker, and runs hyperparameter optimization. |
+
+---
+
+## Lifecycle at a Glance
+
+```
+[0]   Setup        ai-setup configure / new-project
+[1]   Research     Alex   — domain-research     → Domain Knowledge Base
+[1.5] Ideation     Alex   — ideation            → Research Thesis + PRD
+[2]   EDA          Sam    — eda                 → EDA Report + baseline
+[3]   Architecture Maya   — architecture        → Architecture document
+[4]   Design       Maya   — detailed-design     → INF-* + EXP-* tasks
+[4.5] TECHSPEC     Kai    — techspec            → Pre-experiment contract
+[5]   Infra        Kai    — infra               → Pipelines + eval harness
+[6]   Experiment   Jordan — experiment          → Experiment Log
+[7]   Analysis     Maya   — analysis            → Analysis report
+      ├── [7.5]    Jordan — hparam (if needed)  → HPO report → back to [6]
+      └── [8]      Alex   — revision-audit      → Revision Log → back to [4.5]
+
+Anytime:
+      Alex   — advise          Surface validated params from past experiments
+      Maya   — retrospective   Capture session learnings
+      Kai    — inference-pipeline  Adapt model for production + V&V
+```
 
 ---
 
 ## Getting Started
 
-### Step 0 — Install BMAD (prerequisite)
+### Prerequisites
 
-This package is a **BMAD Method module** and requires a BMAD installation to function.
-BMAD provides the `_bmad/` project structure, the `/bmad-help` routing skill, and the
-`_bmad/_config/bmad-help.csv` file that drives workflow navigation.
+| Requirement | Notes |
+|-------------|-------|
+| [BMad Method](https://github.com/bmad-code-org/bmad-method) | **Required** — provides `/bmad-help` routing and `_bmad/` structure |
+| AI IDE | Claude Code, Antigravity, or VSCode + Cline / Cursor |
+| Claude Sonnet 4.6+ or equivalent | Recommended model for all agents |
+| [uv](https://docs.astral.sh/uv/) | Python package manager — `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 
-Follow the [BMAD Method setup guide](https://github.com/bmad-code-org/bmad-method) for your IDE.
-After setup your project root should contain an `_bmad/` folder.
-
-### Step 1 — Install this module
+### Install the module
 
 ```bash
-# From your project root (where _bmad/ lives) — add as a git submodule
-git submodule add https://github.com/avielbl/ai-lifecycle _bmad/ai-lifecycle
+# From your project root (where _bmad/ lives)
+git submodule add https://github.com/avielbl/ai-lifecycle .claude/skills/ai-lifecycle
 git submodule update --init
 ```
 
-### Step 2 — Scaffold (shell command — run once, no AI involved)
+### Configure (once per project)
 
-Scaffolding always starts with a plain shell command regardless of IDE:
+Run the setup skill to write config and register capabilities with `/bmad-help`:
 
-```bash
-python3 _bmad/ai-lifecycle/scripts/init_project.py
+```
+/ai-setup   → then: configure
 ```
 
-| `--ide` | Config file written | Agent files copied to |
-|---------|--------------------|-----------------------|
-| `cline` / `cursor` | `.clinerules` | — (referenced by path) |
-| `claude-code` | `.claude/CLAUDE.md` | `.claude/skills/` ← enables slash commands |
-| `antigravity` | `.clinerules` | — (auto-discovered globally) |
+Or headless with defaults:
 
-**No packages are installed.** `pyproject.toml` is written with an empty `dependencies = []`.
-
-### Step 3 — Let BMAD route you
-
-After scaffolding, run `/bmad-help` in your IDE. It reads `_bmad/_config/bmad-help.csv`
-(updated by `init_project.py`) and tells you exactly what to do next.
-
-### Step 4 — Invoke agents (IDE-specific)
-
-#### Claude Code
-The scaffold step copies agents into `.claude/skills/`, enabling slash commands:
 ```
-/ai-agent-domain-expert   → then tell it which capability to activate
+/ai-setup configure --headless
+```
+
+### Scaffold a new project (optional)
+
+For brand-new projects, scaffold the full directory structure, IDE config, and uv project:
+
+```
+/ai-setup   → then: new-project
+```
+
+This creates `data/`, `src/`, `notebooks/`, `configs/`, `docs/`, `models/`, `outputs/`, a `pyproject.toml` (no dependencies yet), and IDE-specific agent config.
+
+> **No packages are installed at scaffold time.** Dependencies are added in Ideation (Stage 1.5) and installed in Infrastructure (Stage 5) via `uv sync`.
+
+### Navigate with BMad Help
+
+```
+/bmad-help
+```
+
+Reads your project state and tells you exactly which agent and capability to invoke next.
+
+---
+
+## Invoking Agents
+
+### Claude Code
+
+The install step copies agents into `.claude/skills/`, enabling slash commands:
+
+```
+/ai-agent-domain-expert   → tell it which capability to activate
 /ai-agent-data-engineer
 /ai-agent-researcher
 /ai-agent-developer
 /ai-agent-engineer
 ```
 
-#### Antigravity
+### Antigravity
+
 Auto-discovered globally. Use slash commands directly.
 
-#### VSCode + Cline / Cursor
-No slash commands. Tell the AI to follow an agent by referencing its path:
+### VSCode + Cline / Cursor
+
+No slash commands. Reference the agent by path:
+
 ```
-Follow the workflow in: _bmad/ai-lifecycle/ai-agent-domain-expert/SKILL.md
+Follow the workflow in: .claude/skills/ai-lifecycle/ai-agent-domain-expert/SKILL.md
+Activate capability: domain-research
 ```
-The `.clinerules` file lists all agent paths and capabilities for quick copy-paste.
+
+The `.clinerules` file generated by `ai-setup new-project` lists all agent paths for quick copy-paste.
 
 ---
 
-## Agents Overview
+## Stages Reference
 
-### Sequential Lifecycle Agents
+### Sequential Lifecycle
 
 | Stage | Agent | Capability | Output |
 |-------|-------|------------|--------|
-| 1 | `ai-agent-domain-expert` | `domain-research` | Domain Knowledge Base (`docs/research/`) |
-| 1.5 | `ai-agent-domain-expert` | `ideation` | Research Thesis + PRD (`docs/`) |
-| 2 | `ai-agent-data-engineer` | `eda` | EDA Report (`docs/eda/`) |
-| 3 | `ai-agent-researcher` | `architecture` | Architecture document (`docs/architecture/`) |
-| 4 | `ai-agent-researcher` | `detailed-design` | Detailed Design — INF-* + EXP-* tasks (`docs/design/`) |
-| 4.5 | `ai-agent-developer` | `techspec` | TECHSPEC contract (`docs/techspecs/`) |
-| 5 | `ai-agent-developer` | `infra` | Infra Log + smoke test (`docs/implementation/`) |
-| 6 | `ai-agent-engineer` | `experiment` | Experiment Log (`docs/experiments/`) |
-| 7 | `ai-agent-researcher` | `analysis` | Analysis report (`docs/experiments/`) |
-| 7.5 *(conditional)* | `ai-agent-engineer` | `hparam` | HPO report (`docs/experiments/`) |
-| 8 | `ai-agent-domain-expert` | `revision-audit` | Revision Log + amended upstream docs |
+| 1 | Alex (domain-expert) | `domain-research` | Domain Knowledge Base |
+| 1.5 | Alex (domain-expert) | `ideation` | Research Thesis + PRD |
+| 2 | Sam (data-engineer) | `eda` | EDA Report |
+| 3 | Maya (researcher) | `architecture` | Architecture document |
+| 4 | Maya (researcher) | `detailed-design` | Detailed Design (INF-* + EXP-* tasks) |
+| 4.5 | Kai (developer) | `techspec` | TECHSPEC contract |
+| 5 | Kai (developer) | `infra` | Pipelines + eval harness |
+| 6 | Jordan (engineer) | `experiment` | Experiment Log |
+| 7 | Maya (researcher) | `analysis` | Analysis report |
+| 7.5 *(conditional)* | Jordan (engineer) | `hparam` | HPO report |
+| 8 | Alex (domain-expert) | `revision-audit` | Revision Log + amended upstream docs |
 
 ### Anytime Capabilities
 
-| Agent | Capability | Purpose |
-|-------|------------|---------|
-| `ai-agent-domain-expert` | `advise` | Surface validated params from past experiments before new work |
-| `ai-agent-researcher` | `retrospective` | Capture session learnings into team knowledge base |
-| `ai-agent-developer` | `inference-pipeline` | Adapt model for production and V&V |
+| Agent | Capability | When to Use |
+|-------|------------|-------------|
+| Alex (domain-expert) | `advise` | Before any experiment — surfaces validated params and dead ends from past work |
+| Maya (researcher) | `retrospective` | After any session — captures learnings into the team knowledge base |
+| Kai (developer) | `inference-pipeline` | After a model is accepted — adapts for production with V&V |
 
 ---
 
 ## Task Namespaces
 
-Detailed Design produces two categories of tasks with distinct prefixes:
+Detailed Design (Stage 4) produces two task categories:
 
-| Prefix | Executed By | Meaning |
-|--------|------------|---------|
-| `INF-001`, `INF-002`, ... | `ai-agent-developer infra` | Infrastructure tasks — built once, reused across experiment cycles |
-| `EXP-001`, `EXP-002`, ... | `ai-agent-engineer experiment` | Experiment tasks — executed in each cycle against the active TECHSPEC |
-| `REV-001`, `REV-002`, ... | Next cycle | Generated by `revision-audit` for the following cycle |
+| Prefix | Executed By | Purpose |
+|--------|-------------|---------|
+| `INF-*` | Kai — `infra` | Infrastructure tasks — built once, reused across experiment cycles |
+| `EXP-*` | Jordan — `experiment` | Experiment tasks — executed each cycle against the active TECHSPEC |
+| `REV-*` | Next cycle | Generated by `revision-audit` for the following iteration |
 
 ---
 
-## Experiment Tracking Integration
+## Experiment Tracking
 
 | Tool | Best For |
-|------|---------|
+|------|----------|
 | [Weights & Biases](https://wandb.ai) | Teams, sweep UI, collaboration |
 | [MLflow](https://mlflow.org) | Self-hosted, open-source, model registry |
 | [ClearML](https://clear.ml) | Auto-capture, enterprise MLOps, HPO orchestration |
 
-Choose one at project start; wire it in `ai-agent-developer infra` (Stage 5).
+Choose one during `ai-setup configure`; wire it in `infra` (Stage 5).
 
 ---
 
-## Hyperparameter Optimization
+## LLM Configuration
 
-HPO is a **conditional stage** (7.5) that runs only after `ai-agent-researcher analysis` confirms the baseline meets the TECHSPEC's minimum viable tier.
+### Agent model
 
-Supported HPO frameworks: **Optuna**, **W&B Sweeps**, **Ray Tune**, **ClearML HPO**.
+Set in your IDE — not here. Any model supported by your IDE works.
 
----
+### Script-level LLM calls
 
-## Lifecycle Flow
-
-```
-[0] Scaffold (once — shell command)
-    ↓  folder structure + .clinerules/.claude/CLAUDE.md + pyproject.toml (no deps)
-[1] Domain Research (ai-agent-domain-expert)
-    ↓  docs/research/Domain_Knowledge_Base.md
-[1.5] Ideation (ai-agent-domain-expert)
-    ↓  docs/00_Research_Thesis.md  +  docs/prd/01_PRD.md  +  pyproject.toml deps
-[2] EDA (ai-agent-data-engineer)
-    ↓  docs/eda/02_EDA_Report.md  +  Thesis §IV updated
-[3] Architecture (ai-agent-researcher)
-    ↓  docs/architecture/03_Architecture.md
-[4] Detailed Design (ai-agent-researcher)
-    ↓  docs/design/04_Detailed_Design.md
-[4.5] TECHSPEC (ai-agent-developer)
-    ↓  docs/techspecs/TECHSPEC_EXP_[ID].md
-[5] Infrastructure (ai-agent-developer)
-    ↓  uv sync  ← FIRST package installation
-    ↓  docs/implementation/05_Infra_Log.md
-[6] Experiment (ai-agent-engineer)  ← advise before, retrospective after
-    ↓  docs/experiments/06_Experiment_Log.md
-[7] Analysis (ai-agent-researcher)  ← advise before, retrospective after
-    ↓  docs/experiments/07_Analysis_EXP_[ID].md
-    ↓
-    ├── [7.5] HPO (conditional)
-    │       ↓  docs/experiments/HPARAM_EXP_[ID].md
-    │       └──→ back to [6] with tuned params
-    │
-    └── [8] Revision (ai-agent-domain-expert)
-            ↓  docs/revisions/08_Revision_Log.md
-            ↓  Thesis · PRD · Architecture · Detailed Design all audited + amended
-            └──→ back to [4.5] with new hypothesis
-```
-
----
-
-## Prerequisites
-
-| Requirement | Why |
-|-------------|-----|
-| [BMAD Method](https://github.com/bmad-code-org/bmad-method) | **Required.** Provides `_bmad/` project structure and `/bmad-help` routing. |
-| An AI IDE | Claude Code, Antigravity, or VSCode + Cline / Cursor |
-| Claude Sonnet 4.5+ or equivalent | Recommended model for all lifecycle agents |
-| [uv](https://docs.astral.sh/uv/) | Python package manager (`curl -LsSf https://astral.sh/uv/install.sh \| sh`) |
-
----
-
-## Installation
-
-### Option A — Git Submodule (recommended)
-
-```bash
-git submodule add https://github.com/avielbl/ai-lifecycle _bmad/ai-lifecycle
-git submodule update --init
-```
-
-Pull updates:
-
-```bash
-git submodule update --remote _bmad/ai-lifecycle
-```
-
-### Option B — Manual Copy
-
-```bash
-git clone https://github.com/avielbl/ai-lifecycle
-cp -r ai-lifecycle/ai-agent-* your-project/_bmad/ai-lifecycle/
-cp ai-lifecycle/ai-lifecycle.csv your-project/_bmad/ai-lifecycle/
-```
-
----
-
-## LLM Engine Configuration
-
-### Agent model (IDE-level)
-
-The model that **executes the agent prompts** is set inside your IDE — not here.
-Any OpenAI-compatible endpoint supported by your IDE works.
-
-### Programmatic LLM calls (script-level)
-
-Some utility scripts call an LLM directly. These use `scripts/llm_client.py`, configured via `configs/llm_config.yaml`.
-
-`init_project.py` copies both files into your project. Edit `configs/llm_config.yaml`:
+Some utility scripts call an LLM directly via `scripts/llm_client.py`, configured by `configs/llm_config.yaml` (written by `ai-setup new-project`):
 
 ```yaml
 # Anthropic / Claude (default)
@@ -223,14 +197,27 @@ model: claude-sonnet-4-6
 base_url: ~
 api_key_env: ANTHROPIC_API_KEY
 
-# OpenAI-compatible (any endpoint)
+# OpenAI-compatible
 # provider: openai-compatible
 # model: gpt-4o
 # base_url: http://localhost:11434/v1
 # api_key_env: OPENAI_API_KEY
 ```
 
-The API key is **never stored in the config file** — it lives in the env var named by `api_key_env`.
+The API key lives in the env var — never in the config file.
+
+---
+
+## Key Principles
+
+- **Configure first.** Run `ai-setup configure` before invoking any agent.
+- **Scaffold, then install.** No `uv sync` until Kai runs `infra` (Stage 5).
+- **TECHSPECs are contracts.** Lock them before training starts; amend them with a new revision.
+- **HPO only after baseline confirmation.** HPO on a broken architecture wastes compute.
+- **Run advise before every experiment.** Alex mines past projects so you don't repeat mistakes.
+- **Run retrospective after every session.** Maya writes it; you review.
+- **Fresh context window per agent.** Each agent is specialized — mixing stages in one session degrades quality.
+- **Failed attempts are mandatory.** Infra Log and Analysis documents with no failures documented are incomplete.
 
 ---
 
@@ -243,24 +230,20 @@ Two GitHub Actions workflows are included:
 
 ---
 
-## Key Principles
+## Updating the Module
 
-- **Scaffold first, install last.** No packages until `ai-agent-developer infra` (Stage 5) runs `uv sync`.
-- **TECHSPECs are contracts.** Never modify after training starts.
-- **HPO only after baseline confirmation.** HPO on a broken architecture wastes compute.
-- **Run advise before every experiment.** Skip the days of rediscovery.
-- **Run retrospective after every session.** The agent does the writing; you review.
-- **Failed Attempts sections are mandatory** in Infra Log and Analysis. A log with no failures documented is incomplete.
-- **Fresh context window per agent.** Each agent is specialized; mixing steps in one session degrades quality.
+```bash
+git submodule update --remote .claude/skills/ai-lifecycle
+```
 
 ---
 
-## Versioning & Changelog
+## Versioning
 
-- `v4.0.0` — Renamed from `bmad-dl-lifecycle` to `ai-lifecycle`. Module code `ai`. Broadened scope from deep learning to full AI/ML paradigms (DL, XGBoost, transformers, classical ML). Agent names updated to `ai-agent-*`. Setup skill (`ai-setup`) absorbs scaffold. Module packaged for BMad Builder compatibility.
-- `v3.0.0` — Agent-based architecture. Five domain specialists replace per-skill approach. Memory added to Domain Expert, AI Researcher, AI Developer.
-- `v2.1.0` — Added scaffold (Stage 0): automated project scaffolding with uv.
-- `v2.0.0` — Split implementation into infra + experiment. Added HPO (Stage 7.5). Native W&B/MLflow/ClearML integration.
+- `v4.0.0` — Renamed from `bmad-dl-lifecycle` to `ai-lifecycle`. Module code `ai`. Broadened from deep learning to all AI/ML paradigms. Agents renamed to `ai-agent-*` with assigned personas (Alex, Sam, Maya, Kai, Jordan). `ai-setup` skill absorbs scaffold and module configuration.
+- `v3.0.0` — Agent-based architecture. Five domain specialists replace per-skill approach. Memory added to Domain Expert, Researcher, Developer.
+- `v2.1.0` — Scaffold (Stage 0): automated project scaffolding with uv.
+- `v2.0.0` — Split infra + experiment. HPO (Stage 7.5). W&B/MLflow/ClearML integration.
 - `v1.2.0` — Knowledge flywheel: advise, retrospective, techspec.
 - `v1.0.0` — Initial release.
 
