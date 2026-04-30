@@ -1,0 +1,9 @@
+{
+  "module": {
+    "code": "ai",
+    "name": "AI Lifecycle",
+    "version": "4.0.0",
+    "description": "Agentic team for the full AI/ML project lifecycle \u2014 from domain research through production inference. Covers deep learning, classical ML, gradient boosting, transformers, and beyond."
+  },
+  "skills": []
+}
