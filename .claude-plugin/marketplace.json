@@ -1,0 +1,25 @@
+{
+  "name": "ai-lifecycle",
+  "owner": { "name": "Aviel" },
+  "license": "MIT",
+  "homepage": "https://github.com/avielbl/ai-lifecycle",
+  "repository": "https://github.com/avielbl/ai-lifecycle",
+  "keywords": ["bmad", "ai", "ml", "mlops", "lifecycle", "agents"],
+  "plugins": [
+    {
+      "name": "ai-lifecycle",
+      "source": "./",
+      "description": "Agentic team for the full AI/ML project lifecycle — from domain research through production inference. Covers deep learning, classical ML, gradient boosting, transformers, and beyond.",
+      "version": "4.0.0",
+      "author": { "name": "Aviel" },
+      "skills": [
+        "./ai-setup",
+        "./ai-agent-domain-expert",
+        "./ai-agent-data-engineer",
+        "./ai-agent-researcher",
+        "./ai-agent-developer",
+        "./ai-agent-engineer"
+      ]
+    }
+  ]
+}

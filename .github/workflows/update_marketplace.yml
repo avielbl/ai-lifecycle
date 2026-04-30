@@ -1,102 +1,67 @@
-name: Update Marketplace Index
+name: Update Marketplace Manifest
 
 on:
   push:
     branches: [main]
     paths:
-      - 'bmad-dl-*/bmad-manifest.json'
-      - 'bmad-dl-*/SKILL.md'
+      - 'ai-agent-*/SKILL.md'
+      - 'ai-setup/SKILL.md'
+      - 'ai-setup/assets/module.yaml'
       - 'module.yaml'
 
 jobs:
-  update-index:
+  update-manifest:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generate marketplace.json
+      - name: Update .claude-plugin/marketplace.json
         run: |
           python3 - <<'EOF'
           import json
-          import os
           from pathlib import Path
 
-          skills = []
-          module_meta = {}
+          # Read version from ai-setup/assets/module.yaml (authoritative source)
+          version = "4.0.0"
+          module_yaml = Path("ai-setup/assets/module.yaml")
+          if module_yaml.exists():
+              for line in module_yaml.read_text().splitlines():
+                  if line.startswith("version:"):
+                      version = line.split(":", 1)[1].strip()
+                      break
 
-          # Read module.yaml
-          with open("module.yaml") as f:
-              for line in f:
-                  if ":" in line:
-                      k, v = line.split(":", 1)
-                      module_meta[k.strip()] = v.strip()
+          # Collect all skill directories (those containing SKILL.md)
+          skills = sorted(
+              f"./{d.name}"
+              for d in Path(".").iterdir()
+              if d.is_dir() and (d / "SKILL.md").exists()
+          )
 
-          # Scan all skill directories
-          for skill_dir in sorted(Path(".").glob("bmad-dl-*")):
-              if not skill_dir.is_dir():
-                  continue
+          manifest_path = Path(".claude-plugin/marketplace.json")
+          existing = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
 
-              manifest_path = skill_dir / "bmad-manifest.json"
-              skill_path = skill_dir / "SKILL.md"
+          plugin = existing.get("plugins", [{}])[0] if existing.get("plugins") else {}
+          plugin.update({
+              "version": version,
+              "skills": skills,
+          })
+          existing["plugins"] = [plugin]
 
-              if not manifest_path.exists():
-                  continue
+          manifest_path.parent.mkdir(parents=True, exist_ok=True)
+          manifest_path.write_text(json.dumps(existing, indent=2) + "\n")
 
-              with open(manifest_path) as f:
-                  manifest = json.load(f)
-
-              # Extract description from SKILL.md frontmatter
-              skill_description = ""
-              if skill_path.exists():
-                  in_frontmatter = False
-                  for line in skill_path.read_text(encoding="utf-8").splitlines():
-                      line_clean = line.lstrip("\\")
-                      if line_clean.strip() == "---":
-                          in_frontmatter = not in_frontmatter
-                          continue
-                      if in_frontmatter and line_clean.startswith("description:"):
-                          skill_description = line_clean.split(":", 1)[1].strip()
-                          break
-
-              for cap in manifest.get("capabilities", []):
-                  skills.append({
-                      "skill": skill_dir.name,
-                      "name": cap.get("name"),
-                      "menu-code": cap.get("menu-code"),
-                      "phase": cap.get("phase-name"),
-                      "description": cap.get("description") or skill_description,
-                      "after": cap.get("after", []),
-                      "before": cap.get("before", []),
-                      "supports-headless": cap.get("supports-headless", False),
-                      "is-required": cap.get("is-required", False),
-                  })
-
-          marketplace = {
-              "module": {
-                  "code": module_meta.get("code", "bmad-dl-lifecycle"),
-                  "name": module_meta.get("name", "bmad-dl-lifecycle"),
-                  "version": module_meta.get("version", ""),
-                  "description": module_meta.get("description", ""),
-              },
-              "skills": sorted(skills, key=lambda s: s.get("phase", "z")),
-          }
-
-          with open("marketplace.json", "w") as f:
-              json.dump(marketplace, f, indent=2)
-              f.write("\n")
-
-          print(f"Generated marketplace.json with {len(skills)} skills")
+          print(f"Updated .claude-plugin/marketplace.json — version {version}, {len(skills)} skills: {skills}")
           EOF
 
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add marketplace.json
+          git add .claude-plugin/marketplace.json
           if git diff --staged --quiet; then
-            echo "No changes to marketplace.json"
+            echo "No changes"
           else
             git commit -m "chore: update marketplace.json [skip ci]"
             git push
