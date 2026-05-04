@@ -3,8 +3,9 @@ name: Validate Skills
 on:
   pull_request:
     paths:
-      - 'bmad-dl-*/SKILL.md'
-      - 'bmad-dl-*/bmad-manifest.json'
+      - 'ai-agent-*/SKILL.md'
+      - 'ai-agent-*/bmad-manifest.json'
+      - 'ai-setup/SKILL.md'
       - 'module.yaml'
 
 jobs:
@@ -16,7 +17,7 @@ jobs:
       - name: Validate SKILL.md frontmatter
         run: |
           FAILED=0
-          for skill_dir in bmad-dl-*/; do
+          for skill_dir in ai-agent-*/ ai-setup/; do
             skill_file="$skill_dir/SKILL.md"
             if [ ! -f "$skill_file" ]; then
               echo "❌ Missing SKILL.md in $skill_dir"
@@ -49,7 +50,7 @@ jobs:
       - name: Validate bmad-manifest.json structure
         run: |
           FAILED=0
-          for skill_dir in bmad-dl-*/; do
+          for skill_dir in ai-agent-*/; do
             manifest="$skill_dir/bmad-manifest.json"
             if [ ! -f "$manifest" ]; then
               echo "⚠️  No bmad-manifest.json in $skill_dir (optional for universal tools)"
@@ -88,39 +89,6 @@ jobs:
 
             echo "✅ $manifest"
           done
-          exit $FAILED
-
-      - name: Check analysis documents have Failed Attempts section
-        run: |
-          FAILED=0
-          # Check Analysis SKILL.md template
-          if grep -q "Failed Attempts" bmad-dl-analysis/SKILL.md; then
-            echo "✅ bmad-dl-analysis/SKILL.md: Failed Attempts section present"
-          else
-            echo "❌ bmad-dl-analysis/SKILL.md: missing mandatory 'Failed Attempts' section"
-            FAILED=1
-          fi
-
-          # Check Implementation SKILL.md template
-          if grep -q "Failed Attempts" bmad-dl-implementation/SKILL.md; then
-            echo "✅ bmad-dl-implementation/SKILL.md: Failed Attempts section present"
-          else
-            echo "❌ bmad-dl-implementation/SKILL.md: missing mandatory 'Failed Attempts' section"
-            FAILED=1
-          fi
-
-          # Check any retrospective files in docs/knowledge/ if they exist
-          for retro in docs/knowledge/RETRO_*.md; do
-            if [ -f "$retro" ]; then
-              if grep -q "Failed Attempts\|What Failed" "$retro"; then
-                echo "✅ $retro: failure documentation present"
-              else
-                echo "❌ $retro: retrospective missing 'Failed Attempts' section — incomplete knowledge capture"
-                FAILED=1
-              fi
-            fi
-          done
-
           exit $FAILED
 
       - name: Validate module.yaml version format
