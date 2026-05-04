@@ -55,10 +55,17 @@ Anytime:
 
 ### Install the module
 
+Use the BMad installer from your project root:
+
 ```bash
-# From your project root (where _bmad/ lives)
-git submodule add https://github.com/avielbl/ai-lifecycle .claude/skills/ai-lifecycle
-git submodule update --init
+npx bmad-method install --custom-source https://github.com/avielbl/ai-lifecycle --tools claude-code --yes
+```
+
+Or interactively:
+
+```bash
+npx bmad-method install
+# Select "Custom / Community module" → paste https://github.com/avielbl/ai-lifecycle
 ```
 
 ### Configure (once per project)
@@ -233,7 +240,7 @@ Two GitHub Actions workflows are included:
 ## Updating the Module
 
 ```bash
-git submodule update --remote .claude/skills/ai-lifecycle
+npx bmad-method install --custom-source https://github.com/avielbl/ai-lifecycle --tools claude-code --yes
 ```
 
 ---
