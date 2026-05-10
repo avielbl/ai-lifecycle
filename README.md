@@ -55,17 +55,46 @@ Anytime:
 
 ### Install the module
 
-Use the BMad installer from your project root:
+Use the BMad installer from your project root. Choose the method that matches your environment:
+
+**From a Git repository or npm registry (default / Artifactory)**
 
 ```bash
-npx bmad-method install --custom-source https://github.com/avielbl/ai-lifecycle --tools claude-code --yes
+npx bmad-method install \
+  --directory . \
+  --modules bmm \
+  --custom-source https://github.com/avielbl/ai-lifecycle \
+  --tools claude-code \
+  --yes
 ```
 
-Or interactively:
+If your organisation mirrors npm packages through an internal Artifactory or similar registry, replace the GitHub URL with the package name:
+
+```bash
+npx bmad-method install \
+  --directory . \
+  --modules bmm \
+  --custom-source ai-lifecycle \
+  --tools claude-code \
+  --yes
+```
+
+**From a local path (offline / air-gapped environments)**
+
+```bash
+npx bmad-method install \
+  --directory . \
+  --modules bmm \
+  --custom-source /path/to/ai-lifecycle \
+  --tools claude-code \
+  --yes
+```
+
+**Interactively**
 
 ```bash
 npx bmad-method install
-# Select "Custom / Community module" → paste https://github.com/avielbl/ai-lifecycle
+# When prompted for a custom source → paste the GitHub URL or local path
 ```
 
 ### Configure (once per project)
@@ -239,9 +268,18 @@ Two GitHub Actions workflows are included:
 
 ## Updating the Module
 
+Re-run the installer with the same `--custom-source` you used during installation. BMad re-fetches from the original source and applies updates in place.
+
 ```bash
-npx bmad-method install --custom-source https://github.com/avielbl/ai-lifecycle --tools claude-code --yes
+npx bmad-method install \
+  --directory . \
+  --modules bmm \
+  --custom-source https://github.com/avielbl/ai-lifecycle \
+  --tools claude-code \
+  --yes
 ```
+
+For offline environments, use the local path instead of the GitHub URL.
 
 ---
 

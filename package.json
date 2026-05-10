@@ -1,0 +1,28 @@
+{
+  "name": "ai-lifecycle",
+  "version": "1.0.0",
+  "description": "> A structured agentic team for the full AI/ML project lifecycle — a [BMad Method](https://github.com/bmad-code-org/bmad-method) module.",
+  "files": [
+    "ai-agent-data-engineer",
+    "ai-agent-developer",
+    "ai-agent-domain-expert",
+    "ai-agent-engineer",
+    "ai-agent-researcher",
+    "ai-setup",
+    "scripts",
+    "ai-lifecycle.csv",
+    "module.yaml",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avielbl/ai-lifecycle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/avielbl/ai-lifecycle/issues"
+  },
+  "homepage": "https://github.com/avielbl/ai-lifecycle#readme"
+}
