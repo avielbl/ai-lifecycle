@@ -315,7 +315,7 @@ def write_llm_config(root: Path, skill_dir: Path) -> None:
         print(f"  Skipped: configs/llm_config.yaml (already exists)")
         return
 
-    template = skill_dir.parent / "configs" / "llm_config.yaml.template"
+    template = skill_dir / "llm_config.yaml.template"
     if template.exists():
         shutil.copy2(template, dest)
         print(f"  Wrote: configs/llm_config.yaml (edit to configure programmatic LLM calls)")
@@ -343,7 +343,7 @@ def register_in_bmad_help(root: Path, skill_dir: Path) -> None:
         print(f"  Skipped: {csv_path} not found (not a BMAD project root?)")
         return
 
-    our_csv = skill_dir.parent.parent / "ai-lifecycle.csv"
+    our_csv = skill_dir.parent / "ai-lifecycle.csv"
     if not our_csv.exists():
         print(f"  Skipped: ai-lifecycle.csv not found in module root")
         return
@@ -363,7 +363,7 @@ def copy_claude_skills(root: Path, skill_dir: Path) -> None:
     Copy all ai-lifecycle SKILL.md + bmad-manifest.json files into .claude/skills/
     so that Claude Code can discover them as slash commands.
     """
-    module_root = skill_dir.parent.parent  # scripts/ -> ai-setup/ -> ai-lifecycle/
+    module_root = skill_dir.parent  # scripts/ -> ai-lifecycle/ (module root)
     dest_root = root / ".claude" / "skills"
     dest_root.mkdir(parents=True, exist_ok=True)
 
@@ -389,7 +389,7 @@ def copy_claude_skills(root: Path, skill_dir: Path) -> None:
 def copy_scripts(root: Path, skill_dir: Path) -> None:
     """Copy ai-lifecycle utility scripts (including llm_client.py) into project scripts/."""
     scripts_dir = root / "scripts"
-    module_root = skill_dir.parent.parent
+    module_root = skill_dir.parent
 
     copied = []
 
