@@ -11,10 +11,22 @@
       "supports-headless": true,
       "phase-name": "6-experiment",
       "after": ["infra"],
-      "before": ["analysis"],
+      "before": ["results"],
       "is-required": true,
       "prompt": "experiment.md",
-      "output-location": "{output_folder}/experiments"
+      "output-location": "{output_folder}/experiments/{exp_id}"
+    },
+    {
+      "name": "results",
+      "menu-code": "AIRES",
+      "description": "Produces raw experiment outputs — learning curves, metrics, comparison tables, and per-arm timing.",
+      "supports-headless": true,
+      "phase-name": "6.5-results",
+      "after": ["experiment"],
+      "before": ["analysis"],
+      "is-required": true,
+      "prompt": "results.md",
+      "output-location": "{output_folder}/experiments/{exp_id}"
     },
     {
       "name": "hparam",
@@ -26,7 +38,7 @@
       "before": ["experiment"],
       "is-required": false,
       "prompt": "hparam.md",
-      "output-location": "{output_folder}/experiments"
+      "output-location": "{output_folder}/experiments/{exp_id}"
     }
   ]
 }

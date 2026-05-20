@@ -17,7 +17,7 @@ Reads PRD performance requirements if provided, same as parse_training_logs.py.
 
 Usage:
     python3 scripts/baseline_classifier.py <data_csv> [prd_path] [--label-col LABEL] [--output report.md]
-    python3 scripts/baseline_classifier.py data/features.csv docs/prd/01_PRD.md --label-col defective
+    python3 scripts/baseline_classifier.py data/features.csv docs/prd/PRD.md --label-col defective
 
 Exit codes:
     0 — success

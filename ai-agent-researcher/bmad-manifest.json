@@ -31,23 +31,14 @@
     {
       "name": "analysis",
       "menu-code": "AIAN",
-      "description": "Analyzes experiment results against TECHSPEC tiers.",
+      "description": "Interprets results against TECHSPEC tiers and research thesis. Analyzes root causes, captures lessons learned, and recommends follow-up experiments.",
       "supports-headless": true,
       "phase-name": "7-analysis",
-      "after": ["experiment"],
+      "after": ["results"],
       "before": ["revision-audit"],
       "is-required": true,
       "prompt": "analysis.md",
-      "output-location": "{output_folder}/experiments"
-    },
-    {
-      "name": "retrospective",
-      "menu-code": "AIRET",
-      "description": "Captures session learnings into the team knowledge base.",
-      "supports-headless": false,
-      "phase-name": "anytime",
-      "prompt": "retrospective.md",
-      "output-location": "{output_folder}/knowledge"
+      "output-location": "{output_folder}/experiments/{exp_id}"
     }
   ]
 }

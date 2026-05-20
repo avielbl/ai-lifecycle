@@ -39,6 +39,7 @@ CLINERULES_TEMPLATE = """\
 - Stage 4.5 — TECHSPEC:               .claude/skills/ai-lifecycle/ai-agent-developer/SKILL.md       (capability: techspec)
 - Stage 5   — Infrastructure:         .claude/skills/ai-lifecycle/ai-agent-developer/SKILL.md       (capability: infra)
 - Stage 6   — Experiment:             .claude/skills/ai-lifecycle/ai-agent-engineer/SKILL.md        (capability: experiment)
+- Stage 6.5 — Results:                .claude/skills/ai-lifecycle/ai-agent-engineer/SKILL.md        (capability: results)
 - Stage 7   — Analysis:               .claude/skills/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: analysis)
 - Stage 7.5 — HPO (conditional):      .claude/skills/ai-lifecycle/ai-agent-engineer/SKILL.md        (capability: hparam)
 - Stage 8   — Revision:               .claude/skills/ai-lifecycle/ai-agent-domain-expert/SKILL.md   (capability: revision-audit)
@@ -46,7 +47,6 @@ CLINERULES_TEMPLATE = """\
 ## Universal Tools (invoke anytime)
 
 - Advise (surface past findings):     .claude/skills/ai-lifecycle/ai-agent-domain-expert/SKILL.md   (capability: advise)
-- Retrospective (capture learnings):  .claude/skills/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: retrospective)
 - Inference pipeline:                 .claude/skills/ai-lifecycle/ai-agent-developer/SKILL.md        (capability: inference-pipeline)
 
 ## Experiment Tracking
@@ -79,9 +79,9 @@ CLAUDE_MD_TEMPLATE = """\
 |---------------|--------|------|
 | /ai-agent-domain-expert | 1, 1.5, 8, anytime | Domain Expert — domain research, problem framing, PRD, advise, revision audit |
 | /ai-agent-data-engineer | 2 | Data Engineer — EDA, baseline, data quality |
-| /ai-agent-researcher | 3, 4, 7, anytime | AI Researcher — architecture, detailed design, analysis, retrospective |
+| /ai-agent-researcher | 3, 4, 7 | AI Researcher — architecture, detailed design, analysis |
 | /ai-agent-developer | 4.5, 5, anytime | AI Developer — TECHSPEC, infrastructure, inference pipeline |
-| /ai-agent-engineer | 6, 7.5 | AI Engineer — experiments, HPO |
+| /ai-agent-engineer | 6, 6.5, 7.5 | AI Engineer — experiments, results, HPO |
 
 After invoking an agent, tell it which capability to activate (e.g. "run domain-research", "run architecture").
 

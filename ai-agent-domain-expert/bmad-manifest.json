@@ -41,7 +41,7 @@
     {
       "name": "advise",
       "menu-code": "AIAD",
-      "description": "Searches past experiments and retrospectives for validated parameters.",
+      "description": "Searches past experiment analyses and decisions for validated parameters.",
       "supports-headless": true,
       "phase-name": "anytime",
       "prompt": "advise.md",

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 validate_design.py — BMAD DL Lifecycle
-Validates docs/design/03_Detailed_Design.md before implementation begins.
+Validates docs/design/Detailed_Design.md before implementation begins.
 
 Checks:
   - TSK-001 exists and is assigned to Data-Agent (mandatory EDA task)
@@ -12,7 +12,7 @@ Checks:
 
 Usage:
     python3 scripts/validate_design.py <design_path> [prd_path]
-    python3 scripts/validate_design.py docs/design/03_Detailed_Design.md docs/prd/01_PRD.md
+    python3 scripts/validate_design.py docs/design/Detailed_Design.md docs/prd/PRD.md
 
 Exit codes:
     0 — PASS

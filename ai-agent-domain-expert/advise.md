@@ -1,7 +1,7 @@
 # Capability: Advisory
 
 ## Overview
-Searches past experiment logs, retrospectives, and the team knowledge base to surface validated parameters, failed approaches to avoid, and relevant prior findings — before starting new work. Run this before any new experiment cycle.
+Searches past experiment analyses and decision logs to surface validated parameters, failed approaches to avoid, and relevant prior findings — before starting new work. Run this before any new experiment cycle.
 
 ## Phase 1: Query Intent
 Ask the user what they are about to do (or infer from context):
@@ -11,11 +11,11 @@ Ask the user what they are about to do (or infer from context):
 ## Phase 2: Knowledge Base Search
 Search the following sources in order:
 
-1. **Retrospectives** — `{output_folder}/knowledge/RETRO_EXP_*.md`
-   - Look for: validated configurations, failure post-mortems, lessons learned
+1. **Analysis reports** — `{output_folder}/experiments/*/ANALYSIS_*.md`
+   - Look for: TECHSPEC tier outcomes, root-cause analyses, validated parameters, failed attempts, lessons learned
 
-2. **Analysis reports** — `{output_folder}/experiments/07_Analysis_EXP_*.md`
-   - Look for: TECHSPEC tier outcomes, which approaches met or missed targets
+2. **Decisions logs** — `{output_folder}/experiments/*/DECISIONS.md`
+   - Look for: rejected alternatives, implementation know-how, deferred questions
 
 3. **Agent memory** (if enabled) — past architectural patterns and paradigm-specific knowledge
 

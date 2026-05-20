@@ -9,7 +9,7 @@ Produces the Research Thesis and Product Requirements Document (PRD) by synthesi
 3. Confirm with the user: "Have there been any developments since the Domain Knowledge Base was written that I should factor in?"
 
 ## Phase 2: Research Thesis
-Produce `docs/00_Research_Thesis.md` containing:
+Produce `docs/Research_Thesis.md` containing:
 - **Active Hypothesis:** The single most important question this project must answer.
 - **Domain Failure Costs:** What does failure look like in real-world terms? Quantify where possible.
 - **Data Characterization:** What data is available, what is its known quality, and what are the known limitations?
@@ -19,7 +19,7 @@ Produce `docs/00_Research_Thesis.md` containing:
 The Research Thesis is the **single source of truth** for all downstream agents. Every architectural and design decision must trace back to it.
 
 ## Phase 3: Product Requirements Document (PRD)
-Produce `docs/prd/01_PRD.md` containing:
+Produce `docs/prd/PRD.md` containing:
 - **Problem Statement:** One paragraph, no jargon.
 - **User/Stakeholder Needs:** Who is affected and what do they need?
 - **Functional Requirements:** What must the model do? (FR-001, FR-002, ...)

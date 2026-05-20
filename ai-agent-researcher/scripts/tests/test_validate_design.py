@@ -56,7 +56,7 @@ BAD_DEPENDENCY = textwrap.dedent("""\
 
 
 def design_file(text: str) -> Path:
-    p = TMP / "03_Detailed_Design.md"
+    p = TMP / "Detailed_Design.md"
     p.write_text(text)
     return p
 

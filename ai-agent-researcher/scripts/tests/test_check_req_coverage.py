@@ -50,8 +50,8 @@ ARCH_WITH_PHANTOM = textwrap.dedent("""\
 
 
 def write_files(prd_text: str, arch_text: str) -> tuple[Path, Path]:
-    prd = TMP / "01_PRD.md"
-    arch = TMP / "02_Architecture.md"
+    prd = TMP / "PRD.md"
+    arch = TMP / "Architecture.md"
     prd.write_text(prd_text)
     arch.write_text(arch_text)
     return prd, arch
@@ -94,12 +94,12 @@ class TestPhantomIds(unittest.TestCase):
 
 class TestMissingFiles(unittest.TestCase):
     def test_missing_prd(self):
-        result = check_coverage(Path("/no/prd.md"), TMP / "02_Architecture.md")
+        result = check_coverage(Path("/no/prd.md"), TMP / "Architecture.md")
         self.assertFalse(result.passed)
         self.assertTrue(any("PRD" in e for e in result.errors))
 
     def test_missing_arch(self):
-        prd = TMP / "01_PRD.md"
+        prd = TMP / "PRD.md"
         prd.write_text(PRD)
         result = check_coverage(prd, Path("/no/arch.md"))
         self.assertFalse(result.passed)
