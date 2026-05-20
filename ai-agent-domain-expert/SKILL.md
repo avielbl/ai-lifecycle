@@ -25,7 +25,7 @@ When a user requests a capability, load the corresponding instruction file:
 
 1. **Domain Research (`domain-research.md`)**: Use to gather all info required to become a domain expert via web and internal sources.
 2. **Ideation & Problem Framing (`ideation.md`)**: Use after research to define the Research Thesis and PRD.
-3. **Advisory (`advise.md`)**: Use anytime to search past experiments and retrospectives for validated parameters.
+3. **Advisory (`advise.md`)**: Use anytime to search past experiment analyses and decisions for validated parameters.
 4. **Revision Audit (`revision-audit.md`)**: Use at the end of an experiment cycle to audit and amend all upstream documentation.
 
 ## Operating Principles

@@ -65,8 +65,8 @@ Ask the user for values. Show defaults in brackets. Present all values together 
 Write a temp JSON file with collected answers as `{"core": {...}, "module": {...}}` (omit `core` if already exists). Run both scripts in parallel:
 
 ```bash
-python3 ./scripts/merge-config.py --config-path "{project-root}/_bmad/config.yaml" --user-config-path "{project-root}/_bmad/config.user.yaml" --module-yaml ./assets/module.yaml --answers {temp-file} --legacy-dir "{project-root}/_bmad"
-python3 ./scripts/merge-help-csv.py --target "{project-root}/_bmad/module-help.csv" --source ./assets/module-help.csv --legacy-dir "{project-root}/_bmad" --module-code ai
+uv run ./scripts/merge-config.py --config-path "{project-root}/_bmad/config.yaml" --user-config-path "{project-root}/_bmad/config.user.yaml" --module-yaml ./assets/module.yaml --answers {temp-file} --legacy-dir "{project-root}/_bmad"
+uv run ./scripts/merge-help-csv.py --target "{project-root}/_bmad/module-help.csv" --source ./assets/module-help.csv --legacy-dir "{project-root}/_bmad" --module-code ai
 ```
 
 Both scripts output JSON to stdout. If either exits non-zero, surface the error and stop. Check `legacy_configs_deleted` and `legacy_csvs_deleted` in the output.
@@ -78,7 +78,7 @@ After writing config, resolve `{project-root}` to the actual project root and cr
 ### Step 5: Cleanup Legacy Directories
 
 ```bash
-python3 ./scripts/cleanup-legacy.py --bmad-dir "{project-root}/_bmad" --module-code ai --also-remove _config --skills-dir "{project-root}/.claude/skills"
+uv run ./scripts/cleanup-legacy.py --bmad-dir "{project-root}/_bmad" --module-code ai --also-remove _config --skills-dir "{project-root}/.claude/skills"
 ```
 
 The script verifies every skill exists at `.claude/skills/` before removing. Missing directories are not errors. Check `directories_removed` and `files_removed_count`.
@@ -113,7 +113,7 @@ Locate `init_project.py` — it lives at `{skill-install-path}/scripts/init_proj
 
 ```bash
 mkdir -p "{project_dir}"
-cd "{project_dir}" && printf "{ide}\n{tracking_tool}\n{python_version}\nyes\n" | python3 "{init_project_path}" 2>&1
+cd "{project_dir}" && printf "{ide}\n{tracking_tool}\n{python_version}\nyes\n" | uv run "{init_project_path}" 2>&1
 ```
 
 The script creates:

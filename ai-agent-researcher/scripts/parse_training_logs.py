@@ -10,7 +10,7 @@ Supported log formats:
 
 Usage:
     python3 scripts/parse_training_logs.py <log_path> [prd_path] [--format csv|json]
-    python3 scripts/parse_training_logs.py docs/experiments/run_001_metrics.csv docs/prd/01_PRD.md
+    python3 scripts/parse_training_logs.py docs/experiments/run_001_metrics.csv docs/prd/PRD.md
 
 Exit codes:
     0 — success

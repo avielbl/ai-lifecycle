@@ -11,10 +11,22 @@
       "supports-headless": true,
       "phase-name": "4.5-techspec",
       "after": ["detailed-design"],
-      "before": ["infra"],
+      "before": ["decisions"],
       "is-required": true,
       "prompt": "techspec.md",
-      "output-location": "{output_folder}/techspecs"
+      "output-location": "{output_folder}/experiments/{exp_id}"
+    },
+    {
+      "name": "decisions",
+      "menu-code": "AIDEC",
+      "description": "Captures implementation decisions and rejected alternatives.",
+      "supports-headless": false,
+      "phase-name": "4.6-decisions",
+      "after": ["techspec"],
+      "before": ["infra"],
+      "is-required": false,
+      "prompt": "decisions.md",
+      "output-location": "{output_folder}/experiments/{exp_id}"
     },
     {
       "name": "infra",

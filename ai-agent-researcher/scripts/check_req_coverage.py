@@ -6,7 +6,7 @@ in the architecture document's traceability table.
 
 Usage:
     python3 scripts/check_req_coverage.py <prd_path> <architecture_path>
-    python3 scripts/check_req_coverage.py docs/prd/01_PRD.md docs/architecture/02_Architecture.md
+    python3 scripts/check_req_coverage.py docs/prd/PRD.md docs/architecture/Architecture.md
 
 Exit codes:
     0 — full coverage
@@ -158,7 +158,7 @@ def print_report(result: CoverageResult) -> None:
     if result.uncovered:
         print(f"\n✗ FAILED — {len(result.uncovered)} requirement(s) not mapped to any architecture component:\n")
         for req_id in sorted(result.uncovered):
-            print(f"  • {req_id} — not referenced in 02_Architecture.md")
+            print(f"  • {req_id} — not referenced in Architecture document")
         print(
             "\n  Fix: Add each missing REQ-ID to the 'Satisfies Requirement' column "
             "of the Component Design table in the architecture document."

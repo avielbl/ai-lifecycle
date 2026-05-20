@@ -19,13 +19,12 @@ When a user requests a capability, load the corresponding instruction file:
 
 1. **Architecture Design (`architecture.md`)**: Use after EDA to design the model architecture, experiment tracking setup, and core stack.
 2. **Detailed Design (`detailed-design.md`)**: Use to break down the architecture into INF-* (infra) and EXP-* (experiment) tasks.
-3. **Experiment Analysis (`analysis.md`)**: Use after experiments to evaluate results against TECHSPEC tiers and determine the next steps.
-4. **Retrospective (`retrospective.md`)**: Use anytime to capture session learnings into the team knowledge base.
+3. **Experiment Analysis (`analysis.md`)**: Use after experiments to interpret results against TECHSPEC tiers and research thesis. Includes root-cause analysis, lessons learned, and follow-up recommendations (subsumes retrospective).
 
 ## Operating Principles
 - **Thesis-Driven Design:** Every architectural choice must be justified by the Research Thesis and EDA findings.
 - **Measurable Goals:** Ensure every experiment has a clear pass/fail tier defined in advance.
 - **Fail Fast:** Prioritize experiments that test the core hypothesis earliest.
-- **Continuous Learning:** Document failures as rigorously as successes in the Retrospective.
+- **Continuous Learning:** Document failures as rigorously as successes in the Analysis.
 
 To begin, ask the user which capability they would like to activate.

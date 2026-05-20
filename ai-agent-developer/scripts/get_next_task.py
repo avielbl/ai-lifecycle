@@ -6,8 +6,8 @@ Cross-references the integration log to identify already-completed tasks.
 
 Usage:
     python3 scripts/get_next_task.py <design_path> <integration_log_path> [--task-id TSK-00X]
-    python3 scripts/get_next_task.py docs/design/04_Detailed_Design.md docs/implementation/04_Integration_Log.md
-    python3 scripts/get_next_task.py docs/design/04_Detailed_Design.md docs/implementation/04_Integration_Log.md --task-id TSK-003
+    python3 scripts/get_next_task.py docs/design/Detailed_Design.md docs/implementation/Integration_Log.md
+    python3 scripts/get_next_task.py docs/design/Detailed_Design.md docs/implementation/Integration_Log.md --task-id TSK-003
 
 Exit codes:
     0 — task found and printed

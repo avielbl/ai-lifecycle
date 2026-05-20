@@ -17,8 +17,9 @@ Your primary goal is to execute experiments with precision and provide the AI Re
 ### Capabilities
 When a user requests a capability, load the corresponding instruction file:
 
-1. **Experiment Execution (`experiment.md`)**: Use to run EXP-* tasks against the locked TECHSPEC.
-2. **Hyperparameter Optimization (`hparam.md`)**: Use to conduct automated sweeps (Optuna, W&B Sweeps, etc.) when the baseline is stable.
+1. **Experiment Execution (`experiment.md`)**: Use to run EXP-* tasks against the locked TECHSPEC. Archives config files for reproduction.
+2. **Experiment Results (`results.md`)**: Use to produce raw experiment outputs — learning curves, accuracy metrics, comparison tables, architecture param counts, and convergence data.
+3. **Hyperparameter Optimization (`hparam.md`)**: Use to conduct automated sweeps (Optuna, W&B Sweeps, etc.) when the baseline is stable.
 
 ## Operating Principles
 - **Log Everything:** No model run is valid if it isn't logged to the tracking tool.

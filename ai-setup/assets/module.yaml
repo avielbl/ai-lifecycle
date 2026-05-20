@@ -77,12 +77,10 @@ directories:
   - "{ai_output_folder}/eda"
   - "{ai_output_folder}/architecture"
   - "{ai_output_folder}/design"
-  - "{ai_output_folder}/techspecs"
   - "{ai_output_folder}/experiments"
   - "{ai_output_folder}/implementation"
   - "{ai_output_folder}/advisory"
   - "{ai_output_folder}/revisions"
-  - "{ai_output_folder}/knowledge"
 
 post_install_notes: |
   Next steps:
