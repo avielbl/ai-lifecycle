@@ -44,6 +44,6 @@ Produce `{output_folder}/revisions/Revision_Log.md` (or append to it if it exist
 
 ## Phase 5: Handoff
 Point to the Revision Log. Then based on thesis status:
-- **Hypothesis refined** (not rejected): return to **TECHSPEC** (`ai-agent-developer`, capability: `techspec`) for the next experiment cycle with the updated hypothesis.
+- **Hypothesis refined** (not rejected): return to **TECHSPEC** (`ai-agent-mlops-engineer`, capability: `techspec`) for the next experiment cycle with the updated hypothesis.
 - **Hypothesis rejected**: return to **Architecture** (`ai-agent-researcher`, capability: `architecture`) to reconsider the paradigm or model family.
-- **Hypothesis confirmed** (success criteria met): proceed to **Inference Pipeline** (`ai-agent-developer`, capability: `inference-pipeline`) for production deployment.
+- **Hypothesis confirmed** (success criteria met): proceed to **Inference Pipeline** (`ai-agent-mlops-engineer`, capability: `inference-pipeline`) for production deployment.

@@ -6,7 +6,7 @@ Creates the full folder structure, writes .clinerules / CLAUDE.md,
 initialises a uv project, and adds a .gitignore.
 
 No packages are installed. Dependency selection happens in ai-agent-domain-expert ideation
-(Stage 1.5); installations run in ai-agent-developer infra (Stage 5) via `uv sync`.
+(Stage 1.5); installations run in ai-agent-mlops-engineer infra (Stage 5) via `uv sync`.
 """
 
 import os
@@ -36,23 +36,23 @@ CLINERULES_TEMPLATE = """\
 - Stage 2   — EDA:                    .claude/skills/ai-lifecycle/ai-agent-data-engineer/SKILL.md   (capability: eda)
 - Stage 3   — Architecture:           .claude/skills/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: architecture)
 - Stage 4   — Detailed Design:        .claude/skills/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: detailed-design)
-- Stage 4.5 — TECHSPEC:               .claude/skills/ai-lifecycle/ai-agent-developer/SKILL.md       (capability: techspec)
-- Stage 5   — Infrastructure:         .claude/skills/ai-lifecycle/ai-agent-developer/SKILL.md       (capability: infra)
-- Stage 6   — Experiment:             .claude/skills/ai-lifecycle/ai-agent-engineer/SKILL.md        (capability: experiment)
-- Stage 6.5 — Results:                .claude/skills/ai-lifecycle/ai-agent-engineer/SKILL.md        (capability: results)
+- Stage 4.5 — TECHSPEC:               .claude/skills/ai-lifecycle/ai-agent-mlops-engineer/SKILL.md       (capability: techspec)
+- Stage 5   — Infrastructure:         .claude/skills/ai-lifecycle/ai-agent-mlops-engineer/SKILL.md       (capability: infra)
+- Stage 6   — Experiment:             .claude/skills/ai-lifecycle/ai-agent-experimentation-engineer/SKILL.md        (capability: experiment)
+- Stage 6.5 — Results:                .claude/skills/ai-lifecycle/ai-agent-experimentation-engineer/SKILL.md        (capability: results)
 - Stage 7   — Analysis:               .claude/skills/ai-lifecycle/ai-agent-researcher/SKILL.md      (capability: analysis)
-- Stage 7.5 — HPO (conditional):      .claude/skills/ai-lifecycle/ai-agent-engineer/SKILL.md        (capability: hparam)
+- Stage 7.5 — HPO (conditional):      .claude/skills/ai-lifecycle/ai-agent-experimentation-engineer/SKILL.md        (capability: hparam)
 - Stage 8   — Revision:               .claude/skills/ai-lifecycle/ai-agent-domain-expert/SKILL.md   (capability: revision-audit)
 
 ## Universal Tools (invoke anytime)
 
 - Advise (surface past findings):     .claude/skills/ai-lifecycle/ai-agent-domain-expert/SKILL.md   (capability: advise)
-- Inference pipeline:                 .claude/skills/ai-lifecycle/ai-agent-developer/SKILL.md        (capability: inference-pipeline)
+- Inference pipeline:                 .claude/skills/ai-lifecycle/ai-agent-mlops-engineer/SKILL.md        (capability: inference-pipeline)
 
 ## Experiment Tracking
 
 Chosen tool: {tracking_tool}
-Configure in ai-agent-developer infra (Stage 5).
+Configure in ai-agent-mlops-engineer infra (Stage 5).
 
 ## LLM Engine
 
@@ -61,7 +61,7 @@ For scripts calling an LLM programmatically: configs/llm_config.yaml + scripts/l
 
 ## Key Principles
 
-- No packages installed until ai-agent-developer infra (Stage 5) runs `uv sync`.
+- No packages installed until ai-agent-mlops-engineer infra (Stage 5) runs `uv sync`.
 - Package requirements are written to pyproject.toml in ai-agent-domain-expert ideation (Stage 1.5).
 - TECHSPECs are contracts — never modify after training starts.
 """
@@ -80,15 +80,15 @@ CLAUDE_MD_TEMPLATE = """\
 | /ai-agent-domain-expert | 1, 1.5, 8, anytime | Domain Expert — domain research, problem framing, PRD, advise, revision audit |
 | /ai-agent-data-engineer | 2 | Data Engineer — EDA, baseline, data quality |
 | /ai-agent-researcher | 3, 4, 7 | AI Researcher — architecture, detailed design, analysis |
-| /ai-agent-developer | 4.5, 5, anytime | AI Developer — TECHSPEC, infrastructure, inference pipeline |
-| /ai-agent-engineer | 6, 6.5, 7.5 | AI Engineer — experiments, results, HPO |
+| /ai-agent-mlops-engineer | 4.5, 5, anytime | ML/MLOps Engineer — TECHSPEC, infrastructure, inference pipeline |
+| /ai-agent-experimentation-engineer | 6, 6.5, 7.5 | Experimentation Engineer — experiments, results, HPO |
 
 After invoking an agent, tell it which capability to activate (e.g. "run domain-research", "run architecture").
 
 ## Experiment Tracking
 
 Chosen tool: {tracking_tool}
-Configure in ai-agent-developer infra (Stage 5).
+Configure in ai-agent-mlops-engineer infra (Stage 5).
 
 ## LLM Engine
 
@@ -108,7 +108,7 @@ This project uses **uv**. Do NOT use pip or python -m venv.
 - Run scripts: `uv run python scripts/...`
 
 Packages are added to pyproject.toml in ai-agent-domain-expert ideation (Stage 1.5).
-The first `uv sync` runs in ai-agent-developer infra (Stage 5) as part of the smoke test.
+The first `uv sync` runs in ai-agent-mlops-engineer infra (Stage 5) as part of the smoke test.
 """
 
 # ---------------------------------------------------------------------------
@@ -176,7 +176,7 @@ description = "Generated by ai-setup. Add description after ai-agent-domain-expe
 requires-python = ">={python_version}"
 dependencies = []
 # Dependencies are added in ai-agent-domain-expert ideation (Stage 1.5) and installed
-# in ai-agent-developer infra (Stage 5) via: uv sync
+# in ai-agent-mlops-engineer infra (Stage 5) via: uv sync
 
 [project.optional-dependencies]
 dev = [
@@ -499,7 +499,7 @@ Next steps:
   2. Start Stage 1 — Domain Expert researches the problem space:
 {stage1_instruction}
      The agent determines required packages and writes them to pyproject.toml.
-  3. Stage 5 (ai-agent-developer infra) runs: uv sync  <- FIRST package installation.
+  3. Stage 5 (ai-agent-mlops-engineer infra) runs: uv sync  <- FIRST package installation.
 
 Do NOT run `uv sync` or `uv add` before Stage 5.
 """)

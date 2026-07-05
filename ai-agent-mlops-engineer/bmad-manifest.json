@@ -1,5 +1,5 @@
 {
-  "name": "ai-agent-developer",
+  "name": "ai-agent-mlops-engineer",
   "description": "Senior AI/ML Engineer and MLOps Specialist. Owns the infrastructure layer: data pipelines, training/fit loops, eval harness, TECHSPEC contracts, and production inference.",
   "module-code": "ai",
   "has-memory": true,

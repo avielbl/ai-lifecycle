@@ -1,12 +1,12 @@
 {
   "name": "ai-lifecycle",
-  "version": "1.0.0",
+  "version": "4.1.0",
   "description": "> A structured agentic team for the full AI/ML project lifecycle — a [BMad Method](https://github.com/bmad-code-org/bmad-method) module.",
   "files": [
     "ai-agent-data-engineer",
-    "ai-agent-developer",
+    "ai-agent-mlops-engineer",
     "ai-agent-domain-expert",
-    "ai-agent-engineer",
+    "ai-agent-experimentation-engineer",
     "ai-agent-researcher",
     "ai-setup",
     "scripts",
