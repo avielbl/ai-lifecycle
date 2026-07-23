@@ -25,9 +25,9 @@
       },
       "skills": [
         "./ai-agent-data-engineer",
-        "./ai-agent-mlops-engineer",
         "./ai-agent-domain-expert",
         "./ai-agent-experimentation-engineer",
+        "./ai-agent-mlops-engineer",
         "./ai-agent-researcher",
         "./ai-setup"
       ]
