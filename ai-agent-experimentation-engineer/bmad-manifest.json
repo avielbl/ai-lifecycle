@@ -1,5 +1,5 @@
 {
-  "name": "ai-agent-engineer",
+  "name": "ai-agent-experimentation-engineer",
   "description": "Training Specialist. Executes experiments and hyperparameter optimization against TECHSPEC contracts. Works across paradigms: epoch-based DL, boosting rounds, fit/predict loops.",
   "module-code": "ai",
   "has-memory": false,

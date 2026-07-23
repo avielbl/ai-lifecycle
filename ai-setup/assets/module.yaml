@@ -1,7 +1,7 @@
 code: ai
 name: AI Lifecycle
 description: Agentic team for the full AI/ML project lifecycle — from domain research through production inference. Covers deep learning, classical ML, gradient boosting, transformers, and beyond.
-version: 4.0.0
+version: 4.1.0
 
 module_greeting: |
   AI Lifecycle is installed! Your agentic ML team is ready.
@@ -24,13 +24,13 @@ agents:
     name: Maya
     title: AI Researcher
     description: In charge of architectural decisions, experiment result analysis, and team leadership.
-  - code: developer
+  - code: mlops-engineer
     name: Kai
-    title: AI Developer
+    title: ML/MLOps Engineer
     description: Writes pre-experiment contracts, builds training/fit pipelines and eval harnesses, and creates production inference pipelines.
-  - code: engineer
+  - code: experimentation-engineer
     name: Jordan
-    title: AI Engineer
+    title: Experimentation Engineer
     description: Executes model training runs and HPO across any paradigm — epoch-based DL, boosting rounds, or fit/predict loops.
 
 variables:
