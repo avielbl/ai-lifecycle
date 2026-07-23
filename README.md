@@ -287,6 +287,7 @@ For offline environments, use the local path instead of the GitHub URL.
 
 ## Versioning
 
+- `v4.1.0` — Renamed MLOps Developer and Experimentation Engineer personas for role clarity. Restructured experiment output into per-experiment folders with dedicated `results` and `decisions` capabilities; merged retrospective into analysis and dropped numeric prefixes. Added `package.json` for npm/registry distribution with environment-specific install examples (GitHub, Artifactory, local path). Repaired broken file references across skills. Updated docs to use BMad installer instead of git submodules.
 - `v4.0.0` — Renamed from `bmad-dl-lifecycle` to `ai-lifecycle`. Module code `ai`. Broadened from deep learning to all AI/ML paradigms. Agents renamed to `ai-agent-*` with assigned personas (Alex, Sam, Maya, Kai, Jordan). `ai-setup` skill absorbs scaffold and module configuration.
 - `v3.0.0` — Agent-based architecture. Five domain specialists replace per-skill approach. Memory added to Domain Expert, Researcher, Developer.
 - `v2.1.0` — Scaffold (Stage 0): automated project scaffolding with uv.
