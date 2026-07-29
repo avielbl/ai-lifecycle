@@ -81,7 +81,7 @@ def load_numeric_csv(path: Path) -> tuple["np.ndarray", list[str]]:
 
     columns = list(rows[0].keys())
     # Exclude likely label columns
-    label_cols = {c for c in columns if c.lower() in ("label", "class", "target", "y", "category")}
+    label_cols = {c for c in columns if c.lower() in ("label", "class", "target", "category")}
 
     numeric_cols: list[str] = []
     for col in columns:
