@@ -6,9 +6,10 @@ Locks the experiment contract: parameters, compute budget, dataset choices, and 
 ## Operating Instructions
 1. **Input:** Read architecture doc and detailed design.
 2. **Create experiment folder:** `{ai_output_folder}/experiments/{ID}/` (e.g., `docs/experiments/E1/`).
-3. **Contract writing:** Define hypothesis, dataset substitutions, preprocessing pipelines, model architectures with param counts, training spec, fine-tuning arms, acceptance gates (Tier 1/2/3), compute placement, execution plan, and risks.
+3. **Contract writing:** Define hypothesis, dataset substitutions, preprocessing pipelines, model architectures with param counts, training spec, fine-tuning arms, acceptance gates (Tier 1/2/3), compute placement, execution plan, and risks. **Ask, don't guess:** for contested choices (tier thresholds, dataset substitutions, compute placement), present the options with a brief recommendation and let the user decide.
 4. **Sign-off:** Request approval from the AI Researcher.
 5. **Output:** `{ai_output_folder}/experiments/{ID}/TECHSPEC.md`
+6. **Review Gate:** Stop. Summarize the contract (hypothesis, arms, gates, compute), ask the user to review and comment, and wait for explicit approval before any infra or experiment work begins.
 
 ## Template Sections
 - Experiment Identity (ID, title, branch, hypothesis, owner)

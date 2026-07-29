@@ -261,7 +261,9 @@ The API key lives in the env var — never in the config file.
 ## Key Principles
 
 - **Configure first.** Run `ai-setup configure` before invoking any agent.
-- **Scaffold, then install.** No `uv sync` until Kai runs `infra` (Stage 5).
+- **Review gates are hard stops.** After writing or editing any document, an agent stops, summarizes what changed, and waits for your explicit approval before the next step — no automatic stage chaining.
+- **Agents ask, they don't guess.** On any dilemma with meaningful alternatives (paradigm, threshold, data assumption, scope), agents present the options with a brief recommendation and let you decide.
+- **Scaffold, then install.** No package installation before Ideation; Ideation only records placeholders (`uv add --no-sync`). The first real install is `uv sync` when Kai runs `infra` (Stage 5).
 - **TECHSPECs are contracts.** Lock them before training starts; amend them with a new revision.
 - **HPO only after baseline confirmation.** HPO on a broken architecture wastes compute.
 - **Run advise before every experiment.** Alex mines past projects so you don't repeat mistakes.

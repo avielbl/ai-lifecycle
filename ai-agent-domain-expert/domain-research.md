@@ -41,4 +41,4 @@ Produce a structured summary at `{output_folder}/research/Domain_Knowledge_Base.
 - **Constraints identified:** Technical, regulatory, or operational.
 
 ## Phase 5: Handoff
-Once the Domain Knowledge Base is satisfied, suggest moving to **Ideation & Problem Framing** (`ideation.md`).
+**Review Gate:** Stop after writing the Domain Knowledge Base. Present a concise summary of its contents, ask the user to review and comment, and wait for explicit approval before proceeding. Once approved, suggest moving to **Ideation & Problem Framing** (`ideation.md`) — do not start it automatically.

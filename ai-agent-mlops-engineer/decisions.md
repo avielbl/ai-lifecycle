@@ -9,6 +9,7 @@ Captures decisions taken, rejected alternatives, and implementation know-how dur
 3. **Include rejected alternatives:** Explain why they were rejected — this is as valuable as what was chosen.
 4. **Deferred questions:** Maintain a section of open questions punted to the next experiment.
 5. **Output:** `{ai_output_folder}/experiments/{ID}/DECISIONS.md`
+6. **Review Gate:** Stop after adding entries. Summarize the new entries, ask the user to review and comment, and wait for explicit approval before resuming other work.
 
 ## Template Sections
 - Numbered decision entries (each with Context, Finding, Decision, Date)
