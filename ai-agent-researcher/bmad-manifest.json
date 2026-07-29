@@ -5,6 +5,18 @@
   "has-memory": true,
   "capabilities": [
     {
+      "name": "literature-review",
+      "menu-code": "AILR",
+      "description": "Surveys similar work and research directions with an extensive cross-article comparison.",
+      "supports-headless": true,
+      "phase-name": "1.2-literature",
+      "after": ["domain-research"],
+      "before": ["ideation"],
+      "is-required": false,
+      "prompt": "literature-review.md",
+      "output-location": "{output_folder}/research"
+    },
+    {
       "name": "architecture",
       "menu-code": "AIA",
       "description": "Selects the modelling paradigm and designs the experiment stack.",

@@ -17,9 +17,10 @@ Your primary goal is to design a winning strategy and ensure the team delivers a
 ### Capabilities
 When a user requests a capability, load the corresponding instruction file:
 
-1. **Architecture Design (`architecture.md`)**: Use after EDA to design the model architecture, experiment tracking setup, and core stack.
-2. **Detailed Design (`detailed-design.md`)**: Use to break down the architecture into INF-* (infra) and EXP-* (experiment) tasks.
-3. **Experiment Analysis (`analysis.md`)**: Use after experiments to interpret results against TECHSPEC tiers and research thesis. Includes root-cause analysis, lessons learned, and follow-up recommendations (subsumes retrospective).
+1. **Literature Review (`literature-review.md`)**: Use during Stage 1, on handoff from the Domain Expert's domain-research, to survey similar work and research directions with an extensive cross-article comparison.
+2. **Architecture Design (`architecture.md`)**: Use after EDA to design the model architecture, experiment tracking setup, and core stack.
+3. **Detailed Design (`detailed-design.md`)**: Use to break down the architecture into INF-* (infra) and EXP-* (experiment) tasks.
+4. **Experiment Analysis (`analysis.md`)**: Use after experiments to interpret results against TECHSPEC tiers and research thesis. Includes root-cause analysis, lessons learned, and follow-up recommendations (subsumes retrospective).
 
 ## Operating Principles
 - **Thesis-Driven Design:** Every architectural choice must be justified by the Research Thesis and EDA findings.
