@@ -112,6 +112,10 @@ Ask the user (present all at once):
 - **IDE** — `claude-code` (slash commands), `cline`, `cursor`, or `antigravity`. Default: `claude-code`.
 - **Python version** — Default: `3.11`.
 - **Experiment tracker** — `wandb`, `mlflow`, `clearml`, or `undecided` (can change at Architecture stage). Default: `undecided`.
+- **Data location** — `local`, `s3`, `gcs`, `azure-blob`, or `nfs`, plus an optional URI/path. Default: `local`.
+- **Artifact registry** — `tracker-native`, `s3`, `gcs`, or `local`, plus an optional URI. Default: `tracker-native` if a tracker was chosen, else `local`.
+- **Compute topology** — `same-machine`, `remote-gpu`, or `cloud-managed`. Default: `same-machine`. If `cloud-managed`, also ask the service: `vertex-ai`, `clearml`, or `generic`.
+- **Git remote** — remote URL for `origin`, or `none`. Default: `none`. Never pushed automatically.
 
 If the user passed arguments inline (e.g., `new-project my-fraud-detector --ide claude-code`), map them and skip the questions.
 
@@ -121,22 +125,28 @@ Locate `init_project.py` — it lives at `{skill-install-path}/scripts/init_proj
 
 ```bash
 mkdir -p "{project_dir}"
-cd "{project_dir}" && printf "{ide}\n{tracking_tool}\n{python_version}\nyes\n" | uv run "{init_project_path}" 2>&1
+cd "{project_dir}" && uv run "{init_project_path}" --ide {ide} --tracker {tracker} --python-version {python_version} --data-location {data_location} --artifact-registry {artifact_registry} --compute {compute} --git-remote {git_remote_url_or_none} --yes 2>&1
 ```
+
+Append `--compute-service {vertex-ai|clearml|generic}` when compute is `cloud-managed`, and `--data-uri` / `--artifact-uri` when the user gave URIs. (`--yes` defaults any omitted flag; the script also still supports the legacy interactive stdin flow.)
 
 The script creates:
 - Full directory structure (`data/`, `src/`, `notebooks/`, `configs/`, `docs/`, `models/`, `outputs/`)
 - `.clinerules` or `CLAUDE.md` with agent skill paths (based on IDE)
 - `pyproject.toml` and `.python-version` (uv project)
+- An empty `.venv` via `uv venv` — no packages installed
+- A git repository on `main` (`git init -b main`) with the scaffold committed; `origin` registered if a remote URL was given (never pushed — the push command is printed as a next step)
 - `.gitignore`
 - `configs/llm_config.yaml` (from template using configured LLM provider/model)
+- `configs/project_infra.yaml` — data location, artifact registry, compute topology (read by TECHSPEC Stage 4.5 and infra Stage 5)
+- `docker/Dockerfile.train` + `docker/README.md` — dockerized training templates (image built at Stage 5+, not now)
 - Copies skills to `.claude/skills/` if `ide=claude-code`
 
 **No premature installs:** the scaffold installs **no packages** — `pyproject.toml` starts with no dependencies. Do not run `uv sync`, `uv add`, `pip install`, or equivalent here. Dependencies are recorded as placeholders in Ideation (Stage 1.5, `uv add --no-sync`) and first installed in Stage 5 (`infra`) via `uv sync`.
 
 ### Step 3: Confirm and Hand Off
 
-Report what was created. Then:
+Report what was created — including the venv, git init and remote status (with the `git push -u origin main` command if a remote was set), `configs/project_infra.yaml`, and the `docker/` templates. Then:
 
 > "Your project is scaffolded at `{project_dir}`. Next: run `/ai-agent-domain-expert` and activate `domain-research` to start Stage 1."
 
