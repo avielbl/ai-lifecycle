@@ -1,7 +1,7 @@
 # Capability: Inference & Optimization
 
 ## Overview
-Adapts the model for production constraints and creates robust inference pipelines.
+Adapts the model for production constraints and creates robust inference pipelines. Runs standalone (anytime, after a model is accepted) or as Phase C of the Stage 9 `deployment` capability.
 
 ## Operating Instructions
 1. **Optimization:** Apply quantization, pruning, or ONNX export if required. **Ask, don't guess:** present the optimization options with trade-offs and a brief recommendation, and let the user decide.
