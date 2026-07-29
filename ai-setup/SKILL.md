@@ -57,7 +57,7 @@ Then ask the user only for the remaining values. Show defaults in brackets. Pres
 **Module config** — from `./assets/module.yaml` variables:
 - `ai_output_folder` — where to save lifecycle documents (default: `docs` → `{project-root}/docs`)
 - `ai_llm_provider` — LLM provider for analysis scripts (anthropic / openai-compatible, default: anthropic)
-- `ai_llm_model` — default model name (default: claude-sonnet-4-6)
+- `ai_llm_model` — model name for the chosen provider (no preset default — ask the user; e.g. claude-sonnet-4-6, gpt-4o, llama3.3)
 - `ai_experiment_tracker` — tracking platform (wandb / mlflow / clearml / none, default: none)
 
 On a **fresh install**, ask all four module questions. On an **update**, apply the same skip-if-present logic: only ask module keys missing from the existing `ai` section; keys that already have values are skipped and shown in the confirmation summary.

@@ -51,7 +51,7 @@ Anytime:
 |-------------|-------|
 | [BMad Method](https://github.com/bmad-code-org/bmad-method) | **Required** — provides `/bmad-help` routing and `_bmad/` structure |
 | AI IDE | Claude Code, Antigravity, or VSCode + Cline / Cursor |
-| Claude Sonnet 4.6+ or equivalent | Recommended model for all agents |
+| LLM | Any capable frontier / coding model, selected in your IDE |
 | [uv](https://docs.astral.sh/uv/) | Python package manager — `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 
 ### Install the module
@@ -240,16 +240,18 @@ Set in your IDE — not here. Any model supported by your IDE works.
 
 Some utility scripts call an LLM directly via `scripts/llm_client.py`, configured by `configs/llm_config.yaml` (written by `ai-setup new-project`):
 
+Two provider options are supported — pick whichever fits your setup (exactly one block active):
+
 ```yaml
-# Anthropic / Claude (default)
+# Option A — Anthropic API
 provider: anthropic
-model: claude-sonnet-4-6
+model: <your-model-name>         # e.g. claude-sonnet-4-6
 base_url: ~
 api_key_env: ANTHROPIC_API_KEY
 
-# OpenAI-compatible
+# Option B — OpenAI-compatible API (OpenAI, Ollama, vLLM, Azure, ...)
 # provider: openai-compatible
-# model: gpt-4o
+# model: <your-model-name>       # e.g. gpt-4o, llama3.3
 # base_url: http://localhost:11434/v1
 # api_key_env: OPENAI_API_KEY
 ```

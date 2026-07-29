@@ -45,15 +45,15 @@ variables:
     type: single-select
     options:
       - value: anthropic
-        label: Anthropic (Claude)
+        label: Anthropic API
       - value: openai-compatible
-        label: OpenAI-compatible
+        label: OpenAI-compatible API (OpenAI, Ollama, vLLM, Azure, ...)
     default: anthropic
     user_setting: false
 
   - key: ai_llm_model
-    prompt: Default model name for analysis scripts?
-    default: claude-sonnet-4-6
+    prompt: Model name for analysis scripts? (e.g. claude-sonnet-4-6, gpt-4o, llama3.3)
+    default: ""
     user_setting: false
 
   - key: ai_experiment_tracker

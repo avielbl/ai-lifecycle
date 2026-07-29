@@ -323,10 +323,11 @@ def write_llm_config(root: Path, skill_dir: Path) -> None:
         dest.write_text(
             "# AI Lifecycle LLM config — for scripts/llm_client.py only.\n"
             "# The agent model is set in your IDE settings.\n"
+            "# provider: anthropic | openai-compatible (OpenAI, Ollama, vLLM, Azure, ...)\n"
             "provider: anthropic\n"
-            "model: claude-sonnet-4-6\n"
-            "base_url: ~\n"
-            "api_key_env: ANTHROPIC_API_KEY\n"
+            "model: <your-model-name>  # e.g. claude-sonnet-4-6, gpt-4o, llama3.3\n"
+            "base_url: ~               # null → provider's default endpoint\n"
+            "api_key_env: ANTHROPIC_API_KEY  # or OPENAI_API_KEY etc., matching your provider\n"
             "max_tokens: 8192\n"
             "temperature: 0.0\n",
             encoding='utf-8',

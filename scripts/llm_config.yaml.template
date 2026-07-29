@@ -11,25 +11,28 @@
 #   programmatically via scripts/llm_client.py — for example, auto-summarization,
 #   log interpretation, or any future script that needs an LLM API call.
 #
-# ── Provider options ──────────────────────────────────────────────────────────
+# ── Provider options (equal alternatives — pick one) ─────────────────────────
 #
-#   anthropic          → Claude models via Anthropic API
+#   anthropic          → Anthropic API
 #   openai-compatible  → Any OpenAI-compatible endpoint:
 #                        OpenAI, Ollama, vLLM, Together.ai, Groq, Mistral, Azure, LiteLLM
 #
-# ── Common configurations ─────────────────────────────────────────────────────
-
-# --- Anthropic / Claude (default) ---
+# Exactly one block below must be active (uncommented). Option A is active
+# only as a starting point — swap in Option B if that matches your setup.
+#
+# ── Option A — Anthropic API ──────────────────────────────────────────────────
 provider: anthropic
-model: claude-sonnet-4-6       # or: claude-opus-4-7, claude-haiku-4-5-20251001
-base_url: ~                    # leave null for Anthropic
+model: <your-model-name>       # e.g. claude-sonnet-4-6
+base_url: ~                    # leave null for the provider's default endpoint
 api_key_env: ANTHROPIC_API_KEY # name of the env var holding your API key
 max_tokens: 8192
 temperature: 0.0               # 0.0 = deterministic; recommended for structured doc output
 
+# ── Option B — OpenAI-compatible API ──────────────────────────────────────────
+
 # --- OpenAI ---
 # provider: openai-compatible
-# model: gpt-4o                  # or: gpt-4o-mini, o1, o3-mini
+# model: <your-model-name>       # e.g. gpt-4o, gpt-4o-mini, o3-mini
 # base_url: ~                    # null → uses https://api.openai.com/v1 by default
 # api_key_env: OPENAI_API_KEY
 # max_tokens: 8192
