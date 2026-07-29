@@ -62,7 +62,9 @@ Then ask the user only for the remaining values. Show defaults in brackets. Pres
 
 On a **fresh install**, ask all four module questions. On an **update**, apply the same skip-if-present logic: only ask module keys missing from the existing `ai` section; keys that already have values are skipped and shown in the confirmation summary.
 
-**Net effect:** a project that just ran the BMad installer answers at most the 4 module questions — no core questions are repeated.
+**Memory import (optional, fresh install only):** also ask — "Import memory from a previous project? (path to its `memory/` folder, or none)" [default: none]. This is not a config key; the answer seeds `imports.yaml` in Step 4. In headless mode, default to none.
+
+**Net effect:** a project that just ran the BMad installer answers at most the 4 module questions plus the optional memory-import prompt — no core questions are repeated.
 
 **Post-configure note:** If `ai_experiment_tracker` is not `none`, remind the user that the tracker SDK is installed in Stage 5 (infra) via `uv sync` — no action needed now.
 
@@ -81,6 +83,26 @@ Both scripts output JSON to stdout. If either exits non-zero, surface the error 
 
 After writing config, resolve `{project-root}` to the actual project root and create each path-type config value that does not yet exist (including `ai_output_folder` and its subfolders from `./assets/module.yaml` `directories`). Use `mkdir -p`. Paths in config files keep the literal `{project-root}` token.
 
+**Seed the memory bank** (never overwrite an existing file):
+
+- `{ai_output_folder}/memory/index.md` — header row only:
+
+  ```markdown
+  | id | type | stage | exp | tags | hook |
+  |----|------|-------|-----|------|------|
+  ```
+
+- `{ai_output_folder}/memory/imports.yaml` — template listing read-only external banks. If the user gave a path at the Step 2 memory-import prompt, add it as the first entry (ask for a short `name` and `note`); otherwise leave the list empty:
+
+  ```yaml
+  # Read-only references to other projects' memory banks (never written to).
+  # imports:
+  #   - name: fraud-v1
+  #     path: /path/to/fraud-v1/docs/memory   # absolute or relative; local mount is fine air-gapped
+  #     note: same data source, prior paradigm was XGBoost
+  imports: []
+  ```
+
 ### Step 5: Cleanup Legacy Directories
 
 ```bash
@@ -91,7 +113,7 @@ The script verifies every skill exists at `.claude/skills/` before removing. Mis
 
 ### Step 6: Confirm
 
-Display what was written: config values, user settings, help entries added, fresh install vs update, any legacy cleanup. Core values that were skipped in Step 2 must appear here marked "inherited from BMad install" — if the user replies with a change, update the config accordingly. Then show the `module_greeting` from `./assets/module.yaml`.
+Display what was written: config values, user settings, help entries added, memory bank files seeded (or skipped, if present), fresh install vs update, any legacy cleanup. Core values that were skipped in Step 2 must appear here marked "inherited from BMad install" — if the user replies with a change, update the config accordingly. Then show the `module_greeting` from `./assets/module.yaml`.
 
 Once `user_name` and `communication_language` are known, use them for the rest of the session.
 

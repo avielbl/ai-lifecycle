@@ -270,10 +270,33 @@ The API key lives in the env var — never in the config file.
 - **Scaffold, then install.** No package installation before Ideation; Ideation only records placeholders (`uv add --no-sync`). The first real install is `uv sync` when Kai runs `infra` (Stage 5).
 - **TECHSPECs are contracts.** Lock them before training starts; amend them with a new revision.
 - **HPO only after baseline confirmation.** HPO on a broken architecture wastes compute.
-- **Run advise before every experiment.** Alex mines past projects so you don't repeat mistakes.
+- **Run advise before every experiment.** Alex mines the memory bank — local and imported — so you don't repeat mistakes.
+- **Memory outlives documents.** Every writing stage ends with a Memory Update that distills atomic facts into the project memory bank; agents start from its compact index instead of re-reading whole documents.
 - **Document decisions as you go.** Kai captures rejected alternatives and know-how in DECISIONS.md — don't lose this context.
 - **Fresh context window per agent.** Each agent is specialized — mixing stages in one session degrades quality.
 - **Failed attempts are mandatory.** Infra Log and Analysis documents with no failures documented are incomplete.
+
+---
+
+## Project Memory Bank
+
+Each project accumulates a file-based knowledge bank, created by `ai-setup configure` and shared by all five agents:
+
+```
+{ai_output_folder}/memory/
+├── index.md            # one table row per entry — the ONLY bank file loaded at agent activation
+├── entries/            # one markdown file per atomic fact (bg-*, fnd-*, les-*, res-*, dec-*, evo-*)
+└── imports.yaml        # optional read-only references to other projects' banks
+```
+
+Six entry types: `background`, `finding`, `lesson`, `result`, `decision`, `evolution`. How it works:
+
+- **Read.** On activation an agent loads only `index.md`. Capabilities retrieve the few relevant entries by type/tag (each < 20 lines) and follow `[[entry-id]]` links — never whole upstream documents for background knowledge.
+- **Write.** Each writing capability ends with a mandatory **Memory Update** step that distills new atomic facts into `entries/` and appends one index row each. Capabilities write only their own types (e.g. `analysis` → `lesson` + `result`; `decisions` → `decision`; `revision-audit` → `evolution`).
+- **Append-only.** Entries are never edited or deleted. Only `revision-audit` marks entries superseded (`superseded_by`) and, past ~200 index rows, compacts stale rows into `index-archive.md` — the cross-cycle evolution chain is preserved.
+- **Cross-project reuse.** `imports.yaml` points at previous projects' banks (read-only). `advise` searches local + imported indexes; imported facts that become load-bearing are copied into the local bank (copy-on-use).
+
+Lifecycle documents remain the authoritative long-form record — the bank holds the distilled, reusable facts. Full design: `docs/design/memory-bank.md`.
 
 ---
 
@@ -305,6 +328,7 @@ For offline environments, use the local path instead of the GitHub URL.
 
 ## Versioning
 
+- `v4.2.0` — Project Memory Bank: shared per-project knowledge bank (`memory/index.md` + typed atomic entries with `[[entry-id]]` links) replacing the "if memory is enabled" placeholders. Mandatory Memory Update steps across writing capabilities, `advise` rewritten as an index query, append-only entries with supersede/compaction owned by `revision-audit`, and cross-project imports via `imports.yaml`.
 - `v4.1.0` — Renamed MLOps Developer and Experimentation Engineer personas for role clarity. Restructured experiment output into per-experiment folders with dedicated `results` and `decisions` capabilities; merged retrospective into analysis and dropped numeric prefixes. Added `package.json` for npm/registry distribution with environment-specific install examples (GitHub, Artifactory, local path). Repaired broken file references across skills. Updated docs to use BMad installer instead of git submodules.
 - `v4.0.0` — Renamed from `bmad-dl-lifecycle` to `ai-lifecycle`. Module code `ai`. Broadened from deep learning to all AI/ML paradigms. Agents renamed to `ai-agent-*` with assigned personas (Alex, Sam, Maya, Kai, Jordan). `ai-setup` skill absorbs scaffold and module configuration.
 - `v3.0.0` — Agent-based architecture. Five domain specialists replace per-skill approach. Memory added to Domain Expert, Researcher, Developer.

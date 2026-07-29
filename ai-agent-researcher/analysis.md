@@ -15,6 +15,7 @@ Interprets experiment results against the TECHSPEC acceptance gates, design docu
 9. **Next steps:** Priority-ordered actions for the next experiment. Each should trace to a specific finding. **Ask, don't guess:** when results support more than one interpretation or next step, present the options with a brief recommendation and let the user decide.
 10. **Output:** `{ai_output_folder}/experiments/{ID}/ANALYSIS_{timestamp}.md`
 11. **Review Gate:** Stop. Summarize the verdict and next steps, ask the user to review and comment, and wait for explicit approval before any handoff (revision-audit or hparam).
+12. **Memory Update (mandatory, after approval):** Distill new atomic facts from the Analysis into `{ai_output_folder}/memory/entries/` using the entry template — `lesson` entries (each What Went Wrong generalizable rule) and `result` entries (the verdict and validated parameters) — and append one index row each to `{ai_output_folder}/memory/index.md`. Write only facts a future cycle would need; link back to the source document.
 
 ## Template Sections
 - Verdict (tier table at top — pass/fail with deltas)

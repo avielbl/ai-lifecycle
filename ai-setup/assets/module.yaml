@@ -1,7 +1,7 @@
 code: ai
 name: AI Lifecycle
 description: Agentic team for the full AI/ML project lifecycle — from domain research through production inference. Covers deep learning, classical ML, gradient boosting, transformers, and beyond.
-version: 4.1.0
+version: 4.2.0
 
 module_greeting: |
   AI Lifecycle is installed! Your agentic ML team is ready.
@@ -81,6 +81,8 @@ directories:
   - "{ai_output_folder}/implementation"
   - "{ai_output_folder}/advisory"
   - "{ai_output_folder}/revisions"
+  - "{ai_output_folder}/memory"
+  - "{ai_output_folder}/memory/entries"
 
 post_install_notes: |
   Next steps:

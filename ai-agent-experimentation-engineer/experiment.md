@@ -5,7 +5,7 @@ Executes training runs and logs execution details.
 
 ## Operating Instructions
 1. **Input:** Read `{ai_output_folder}/experiments/{ID}/TECHSPEC.md`.
-2. **Setup:** Ensure data pipelines and tracking tools are initialized.
+2. **Setup:** Ensure data pipelines and tracking tools are initialized. **Memory retrieval:** scan the memory index for `lesson` entries whose tags match the tracker or tooling in use, and read the matching entry files — known execution pitfalls prevent wasted runs. (This capability reads the bank only; raw run data stays in the experiment folder.)
 3. **Run:** Execute training scripts per TECHSPEC execution plan. **Ask, don't guess:** if the TECHSPEC is ambiguous or a run must deviate from it, stop and ask the user — never improvise parameters.
 4. **Log:** Create `{ai_output_folder}/experiments/{ID}/RUN_{timestamp}.md` with:
    - Per-arm tables: script command, tracker task ID, model summary, total params (pretrained vs random), best metric, convergence status, wall-clock time

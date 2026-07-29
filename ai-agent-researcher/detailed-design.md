@@ -4,7 +4,7 @@
 Acts as a Tech Lead to break down the approved architecture into executable tasks.
 
 ## Operating Instructions
-1. **Input:** Read `docs/architecture/Architecture.md`.
+1. **Input:** Read `docs/architecture/Architecture.md`. **Memory retrieval:** scan the memory index for `decision` and `lesson` entries whose tags match the stack or tasks at hand, and read the matching entry files — known workarounds and rejected alternatives shape the task breakdown. (This capability reads the bank only; it writes no entries.)
 2. **Task Generation:**
    - `INF-*`: Infrastructure tasks (data pipeline, training loop, tracking setup).
    - `EXP-*`: Experiment tasks (specific runs, hyperparameter tests).

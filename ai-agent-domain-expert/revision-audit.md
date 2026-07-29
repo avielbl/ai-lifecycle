@@ -47,6 +47,10 @@ Produce `{output_folder}/revisions/Revision_Log.md` (or append to it if it exist
 ## Phase 5: Handoff
 **Review Gate:** Stop after writing the amendments and Revision Log. Present a concise summary of every change made, ask the user to review and comment, and wait for explicit approval before recommending the next step — never start it automatically.
 
+**Memory Update (mandatory, after approval):** Distill new atomic facts from the Revision Log into `{ai_output_folder}/memory/entries/` using the entry template — `evolution` entries (why each upstream document changed; the cross-cycle reasoning chain) — and append one index row each to `{ai_output_folder}/memory/index.md`. Write only facts a future cycle would need; link back to the source document. In addition, you are the **only** capability with supersede and compaction rights:
+- **Supersede contradicted entries:** for each existing bank entry this cycle's evidence contradicts, write the replacement entry, then set the old entry's frontmatter to `status: superseded` and `superseded_by: <new-id>` (never rewrite its body or delete it), and strike through its hook in `index.md` (`~~hook~~`).
+- **Compaction:** if `index.md` exceeds ~200 rows, move superseded/stale rows into `{ai_output_folder}/memory/index-archive.md` (searchable on demand, never loaded at activation). Entry files are never deleted.
+
 Point to the Revision Log. Then based on thesis status:
 - **Hypothesis refined** (not rejected): return to **TECHSPEC** (`ai-agent-mlops-engineer`, capability: `techspec`) for the next experiment cycle with the updated hypothesis.
 - **Hypothesis rejected**: return to **Architecture** (`ai-agent-researcher`, capability: `architecture`) to reconsider the paradigm or model family.

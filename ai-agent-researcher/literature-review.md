@@ -29,6 +29,7 @@ Surveys potential similar work and research directions for the problem framed by
 6. **Ask, don't guess:** Present the ranked directions and your recommendation to the user — the user decides which direction(s) carry forward. Never silently commit to a direction.
 7. **Output:** Write `{ai_output_folder}/research/Literature_Review.md`.
 8. **Review Gate:** Stop after writing the document. Summarize the findings and recommendation, then wait for explicit user approval before handing back to Alex (domain-expert) to complete the Domain Knowledge Base and proceed to `ideation`.
+9. **Memory Update (mandatory, after approval):** Distill new atomic facts from the Literature Review into `{ai_output_folder}/memory/entries/` using the entry template — `finding` entries (papers, prior art, benchmark results with their citation) — and append one index row each to `{ai_output_folder}/memory/index.md`. Write only facts a future cycle would need; link back to the source document.
 
 ## Output Template
 - Scope and Search Strategy (mode used, queries or drop folder contents)

@@ -11,7 +11,7 @@ The stage produces **two artifacts**:
 > **No project installs at this stage.** EDA is Stage 2 — the first `uv sync` happens in Infrastructure (Stage 5). Run all Python tooling through ephemeral environments (`uv run --with <pkg> ...` or `uvx`). Never run `uv add`, `uv sync`, or `pip install` here.
 
 ## Operating Instructions
-1. **Read the Research Thesis first:** Locate and read `docs/Research_Thesis.md`. Understand the research question framed by the Domain Expert.
+1. **Read the Research Thesis first:** Locate and read `docs/Research_Thesis.md`. Understand the research question framed by the Domain Expert. **Memory retrieval:** scan the memory index for `background` entries whose tags match this dataset/domain, and read the matching entry files — known data constraints inform the analysis.
 2. **Locate the data:** If not already found, ask for the data path and format.
 3. **Execute EDA Suite:** Run the scripts in `scripts/` via ephemeral environments:
    - `eda_analyzer.py`: Analyze distributions and splits — `uv run --with numpy --with pillow python scripts/eda_analyzer.py <data_path>`
@@ -56,6 +56,7 @@ The stage produces **two artifacts**:
    Then verify: no cell errors, plots rendered (histograms, correlation heatmap, class balance bar chart, clustering projection), tables populated.
 8. **Review Gate:** STOP after writing both artifacts. Present a summary of findings and wait for the user's approval. The gate covers **both** the markdown report and the executed notebook — do not proceed until both are approved.
 9. **Update Thesis:** After approval, update Section IV of `docs/Research_Thesis.md` with the findings.
+10. **Memory Update (mandatory, after approval):** Distill new atomic facts from the EDA Report into `{ai_output_folder}/memory/entries/` using the entry template — `background` entries (data-quality facts, split/leakage constraints, and the baseline performance floor) — and append one index row each to `{ai_output_folder}/memory/index.md`. Write only facts a future cycle would need; link back to the source document.
 
 If a dependency is missing from an ephemeral run, flag it to the user — never install into the project (the first installation is Stage 5, `infra`).
 
