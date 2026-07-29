@@ -112,6 +112,18 @@ Or headless with defaults:
 /ai-setup configure --headless
 ```
 
+Core settings (user name, languages, output folder) collected by `npx bmad-method install` are never re-asked — `configure` only prompts for module keys that are still missing.
+
+#### Why agents run resolve_config on activation
+
+BMad core resolves configuration at **runtime** (every agent activation runs `resolve_config.py` to merge `config.yaml`, `config.user.yaml`, and module defaults) rather than baking values in at install time, because:
+
+- `config.user.yaml` is per-user and gitignored — each collaborator has different values, so nothing user-specific can be frozen into shared files.
+- `{project-root}` differs per clone/machine, so absolute paths can only be resolved where the agent actually runs.
+- Config can change between sessions (edits, module updates); resolving on activation always picks up the current values.
+
+Agents resolve once at activation and reuse those values for the whole session.
+
 ### Scaffold a new project (optional)
 
 For brand-new projects, scaffold the full directory structure, IDE config, and uv project:

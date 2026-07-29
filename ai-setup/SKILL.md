@@ -46,17 +46,23 @@ If the user provides arguments (e.g., `accept all defaults`, `--headless`, or in
 
 ### Step 2: Collect Configuration
 
-Ask the user for values. Show defaults in brackets. Present all values together so the user can respond once with only the values they want to change. Never tell the user to "press enter" or "leave blank".
+**Before asking anything**, read `{project-root}/_bmad/config.yaml` and `{project-root}/_bmad/config.user.yaml` (if they exist). Build the question list by **skipping every question whose config key already has a value** — never re-ask a key that is already set.
+
+Then ask the user only for the remaining values. Show defaults in brackets. Present all values together so the user can respond once with only the values they want to change. Never tell the user to "press enter" or "leave blank".
 
 **Default priority** (highest wins): existing config values > legacy config values > `./assets/module.yaml` defaults.
 
-**Core config** (only if no core keys exist yet): `user_name` (default: BMad), `communication_language` and `document_output_language` (default: English — ask as a single question), `output_folder` (default: `{project-root}/_bmad-output`). `user_name` and `communication_language` go to `config.user.yaml`; the rest to `config.yaml`.
+**Core config** — installer-owned; never re-ask keys that have values. The BMad installer (`npx bmad-method install`) collects `user_name`, `communication_language`, `document_output_language`, and `output_folder` before this skill ever runs. If a core key already has a value, do not ask for it — display it in the Step 6 confirmation summary marked "inherited from BMad install", where the user can still override it by replying. Ask only for core keys that are missing entirely (e.g., the installer never ran): `user_name` (default: BMad), `communication_language` and `document_output_language` (default: English — ask as a single question), `output_folder` (default: `{project-root}/_bmad-output`). `user_name` and `communication_language` go to `config.user.yaml`; the rest to `config.yaml`.
 
 **Module config** — from `./assets/module.yaml` variables:
 - `ai_output_folder` — where to save lifecycle documents (default: `docs` → `{project-root}/docs`)
 - `ai_llm_provider` — LLM provider for analysis scripts (anthropic / openai-compatible, default: anthropic)
 - `ai_llm_model` — default model name (default: claude-sonnet-4-6)
 - `ai_experiment_tracker` — tracking platform (wandb / mlflow / clearml / none, default: none)
+
+On a **fresh install**, ask all four module questions. On an **update**, apply the same skip-if-present logic: only ask module keys missing from the existing `ai` section; keys that already have values are skipped and shown in the confirmation summary.
+
+**Net effect:** a project that just ran the BMad installer answers at most the 4 module questions — no core questions are repeated.
 
 **Post-configure note:** If `ai_experiment_tracker` is not `none`, remind the user that the tracker SDK is installed in Stage 5 (infra) via `uv sync` — no action needed now.
 
@@ -85,9 +91,11 @@ The script verifies every skill exists at `.claude/skills/` before removing. Mis
 
 ### Step 6: Confirm
 
-Display what was written: config values, user settings, help entries added, fresh install vs update, any legacy cleanup. Then show the `module_greeting` from `./assets/module.yaml`.
+Display what was written: config values, user settings, help entries added, fresh install vs update, any legacy cleanup. Core values that were skipped in Step 2 must appear here marked "inherited from BMad install" — if the user replies with a change, update the config accordingly. Then show the `module_greeting` from `./assets/module.yaml`.
 
 Once `user_name` and `communication_language` are known, use them for the rest of the session.
+
+> **Note:** BMad core runs `resolve_config.py` on every agent activation to merge these config layers at runtime (see "Why agents run resolve_config on activation" in the README). Agents inherit that resolved config — capabilities should NOT re-read the `_bmad` config files if the agent already resolved them this session.
 
 ---
 
