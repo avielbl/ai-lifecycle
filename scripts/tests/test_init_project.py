@@ -1,5 +1,7 @@
 """Unit tests for init_project.py"""
 
+import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -9,6 +11,11 @@ import pytest
 # Make the scripts directory importable
 sys.path.insert(0, str(Path(__file__).parent.parent))
 import init_project as ip
+
+SCRIPT = Path(__file__).parent.parent / "init_project.py"
+
+GIT_AVAILABLE = shutil.which("git") is not None
+UV_AVAILABLE = shutil.which("uv") is not None
 
 
 @pytest.fixture()
@@ -127,3 +134,258 @@ def test_write_python_version(tmp_root):
     pv = tmp_root / ".python-version"
     assert pv.exists()
     assert pv.read_text().strip() == "3.11"
+
+
+# ---------------------------------------------------------------------------
+# CLI flag parsing
+# ---------------------------------------------------------------------------
+
+def test_parse_args_all_flags():
+    args = ip.parse_args([
+        "--ide", "claude-code",
+        "--tracker", "mlflow",
+        "--python-version", "3.12",
+        "--data-location", "s3",
+        "--data-uri", "s3://bucket/data",
+        "--artifact-registry", "gcs",
+        "--artifact-uri", "gs://bucket/artifacts",
+        "--compute", "cloud-managed",
+        "--compute-service", "vertex-ai",
+        "--git-remote", "git@github.com:org/repo.git",
+        "--yes",
+    ])
+    assert args.ide == "claude-code"
+    assert args.tracker == "mlflow"
+    assert args.python_version == "3.12"
+    assert args.data_location == "s3"
+    assert args.data_uri == "s3://bucket/data"
+    assert args.artifact_registry == "gcs"
+    assert args.artifact_uri == "gs://bucket/artifacts"
+    assert args.compute == "cloud-managed"
+    assert args.compute_service == "vertex-ai"
+    assert args.git_remote == "git@github.com:org/repo.git"
+    assert args.yes is True
+
+
+def test_parse_args_defaults_to_none():
+    args = ip.parse_args([])
+    assert args.ide is None
+    assert args.data_location is None
+    assert args.compute is None
+    assert args.yes is False
+
+
+def test_parse_args_rejects_invalid_choice():
+    with pytest.raises(SystemExit):
+        ip.parse_args(["--compute", "quantum"])
+
+
+def test_resolve_prefers_flag_over_default():
+    assert ip._resolve("s3", True, "Data location", "local") == "s3"
+
+
+def test_resolve_uses_default_with_yes():
+    assert ip._resolve(None, True, "Data location", "local") == "local"
+
+
+def test_ask_returns_default_on_eof(monkeypatch):
+    def raise_eof(_prompt):
+        raise EOFError
+    monkeypatch.setattr("builtins.input", raise_eof)
+    # Must NOT exit — old printf pipes exhaust stdin before the new questions
+    assert ip._ask("Data location", "local", choices=["local", "s3"]) == "local"
+
+
+# ---------------------------------------------------------------------------
+# configs/project_infra.yaml
+# ---------------------------------------------------------------------------
+
+def test_write_infra_config_defaults(tmp_root):
+    yaml = pytest.importorskip("yaml")
+    (tmp_root / "configs").mkdir()
+
+    ip.write_infra_config(tmp_root, "local", "", "local", "", "same-machine", None)
+
+    dest = tmp_root / "configs" / "project_infra.yaml"
+    assert dest.exists()
+    content = dest.read_text()
+    assert "TECHSPEC (Stage 4.5)" in content
+    assert "infra (Stage 5)" in content
+
+    data = yaml.safe_load(content)
+    assert data["data"]["location"] == "local"
+    assert data["data"]["uri"] is None
+    assert data["artifacts"]["registry"] == "local"
+    assert data["artifacts"]["uri"] is None
+    assert data["compute"]["topology"] == "same-machine"
+    assert data["compute"]["service"] is None
+
+
+def test_write_infra_config_cloud_managed(tmp_root):
+    yaml = pytest.importorskip("yaml")
+    (tmp_root / "configs").mkdir()
+
+    ip.write_infra_config(
+        tmp_root, "s3", "s3://bucket/data", "tracker-native", "",
+        "cloud-managed", "vertex-ai",
+    )
+
+    data = yaml.safe_load((tmp_root / "configs" / "project_infra.yaml").read_text())
+    assert data["data"]["location"] == "s3"
+    assert data["data"]["uri"] == "s3://bucket/data"
+    assert data["artifacts"]["registry"] == "tracker-native"
+    assert data["compute"]["topology"] == "cloud-managed"
+    assert data["compute"]["service"] == "vertex-ai"
+
+
+def test_write_infra_config_does_not_overwrite(tmp_root):
+    (tmp_root / "configs").mkdir()
+    existing = tmp_root / "configs" / "project_infra.yaml"
+    existing.write_text("# custom")
+
+    ip.write_infra_config(tmp_root, "gcs", "", "gcs", "", "remote-gpu", None)
+
+    assert existing.read_text() == "# custom"
+
+
+# ---------------------------------------------------------------------------
+# docker/ templates
+# ---------------------------------------------------------------------------
+
+def test_write_docker_templates(tmp_root):
+    ip.write_docker_templates(tmp_root, "test_proj", "3.11", "cloud-managed", "clearml")
+
+    dockerfile = tmp_root / "docker" / "Dockerfile.train"
+    readme = tmp_root / "docker" / "README.md"
+    assert dockerfile.exists()
+    assert readme.exists()
+
+    df = dockerfile.read_text()
+    assert "FROM python:3.11-slim" in df
+    assert "uv sync --frozen" in df
+    assert "ENTRYPOINT" in df
+    assert "nvidia/cuda" in df  # CUDA note in comments
+
+    rd = readme.read_text()
+    assert "Vertex AI" in rd
+    assert "ClearML" in rd
+    assert "docker run" in rd
+    # The chosen service section is emphasized
+    assert "## ClearML Agent queues  <- configured target" in rd
+
+
+def test_write_docker_templates_default_marks_generic(tmp_root):
+    ip.write_docker_templates(tmp_root, "test_proj", "3.12", "same-machine", None)
+
+    rd = (tmp_root / "docker" / "README.md").read_text()
+    assert "## Generic docker run / Kubernetes  <- configured target" in rd
+    df = (tmp_root / "docker" / "Dockerfile.train").read_text()
+    assert "FROM python:3.12-slim" in df
+
+
+def test_write_docker_templates_does_not_overwrite(tmp_root):
+    (tmp_root / "docker").mkdir()
+    existing = tmp_root / "docker" / "Dockerfile.train"
+    existing.write_text("# custom")
+
+    ip.write_docker_templates(tmp_root, "test_proj", "3.11", "same-machine", None)
+
+    assert existing.read_text() == "# custom"
+
+
+# ---------------------------------------------------------------------------
+# git helpers (unit level, real git in a tmp dir)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.skipif(not GIT_AVAILABLE, reason="git not available")
+def test_run_git_init_creates_repo(tmp_root):
+    assert ip.run_git_init(tmp_root) is True
+    assert (tmp_root / ".git").is_dir()
+
+
+@pytest.mark.skipif(not GIT_AVAILABLE, reason="git not available")
+def test_run_git_init_skips_existing_repo(tmp_root):
+    ip.run_git_init(tmp_root)
+    assert ip.run_git_init(tmp_root) is True  # second call skips, still True
+
+
+# ---------------------------------------------------------------------------
+# End-to-end: main() via subprocess in a tmp dir
+# ---------------------------------------------------------------------------
+
+def _git_env():
+    import os
+    env = dict(os.environ)
+    env.update({
+        "GIT_AUTHOR_NAME": "Test", "GIT_AUTHOR_EMAIL": "test@example.com",
+        "GIT_COMMITTER_NAME": "Test", "GIT_COMMITTER_EMAIL": "test@example.com",
+    })
+    return env
+
+
+@pytest.mark.skipif(not GIT_AVAILABLE, reason="git not available")
+def test_main_with_flags_end_to_end(tmp_root):
+    yaml = pytest.importorskip("yaml")
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT),
+         "--ide", "cline", "--tracker", "clearml", "--python-version", "3.11",
+         "--data-location", "gcs", "--data-uri", "gs://bucket/data",
+         "--artifact-registry", "tracker-native",
+         "--compute", "cloud-managed", "--compute-service", "clearml",
+         "--git-remote", "https://example.com/repo.git", "--yes"],
+        cwd=tmp_root, capture_output=True, text=True, timeout=120, env=_git_env(),
+    )
+    assert result.returncode == 0, result.stderr
+
+    # infra config written with the flag values
+    data = yaml.safe_load((tmp_root / "configs" / "project_infra.yaml").read_text())
+    assert data["data"]["location"] == "gcs"
+    assert data["data"]["uri"] == "gs://bucket/data"
+    assert data["artifacts"]["registry"] == "tracker-native"
+    assert data["compute"]["topology"] == "cloud-managed"
+    assert data["compute"]["service"] == "clearml"
+
+    # docker templates exist
+    assert (tmp_root / "docker" / "Dockerfile.train").exists()
+    assert (tmp_root / "docker" / "README.md").exists()
+
+    # git repo initialised with the remote registered, never pushed
+    assert (tmp_root / ".git").is_dir()
+    remotes = subprocess.run(["git", "remote", "get-url", "origin"],
+                             cwd=tmp_root, capture_output=True, text=True)
+    assert remotes.stdout.strip() == "https://example.com/repo.git"
+    log = subprocess.run(["git", "log", "--oneline"],
+                         cwd=tmp_root, capture_output=True, text=True)
+    assert "scaffold AI/ML project structure" in log.stdout
+    assert "git push" in result.stdout  # push offered as next step, not executed
+
+    # venv created (empty) when uv is available; warn-only otherwise
+    if UV_AVAILABLE:
+        assert (tmp_root / ".venv").exists()
+
+
+@pytest.mark.skipif(not GIT_AVAILABLE, reason="git not available")
+def test_main_legacy_stdin_pipe_still_works(tmp_root):
+    """The old printf pipe (ide, tracker, python, yes) must not hang and must
+    fall back to defaults for the new infra questions."""
+    yaml = pytest.importorskip("yaml")
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT)],
+        input="cline\nwandb\n3.11\nyes\n",
+        cwd=tmp_root, capture_output=True, text=True, timeout=120, env=_git_env(),
+    )
+    assert result.returncode == 0, result.stderr
+
+    # Old answers honoured
+    assert (tmp_root / ".clinerules").exists()
+    assert "wandb" in (tmp_root / ".clinerules").read_text()
+
+    # New questions defaulted (tracker chosen -> registry defaults to tracker-native)
+    data = yaml.safe_load((tmp_root / "configs" / "project_infra.yaml").read_text())
+    assert data["data"]["location"] == "local"
+    assert data["artifacts"]["registry"] == "tracker-native"
+    assert data["compute"]["topology"] == "same-machine"
+    assert data["compute"]["service"] is None
+
+    assert (tmp_root / "docker" / "Dockerfile.train").exists()
+    assert (tmp_root / ".git").is_dir()

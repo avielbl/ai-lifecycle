@@ -19,6 +19,7 @@ Locks the experiment contract: parameters, compute budget, dataset choices, and 
 - Fine-Tuning Arms (table: arm, init, architecture, data, task, param counts)
 - Acceptance Gates (Tier 1 mandatory, Tier 2 informational, Tier 3 stretch)
 - Compute (instance, GPU, zone, estimated wall-clock)
+  - Read `configs/project_infra.yaml` for the data location, artifact registry, and compute topology set at scaffold time.
 - Execution Plan (numbered phases)
 - Key Scripts
 - Risks

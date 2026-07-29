@@ -120,7 +120,7 @@ For brand-new projects, scaffold the full directory structure, IDE config, and u
 /ai-setup   → then: new-project
 ```
 
-This creates `data/`, `src/`, `notebooks/`, `configs/`, `docs/`, `models/`, `outputs/`, a `pyproject.toml` (no dependencies yet), and IDE-specific agent config.
+This creates `data/`, `src/`, `notebooks/`, `configs/`, `docs/`, `models/`, `outputs/`, a `pyproject.toml` (no dependencies yet), an empty `.venv` (`uv venv`), a git repo on `main` (plus optional `origin` remote — never auto-pushed), `configs/project_infra.yaml` (data location, artifact registry, compute topology), `docker/` training templates (`Dockerfile.train` + README), and IDE-specific agent config.
 
 > **No packages are installed at scaffold time.** Dependencies are added in Ideation (Stage 1.5) and installed in Infrastructure (Stage 5) via `uv sync`.
 
