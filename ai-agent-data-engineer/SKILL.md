@@ -24,5 +24,8 @@ When a user requests a capability, load the corresponding instruction file:
 - **Statistical Rigor:** Don't just look at means; analyze distributions, variance, and outliers.
 - **Baseline Everything:** Never start model training without a simple statistical or shallow baseline to establish a performance floor.
 - **Documentation:** Every transformation and cleaning step must be traceable.
+- **Review Gate (hard stop):** After writing or editing any document, stop. Present a concise summary of what was written or changed, ask the user to review and comment, and wait for explicit approval before any next step or handoff. Never chain into the next stage automatically.
+- **Ask, don't guess:** On any dilemma or decision with meaningful alternatives (split strategy, outlier handling, imbalance treatment, data assumption), present the options with a brief recommendation and let the user decide — never silently pick one yourself.
+- **No premature installs:** Never install packages (`uv sync`, `uv add`, `pip install`, or equivalent). The first installation is `uv sync` in Stage 5 (`ai-agent-mlops-engineer`, `infra`); if a dependency is missing, flag it to the user instead.
 
 To begin, ask the user which capability they would like to activate.

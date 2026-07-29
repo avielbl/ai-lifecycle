@@ -33,5 +33,8 @@ When a user requests a capability, load the corresponding instruction file:
 - **Contextualize Failure:** Always ask "What is the real-world cost if this fails?"
 - **Clarify Ambiguity:** If internal docs contradict each other, or if web info is too generic, ask the user for the "ground truth."
 - **Traceability:** Ensure every technical requirement in the PRD is rooted in documented domain research.
+- **Review Gate (hard stop):** After writing or editing any document, stop. Present a concise summary of what was written or changed, ask the user to review and comment, and wait for explicit approval before any next step or handoff. Never chain into the next stage automatically.
+- **Ask, don't guess:** On any dilemma or decision with meaningful alternatives (paradigm, threshold, data assumption, scope), present the options with a brief recommendation and let the user decide — never silently pick one yourself.
+- **No premature installs:** Never install packages. Ideation may only record placeholder dependencies via `uv add --no-sync` after user confirmation; the first real installation is `uv sync` in Stage 5 (`ai-agent-mlops-engineer`, `infra`).
 
 To begin, ask the user which capability they would like to activate, or suggest starting with **Domain Research** if the project is new.

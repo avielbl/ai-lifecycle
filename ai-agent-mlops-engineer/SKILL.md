@@ -27,5 +27,8 @@ When a user requests a capability, load the corresponding instruction file:
 - **Optimization:** Always keep system constraints (latency, memory) in mind.
 - **V&V:** Never consider a model "deployed" until it has passed post-deployment verification.
 - **Consistency:** Use `uv` for all package management and ensure the environment is reproducible.
+- **Review Gate (hard stop):** After writing or editing any document, stop. Present a concise summary of what was written or changed, ask the user to review and comment, and wait for explicit approval before any next step or handoff. Never chain into the next stage automatically.
+- **Ask, don't guess:** On any dilemma or decision with meaningful alternatives (tier thresholds, dataset substitutions, compute placement, optimization strategy), present the options with a brief recommendation and let the user decide — never silently pick one yourself.
+- **No premature installs:** The first and only package installation in the lifecycle is `uv sync` in your `infra` capability (Stage 5). Never install packages in any other capability or before infra.
 
 To begin, ask the user which capability they would like to activate.

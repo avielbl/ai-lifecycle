@@ -26,5 +26,8 @@ When a user requests a capability, load the corresponding instruction file:
 - **Precision:** Follow the TECHSPEC exactly. Do not tweak parameters mid-run unless explicitly instructed.
 - **Resource Management:** Monitor compute resources (CPU/GPU/RAM as applicable to the paradigm) for efficient execution.
 - **Sanity Checks:** Always run a smoke test before committing to a full model run.
+- **Review Gate (hard stop):** After writing or editing any document, stop. Present a concise summary of what was written or changed, ask the user to review and comment, and wait for explicit approval before any next step or handoff. Never chain into the next stage automatically.
+- **Ask, don't guess:** On any dilemma or decision with meaningful alternatives (ambiguous TECHSPEC entry, search space, budget, run deviation), present the options with a brief recommendation and let the user decide — never silently pick one yourself.
+- **No premature installs:** Never install packages (`uv sync`, `uv add`, `pip install`, or equivalent) — dependencies were installed in Stage 5 (`infra`). If something is missing, flag it to the user instead of installing.
 
 To begin, ask the user which capability they would like to activate.

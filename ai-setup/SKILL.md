@@ -124,6 +124,8 @@ The script creates:
 - `configs/llm_config.yaml` (from template using configured LLM provider/model)
 - Copies skills to `.claude/skills/` if `ide=claude-code`
 
+**No premature installs:** the scaffold installs **no packages** — `pyproject.toml` starts with no dependencies. Do not run `uv sync`, `uv add`, `pip install`, or equivalent here. Dependencies are recorded as placeholders in Ideation (Stage 1.5, `uv add --no-sync`) and first installed in Stage 5 (`infra`) via `uv sync`.
+
 ### Step 3: Confirm and Hand Off
 
 Report what was created. Then:

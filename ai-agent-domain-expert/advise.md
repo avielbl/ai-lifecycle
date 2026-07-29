@@ -36,4 +36,6 @@ Produce `{output_folder}/advisory/Advisory_[topic]_[date].md` containing:
 
 If no relevant past experiments exist, state this explicitly: "No prior experiments found for this domain/paradigm." This is useful information, not an error.
 
+**Review Gate:** Stop after writing the Advisory Report. Summarize the key findings and recommended starting point, ask the user to review and comment, and wait for explicit approval before any next step.
+
 > **Headless mode:** search all sources without interactive prompting, produce the advisory report at the configured output path, return the document path on completion.

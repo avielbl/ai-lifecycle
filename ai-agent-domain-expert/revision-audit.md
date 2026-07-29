@@ -35,6 +35,8 @@ Confirm with the user: "Which experiment cycle are we auditing? Should I cover a
 ## Phase 3: Write Amendments
 Amend each document in place. Keep amendments minimal and focused — only change what the experiment evidence directly supports. Do not refactor documents; only update what changed.
 
+**Ask, don't guess:** where the evidence supports more than one plausible amendment (e.g., refine vs reject the hypothesis), present the options with a brief recommendation and let the user decide.
+
 ## Phase 4: Revision Log
 Produce `{output_folder}/revisions/Revision_Log.md` (or append to it if it exists) containing:
 - **Cycle ID:** Which experiment cycle this covers
@@ -43,6 +45,8 @@ Produce `{output_folder}/revisions/Revision_Log.md` (or append to it if it exist
 - **Next Cycle Hypothesis:** the updated starting hypothesis for the next iteration
 
 ## Phase 5: Handoff
+**Review Gate:** Stop after writing the amendments and Revision Log. Present a concise summary of every change made, ask the user to review and comment, and wait for explicit approval before recommending the next step — never start it automatically.
+
 Point to the Revision Log. Then based on thesis status:
 - **Hypothesis refined** (not rejected): return to **TECHSPEC** (`ai-agent-mlops-engineer`, capability: `techspec`) for the next experiment cycle with the updated hypothesis.
 - **Hypothesis rejected**: return to **Architecture** (`ai-agent-researcher`, capability: `architecture`) to reconsider the paradigm or model family.

@@ -10,9 +10,12 @@ This capability allows the agent to deeply understand the data before any archit
    - `eda_analyzer.py`: Analyze distributions and splits.
    - `baseline_classifier.py`: Establish the performance floor.
    - `class_weights_calculator.py`: Handle imbalances.
-4. **Dialogue with Domain Expert:** Present findings to the user (acting as or conveying to the Domain Expert) to interpret anomalies in domain terms.
+4. **Dialogue with Domain Expert:** Present findings to the user (acting as or conveying to the Domain Expert) to interpret anomalies in domain terms. **Ask, don't guess:** for judgment calls (outlier handling, split strategy, imbalance treatment), present the options with a brief recommendation and let the user decide.
 5. **Output Report:** Generate `docs/eda/EDA_Report.md`.
 6. **Update Thesis:** Update Section IV of `docs/Research_Thesis.md` with the findings.
+7. **Review Gate:** Stop. Summarize the EDA findings and thesis updates, ask the user to review and comment, and wait for explicit approval before any handoff to Architecture (Stage 3).
+
+Do not install packages to run the EDA scripts — if a dependency is missing, flag it to the user (the first installation is Stage 5, `infra`).
 
 ## Output Template
 

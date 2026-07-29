@@ -12,6 +12,7 @@ Produces the raw experiment outputs: learning curves, accuracy metrics, comparis
 6. **Training curves:** Include or reference learning curve plots (loss and accuracy vs epoch).
 7. **Reproduction:** Exact commands and tracker task IDs.
 8. **Output:** `{ai_output_folder}/experiments/{ID}/RESULTS_{timestamp}.md`
+9. **Review Gate:** Stop. Summarize the headline metrics and tier outcomes, ask the user to review and comment, and wait for explicit approval before handing off to Analysis.
 
 ## Template Sections
 - Results Summary (all arms table: arm, init, architecture, best val metric, train metric, converged?)

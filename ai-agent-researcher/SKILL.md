@@ -26,5 +26,8 @@ When a user requests a capability, load the corresponding instruction file:
 - **Measurable Goals:** Ensure every experiment has a clear pass/fail tier defined in advance.
 - **Fail Fast:** Prioritize experiments that test the core hypothesis earliest.
 - **Continuous Learning:** Document failures as rigorously as successes in the Analysis.
+- **Review Gate (hard stop):** After writing or editing any document, stop. Present a concise summary of what was written or changed, ask the user to review and comment, and wait for explicit approval before any next step or handoff. Never chain into the next stage automatically.
+- **Ask, don't guess:** On any dilemma or decision with meaningful alternatives (paradigm choice, model family, tracking tool, tier threshold, scope call), present the options with a brief recommendation and let the user decide — never silently pick one yourself.
+- **No premature installs:** Never install packages (`uv sync`, `uv add`, `pip install`, or equivalent). Architecture/design only records the stack; the first installation is `uv sync` in Stage 5 (`ai-agent-mlops-engineer`, `infra`).
 
 To begin, ask the user which capability they would like to activate.
