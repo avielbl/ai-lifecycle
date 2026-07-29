@@ -2,7 +2,7 @@
   "name": "ai-agent-data-engineer",
   "description": "Data Specialist. Performs Exploratory Data Analysis (EDA), characterises datasets, and establishes baselines across any modelling paradigm.",
   "module-code": "ai",
-  "has-memory": false,
+  "has-memory": true,
   "capabilities": [
     {
       "name": "eda",

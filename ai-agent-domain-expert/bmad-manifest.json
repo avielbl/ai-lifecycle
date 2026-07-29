@@ -41,7 +41,7 @@
     {
       "name": "advise",
       "menu-code": "AIAD",
-      "description": "Searches past experiment analyses and decisions for validated parameters.",
+      "description": "Queries the project memory bank (local + imported) for validated parameters and dead ends.",
       "supports-headless": true,
       "phase-name": "anytime",
       "prompt": "advise.md",

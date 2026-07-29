@@ -1,6 +1,6 @@
 # Design: Per-Project Memory Bank
 
-> Status: **Proposed** — target Sprint 3. Design only; no skill changes in this document.
+> Status: **Approved & implemented** (Sprint 3) — the §8 skill-file changes have shipped: all five agent SKILL.md files carry the memory protocol, writing capabilities have mandatory Memory Update steps, `advise` is an index-first bank query, and `ai-setup configure` seeds `index.md` + `imports.yaml`.
 
 Every agent SKILL.md currently carries a "Memory & Learning" paragraph that begins *"If memory is enabled..."* — but no mechanism exists. Agents that need history (notably `advise`, `techspec`, `architecture`) re-read entire lifecycle documents: analysis reports, decision logs, the Domain Knowledge Base. That burns context on prose when the agent needs five facts. This design replaces the placeholder with a concrete, file-based knowledge bank.
 
