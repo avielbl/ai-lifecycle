@@ -134,7 +134,7 @@ For brand-new projects, scaffold the full directory structure, IDE config, and u
 /ai-setup   → then: new-project
 ```
 
-This creates `data/`, `src/`, `notebooks/`, `configs/`, `docs/`, `models/`, `outputs/`, a `pyproject.toml` (no dependencies yet), an empty `.venv` (`uv venv`), a git repo on `main` (plus optional `origin` remote — never auto-pushed), `configs/project_infra.yaml` (data location, artifact registry, compute topology), `docker/` training templates (`Dockerfile.train` + README), and IDE-specific agent config.
+This creates `data/`, `src/`, `notebooks/`, `configs/`, `docs/`, `models/`, `outputs/`, an `imports/` export drop folder (gitignored — see [Connecting Internal Sources & Trackers](#connecting-internal-sources--trackers)), a `pyproject.toml` (no dependencies yet), an empty `.venv` (`uv venv`), a git repo on `main` (plus optional `origin` remote — never auto-pushed), `configs/project_infra.yaml` (data location, artifact registry, compute topology), `docker/` training templates (`Dockerfile.train` + README), and IDE-specific agent config.
 
 > **No packages are installed at scaffold time.** Dependencies are added in Ideation (Stage 1.5) and installed in Infrastructure (Stage 5) via `uv sync`.
 
@@ -230,7 +230,21 @@ Detailed Design (Stage 4) produces two task categories:
 | [MLflow](https://mlflow.org) | Self-hosted, open-source, model registry |
 | [ClearML](https://clear.ml) | Auto-capture, enterprise MLOps, HPO orchestration |
 
-Choose one during `ai-setup configure`; wire it in `infra` (Stage 5).
+Choose one during `ai-setup configure`; wire it in `infra` (Stage 5). Stage 5 **verifies connectivity** (using `ai_tracker_url` for self-hosted servers) before the smoke test — on failure it warns, switches to the tool's offline store, records it in the Infra Log, and continues. It never hard-fails on a dead tracker; offline runs sync/import later (`wandb sync`, MLflow file store, `Task.import_offline_session`).
+
+---
+
+## Connecting Internal Sources & Trackers
+
+The module wires internal knowledge systems (Jira, Confluence, SharePoint, network shares) and experiment trackers through config set at `ai-setup configure` — with two acquisition modes that produce **identical downstream artifacts**:
+
+- **MCP-first.** `configure` auto-detects MCP servers registered in your IDE, then asks whether additional **internal servers** exist — air-gapped networks often run their own MCP mirrors/gateways, so air-gapped never automatically means "no MCP". You supply the exact server name as registered in your IDE/MCP config plus the source it serves; everything is recorded in `ai_mcp_servers`. Sources with a server are queried live (Jira JQL, Confluence space search, filesystem).
+- **Export fallback.** Any source without a server uses the `imports/` drop folder (`jira/` CSV/XML exports, `confluence/` space exports, `sharepoint/` downloaded documents, `docs/` loose PDFs). `imports/` is **gitignored by default** (except its README) — exports often contain sensitive data; the Domain Knowledge Base that cites them (by file path) is the committed artifact. SharePoint is export-only for now unless your org provides an MCP server.
+- **Air-gapped background folder.** In air-gapped mode, `domain-research` and `literature-review` also ask for a background folder of PDFs/reference files at **any path you name** — not only `imports/`.
+- **Config keys:** `ai_internal_sources` (per-source mode + scope: Jira project keys, Confluence spaces, share paths — confirmed once per research run), `ai_mcp_servers`, `ai_tracker_url`, `ai_tracker_offline` — all under the `ai` section of `_bmad/config.yaml`. Credentials stay in env vars, never in config.
+- **Tracker offline behavior:** `ai_tracker_offline: true` (or a failed Stage 5 ping) routes runs to offline stores; Stage 6/6.5 read local stores transparently and record `offline:<run-dir>` task IDs.
+
+Full design: `docs/design/integrations.md`.
 
 ---
 

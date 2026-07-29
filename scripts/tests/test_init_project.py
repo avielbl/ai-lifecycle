@@ -96,6 +96,38 @@ def test_write_gitignore(tmp_root):
     assert "*.ckpt" in content
     assert "mlruns/" in content
     assert "wandb/" in content
+    # imports/ is gitignored by default (internal exports are often sensitive),
+    # but its README stays tracked
+    assert "imports/*" in content
+    assert "!imports/README.md" in content
+
+
+def test_write_imports_tree_creates_subfolders_and_readme(tmp_root):
+    ip.write_imports_tree(tmp_root)
+
+    for sub in ["jira", "confluence", "sharepoint", "docs"]:
+        assert (tmp_root / "imports" / sub).is_dir()
+
+    readme = tmp_root / "imports" / "README.md"
+    assert readme.exists()
+    content = readme.read_text()
+    # Expected export formats are documented per subfolder
+    assert "jira/" in content
+    assert "confluence/" in content
+    assert "sharepoint/" in content
+    assert "docs/" in content
+    assert "CSV" in content
+    assert "gitignored" in content
+
+
+def test_write_imports_tree_does_not_overwrite_readme(tmp_root):
+    (tmp_root / "imports").mkdir()
+    existing = tmp_root / "imports" / "README.md"
+    existing.write_text("# custom")
+
+    ip.write_imports_tree(tmp_root)
+
+    assert existing.read_text() == "# custom"
 
 
 def test_write_gitignore_does_not_overwrite_existing(tmp_root):
@@ -348,6 +380,14 @@ def test_main_with_flags_end_to_end(tmp_root):
     # docker templates exist
     assert (tmp_root / "docker" / "Dockerfile.train").exists()
     assert (tmp_root / "docker" / "README.md").exists()
+
+    # imports/ export drop-folder created; gitignored except its README
+    for sub in ["jira", "confluence", "sharepoint", "docs"]:
+        assert (tmp_root / "imports" / sub).is_dir()
+    assert (tmp_root / "imports" / "README.md").exists()
+    tracked = subprocess.run(["git", "ls-files", "imports"],
+                             cwd=tmp_root, capture_output=True, text=True)
+    assert tracked.stdout.split() == ["imports/README.md"]
 
     # git repo initialised with the remote registered, never pushed
     assert (tmp_root / ".git").is_dir()
