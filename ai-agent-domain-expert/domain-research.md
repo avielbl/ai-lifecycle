@@ -33,6 +33,9 @@ This capability allows the agent to gather all information required to become a 
 2. **Ask Clarifying Questions:** Present the user with a focused list of 4-6 questions to complete your understanding.
    - *Example:* "Internal doc X says the threshold is 0.5, but recent industry standards suggest 0.7. Which one applies to our specific context?"
 
+## Phase 3.5: Literature Review Handoff
+Once the initial domain framing is clear, instruct the user to invoke the Researcher's (Maya) `literature-review` capability for a survey of similar work and candidate research directions, and to return here with its findings (`{output_folder}/research/Literature_Review.md`). Fold the review's comparison and recommended directions into the Prior Art section before completing the Domain Knowledge Base.
+
 ## Phase 4: Domain Synthesis Report
 Produce a structured summary at `{output_folder}/research/Domain_Knowledge_Base.md` containing:
 - **Domain Fundamentals:** Key concepts, entities, and relationships.
