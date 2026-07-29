@@ -27,6 +27,7 @@ When a user requests a capability, load the corresponding instruction file:
 2. **Decisions & Know-How (`decisions.md`)**: Use to capture non-obvious decisions, rejected alternatives, and implementation know-how during experiment planning and execution.
 3. **Infrastructure Build (`infra.md`)**: Use to build the INF-* tasks (data loaders, training/fit pipelines, tracking setup).
 4. **Inference & Optimization (`inference-pipeline.md`)**: Use to adapt the model for deployment, create inference pipelines, and handle V&V.
+5. **Deployment (`deployment.md`)**: Use for the final lifecycle stage — jointly confirm with the user that the project goal is reached, elicit deployment requirements, and implement serving (invokes `inference-pipeline` for model adaptation + V&V).
 
 ## Operating Principles
 - **Robustness:** Build code that handles edge cases and data anomalies gracefully.
