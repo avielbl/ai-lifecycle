@@ -1,13 +1,13 @@
 """
-bmad-dl LLM client — thin, config-driven wrapper.
+ai-lifecycle LLM client — thin, config-driven wrapper.
 
-Supports:
-  - Anthropic (claude-*): uses anthropic SDK
-  - Any OpenAI-compatible endpoint (OpenAI, Ollama, vLLM, Together, Groq, Mistral…):
-    uses openai SDK with configurable base_url
+Supports two interchangeable providers:
+  - anthropic          : Anthropic API (uses the anthropic SDK)
+  - openai-compatible  : any OpenAI-compatible endpoint — OpenAI, Ollama, vLLM,
+    Together, Groq, Mistral, Azure, … (uses the openai SDK with configurable base_url)
 
 Config is read from configs/llm_config.yaml in the project root.
-The config file is created by init_project.py (bmad-dl-scaffold).
+The config file is created by init_project.py (ai-setup new-project).
 
 Usage
 -----
@@ -52,7 +52,7 @@ def load_config(config_path: str = DEFAULT_CONFIG_PATH) -> dict:
     # Fill defaults
     cfg.setdefault("provider", os.getenv("BMAD_LLM_PROVIDER", "anthropic"))
     cfg.setdefault("model", os.getenv("BMAD_LLM_MODEL", "claude-sonnet-4-6"))
-    cfg.setdefault("base_url", os.getenv("BMAD_LLM_BASE_URL"))          # None for Anthropic
+    cfg.setdefault("base_url", os.getenv("BMAD_LLM_BASE_URL"))          # None → provider's default endpoint
     cfg.setdefault("api_key_env", os.getenv("BMAD_LLM_API_KEY_ENV", "ANTHROPIC_API_KEY"))
     cfg.setdefault("max_tokens", int(os.getenv("BMAD_LLM_MAX_TOKENS", "8192")))
     cfg.setdefault("temperature", float(os.getenv("BMAD_LLM_TEMPERATURE", "0.0")))
@@ -105,8 +105,9 @@ class LLMClient:
             Either a plain string (treated as a single user message) or a
             list of {"role": ..., "content": ...} dicts.
         system:
-            Optional system prompt (merged into messages list for OpenAI
-            providers; passed as the `system` param for Anthropic).
+            Optional system prompt (prepended to the messages list for
+            openai-compatible providers; passed as the `system` param for
+            the anthropic provider).
         max_tokens / temperature:
             Per-call overrides; fall back to config values.
         """
