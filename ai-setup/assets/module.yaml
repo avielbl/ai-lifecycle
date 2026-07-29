@@ -81,6 +81,7 @@ directories:
   - "{ai_output_folder}/implementation"
   - "{ai_output_folder}/advisory"
   - "{ai_output_folder}/revisions"
+  - "{ai_output_folder}/deployment"
 
 post_install_notes: |
   Next steps:

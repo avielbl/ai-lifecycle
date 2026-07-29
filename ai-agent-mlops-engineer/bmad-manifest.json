@@ -48,6 +48,18 @@
       "phase-name": "anytime",
       "prompt": "inference-pipeline.md",
       "output-location": "{output_folder}/implementation"
+    },
+    {
+      "name": "deployment",
+      "menu-code": "AIDEP",
+      "description": "Jointly confirms the goal is reached, gathers deployment requirements, and implements serving.",
+      "supports-headless": false,
+      "phase-name": "9-deployment",
+      "after": ["revision-audit"],
+      "before": [],
+      "is-required": false,
+      "prompt": "deployment.md",
+      "output-location": "{output_folder}/deployment"
     }
   ]
 }
