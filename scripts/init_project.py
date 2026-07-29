@@ -156,6 +156,10 @@ data/splits/*
 !data/processed/.gitkeep
 !data/splits/.gitkeep
 
+# Internal-source exports (often contain sensitive data — keep local)
+imports/*
+!imports/README.md
+
 # Secrets
 .env
 *.env
@@ -164,6 +168,33 @@ secrets.json
 # OS
 .DS_Store
 Thumbs.db
+"""
+
+# ---------------------------------------------------------------------------
+# imports/README.md — export drop-folder guide
+# ---------------------------------------------------------------------------
+IMPORTS_README = """\
+# imports/ — Internal-Source Export Drop Folder
+
+Exports from internal systems land here when a source has no MCP server
+(air-gapped / corporate fallback). The whole folder is **gitignored** except
+this README — exports often contain sensitive internal data.
+
+Expected export formats per subfolder:
+
+| Folder | Contents |
+|--------|----------|
+| `jira/` | CSV or XML exports (Issue Navigator -> Export); one file per JQL query |
+| `confluence/` | Space exports (HTML or XML zip, unzipped) or individual page PDFs |
+| `sharepoint/` | Downloaded documents (PDF/DOCX/XLSX), preserving library folder structure |
+| `docs/` | Loose PDFs, specs, datasheets from network shares |
+
+Optional: add a `MANIFEST.md` describing what each export contains and when
+it was pulled. Research agents inventory this folder first and cite file
+paths (e.g. `imports/jira/postmortems-2025.csv`) in the Domain Knowledge Base.
+
+Air-gapped note: reference PDFs do not have to live here — agents will also
+ask for a background folder at any path you name.
 """
 
 # ---------------------------------------------------------------------------
@@ -350,6 +381,20 @@ def create_dirs(root: Path, project_name: str) -> None:
         init_file = root / init_dir / "__init__.py"
         if not init_file.exists():
             init_file.write_text("", encoding='utf-8')
+
+
+def write_imports_tree(root: Path) -> None:
+    """Create the imports/ export drop-folder tree (gitignored except README.md)."""
+    imports_dir = root / "imports"
+    for sub in ["jira", "confluence", "sharepoint", "docs"]:
+        (imports_dir / sub).mkdir(parents=True, exist_ok=True)
+
+    readme = imports_dir / "README.md"
+    if not readme.exists():
+        readme.write_text(IMPORTS_README, encoding='utf-8')
+        print(f"  Wrote: imports/README.md (export drop-folder guide; imports/ is gitignored)")
+    else:
+        print(f"  Skipped: imports/README.md (already exists)")
 
 
 def write_clinerules(root: Path, ide: str, tracking_tool: str) -> None:
@@ -802,6 +847,7 @@ def main(argv: list[str] | None = None) -> None:
 
     print("Creating directory structure...")
     create_dirs(root, project_name)
+    write_imports_tree(root)
 
     print("Writing config files...")
     write_clinerules(root, ide, tracking_tool)

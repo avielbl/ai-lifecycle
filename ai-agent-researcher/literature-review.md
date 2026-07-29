@@ -11,9 +11,11 @@ Surveys potential similar work and research directions for the problem framed by
 - Search for scientific literature (arXiv, conference proceedings), preprints, technical blog posts, benchmark/leaderboard results, and open-source implementations on the problem class.
 - Fetch and read the most promising sources in depth; prefer primary sources over summaries.
 
-### Mode B: Drop Folder (Air-Gapped or Corporate)
-- Ask the user for a drop folder containing PDFs, exported papers, or saved articles.
+### Mode B: Internal Sources (Air-Gapped or Corporate)
+- **MCP first:** read `ai_mcp_servers` from the resolved config. Air-gapped networks may run their **own internal MCP servers** (e.g. an internal arXiv mirror or paper-search gateway) — never assume air-gapped means no MCP. If a relevant server is recorded, query it for papers and prior work before asking for files.
+- **Background folder:** ask the user for the location of a background folder containing PDFs, exported papers, or saved articles — **any path the user names** (the conventional `imports/docs/` is only a default suggestion).
 - Enumerate and read every provided document; ask the user to fill obvious coverage gaps if key topics are missing.
+- Cite MCP results by their returned identifier/URL and file-based sources by file path.
 
 3. **Per-article summary:** For each source, capture in a fixed structure:
    - Citation (authors, title, venue/URL, year)

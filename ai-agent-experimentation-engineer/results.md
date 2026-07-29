@@ -4,7 +4,7 @@
 Produces the raw experiment outputs: learning curves, accuracy metrics, comparison tables, and per-arm timing. Straightforward reporting of what happened — no interpretation.
 
 ## Operating Instructions
-1. **Input:** Read RUN log and pull metrics from tracking tool (ClearML/WandB/MLflow).
+1. **Input:** Read the RUN log and pull metrics from the configured tracker via its API (using `ai_tracker_url` when self-hosted) — **or**, when the RUN log records offline mode (`offline:...` task IDs), from the local run store (`./mlruns`, `wandb sync` dir, ClearML offline session). The RESULTS document format is identical either way.
 2. **Metrics tables:** Best val accuracy/loss per arm, final train metrics, convergence epoch.
 3. **Comparison tables:** As defined in TECHSPEC acceptance gates (e.g., A1 vs A2, A3 vs B2).
 4. **Architecture detail:** Layer-by-layer breakdown of each distinct model with param counts (pretrained vs random init). This enables comparing fine-tuning a pretrained model vs training from scratch.

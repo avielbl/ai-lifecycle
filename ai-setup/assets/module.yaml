@@ -71,6 +71,49 @@ variables:
     default: none
     user_setting: false
 
+  - key: ai_internal_sources
+    prompt: Which internal knowledge sources exist for this project? (multi-select)
+    type: multi-select
+    options:
+      - jira
+      - confluence
+      - sharepoint
+      - network_share
+      - none
+    default: none
+    user_setting: false
+    # Written as a map. Per selected source, configure records:
+    #   mode: mcp | export      (mcp when a server is recorded in ai_mcp_servers for it;
+    #                            sharepoint defaults to export unless the org provides a server)
+    #   scope: free text        (Jira project keys, Confluence space keys, share mount path,
+    #                            SharePoint library) — confirmed once per research run
+    #   server: <name>          (mode mcp only — the exact server name from ai_mcp_servers)
+
+  - key: ai_mcp_servers
+    prompt: >-
+      MCP servers for internal sources? Auto-detected first; then confirm and add any
+      internal servers the detection cannot see — give the EXACT server name as registered
+      in your IDE/MCP config plus the source it serves. Air-gapped networks often run their
+      own internal MCP servers (mirrors/gateways) — never assume air-gapped means no MCP.
+    default: auto
+    user_setting: false
+    # Stored as a map of source -> exact registered server name,
+    # e.g. {jira: mcp__atlassian, confluence: mcp__atlassian, docs: mcp__filesystem,
+    #       arxiv: mcp__internal-arxiv-mirror}.
+    # Value "none" means no MCP anywhere — every source falls back to export mode.
+
+  - key: ai_tracker_url
+    prompt: Tracker server URL? (self-hosted MLflow/ClearML/W&B; blank = SaaS default)
+    default: ""
+    user_setting: false
+
+  - key: ai_tracker_offline
+    prompt: Force tracker offline mode? (air-gapped or no server yet)
+    type: single-select
+    options: [auto, "true", "false"]
+    default: auto
+    user_setting: false
+
 directories:
   - "{ai_output_folder}"
   - "{ai_output_folder}/research"
@@ -84,6 +127,13 @@ directories:
   - "{ai_output_folder}/deployment"
   - "{ai_output_folder}/memory"
   - "{ai_output_folder}/memory/entries"
+  # Export drop-folders — created only for sources whose mode is export
+  # (ai-setup SKILL Step 4 filters by ai_internal_sources); gitignored by default.
+  - "{project-root}/imports"
+  - "{project-root}/imports/jira"
+  - "{project-root}/imports/confluence"
+  - "{project-root}/imports/sharepoint"
+  - "{project-root}/imports/docs"
 
 post_install_notes: |
   Next steps:

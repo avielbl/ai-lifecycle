@@ -1,7 +1,9 @@
 # Design: Internal Data Sources and MLOps Tool Integration
 
-> Status: **Draft — pending user decisions (§7)**
-> Scope: design only. Implementation lands in Sprint 3 per the change list in §6.
+> Status: **Approved & implemented** — all five §6 recommendations accepted as recommended (auto-detect MCP / SharePoint export-only / `imports/` gitignored / warn-and-go-offline on tracker failure / scopes in config with per-run confirmation), with three user amendments:
+> 1. Air-gapped networks may run their **own internal MCP servers** — `ai-setup configure` always asks for additional/internal servers (exact registered name + source served) after auto-detection and records them in `ai_mcp_servers`.
+> 2. In air-gapped mode, `domain-research` and `literature-review` prompt for a **background folder** of PDFs/reference files at any user-named path — not only `imports/`.
+> 3. Export/drop-folder fallback applies only when no MCP server (detected or user-supplied) covers a source.
 
 ---
 

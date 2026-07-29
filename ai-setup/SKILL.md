@@ -59,14 +59,27 @@ Then ask the user only for the remaining values. Show defaults in brackets. Pres
 - `ai_llm_provider` — LLM provider for analysis scripts (anthropic / openai-compatible, default: anthropic)
 - `ai_llm_model` — model name for the chosen provider (no preset default — ask the user; e.g. claude-sonnet-4-6, gpt-4o, llama3.3)
 - `ai_experiment_tracker` — tracking platform (wandb / mlflow / clearml / none, default: none)
+- `ai_internal_sources` — internal knowledge sources (multi-select: jira / confluence / sharepoint / network_share / none, default: none). For each selected source also collect its **scope** (Jira project keys, Confluence space keys, share mount path, SharePoint library) — stored in the map so research runs only need a per-run confirmation. Mode (`mcp` / `export`) comes from Step 2b, not from a question.
+- `ai_mcp_servers` — filled by Step 2b (detection + user-supplied internal servers); never typed blind.
+- `ai_tracker_url` / `ai_tracker_offline` — ask **only when `ai_experiment_tracker` is not `none`**: self-hosted server URL (blank = SaaS default) and offline forcing (auto / true / false, default: auto).
 
-On a **fresh install**, ask all four module questions. On an **update**, apply the same skip-if-present logic: only ask module keys missing from the existing `ai` section; keys that already have values are skipped and shown in the confirmation summary.
+On a **fresh install**, ask all applicable module questions. On an **update**, apply the same skip-if-present logic: only ask module keys missing from the existing `ai` section; keys that already have values are skipped and shown in the confirmation summary.
+
+### Step 2b: MCP Detection (internal sources only)
+
+Run when `ai_internal_sources` is being collected (skip entirely when it is already set or the user selected `none`):
+
+1. **Auto-detect** configured MCP servers, best-effort: check `{project-root}/.mcp.json`, the IDE's user-level MCP config (`~/.claude.json` or equivalent) if accessible, and — in Claude Code — the live tool list (`mcp__<server>__*` tools visible this session). Match names/tools against known patterns: `atlassian`, `jira`, `confluence`, `sharepoint`, `ms-365`, `filesystem`.
+2. **Confirm findings:** "Detected MCP servers: atlassian (Jira+Confluence), filesystem. Use these for internal-source research? [Y/n]"
+3. **Ask about internal servers (always, even when nothing was detected):** "Are there additional or internal MCP servers I can't see — e.g. internal mirrors/gateways on an air-gapped network?" Air-gapped ≠ no MCP. For each one the user names, record the **exact server name as registered in the IDE/MCP config** and **which source it serves** — never guess or normalize the name.
+4. **Record:** write the source→server map to `ai_mcp_servers`; for each source with a server set `mode: mcp` (+ `server:`) in `ai_internal_sources`, otherwise `mode: export`. SharePoint defaults to `export` unless the org supplied a server. For a mounted network share, prefer `mode: export` with the mount path as scope — native file tools beat MCP there.
+5. **Headless:** accept detection as-is; undetected sources default to `export`; no internal-server question.
 
 **Memory import (optional, fresh install only):** also ask — "Import memory from a previous project? (path to its `memory/` folder, or none)" [default: none]. This is not a config key; the answer seeds `imports.yaml` in Step 4. In headless mode, default to none.
 
 **Net effect:** a project that just ran the BMad installer answers at most the 4 module questions plus the optional memory-import prompt — no core questions are repeated.
 
-**Post-configure note:** If `ai_experiment_tracker` is not `none`, remind the user that the tracker SDK is installed in Stage 5 (infra) via `uv sync` — no action needed now.
+**Post-configure note:** If `ai_experiment_tracker` is not `none`, remind the user that the tracker SDK is installed in Stage 5 (infra) via `uv sync` — no action needed now. If any internal source ended up in export mode, print a short export summary: the `imports/` layout (`jira/` CSV/XML Issue-Navigator exports, `confluence/` space exports or page PDFs, `sharepoint/` downloaded documents, `docs/` loose PDFs), a note that `imports/` is gitignored, and that an optional `imports/MANIFEST.md` can describe what each export contains.
 
 ### Step 3: Write Files
 
@@ -82,6 +95,8 @@ Both scripts output JSON to stdout. If either exits non-zero, surface the error 
 ### Step 4: Create Output Directories
 
 After writing config, resolve `{project-root}` to the actual project root and create each path-type config value that does not yet exist (including `ai_output_folder` and its subfolders from `./assets/module.yaml` `directories`). Use `mkdir -p`. Paths in config files keep the literal `{project-root}` token.
+
+**Exception — `imports/` entries:** create `{project-root}/imports/` and only the per-source subfolders whose `ai_internal_sources` mode is `export` (skip all of them when no source is in export mode). When creating `imports/`, ensure the project `.gitignore` ignores it (append `imports/*` + `!imports/README.md` if missing) — exports often contain sensitive internal data.
 
 **Seed the memory bank** (never overwrite an existing file):
 

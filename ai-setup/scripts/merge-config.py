@@ -10,6 +10,9 @@ the shared config.yaml (core values at root + module section) and config.user.ya
 (user_name, communication_language, plus any module variable with user_setting: true).
 Uses an anti-zombie pattern for the module section in config.yaml.
 
+Map-valued module variables (e.g. ai_internal_sources, ai_mcp_servers) are supported:
+nested dict answers pass through merge untouched and are serialized as YAML maps.
+
 Legacy migration: when --legacy-dir is provided, reads old per-module config files
 from {legacy-dir}/{module-code}/config.yaml and {legacy-dir}/core/config.yaml.
 Matching values serve as fallback defaults (answers override them). After a
