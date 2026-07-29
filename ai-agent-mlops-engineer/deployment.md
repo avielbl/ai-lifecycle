@@ -34,6 +34,7 @@ Write `{ai_output_folder}/deployment/Deployment_Requirements.md` covering all of
 5. **Smoke test:** Deploy to the target (or a staging equivalent), run an end-to-end smoke test, and record the result.
 6. **Output:** Write `{ai_output_folder}/deployment/Deployment_Report.md` — what was deployed, where, how to roll back, and V&V results. **Failed attempts are mandatory:** document every deployment attempt that failed and how it was resolved; a report with no failures documented is incomplete unless everything genuinely worked first try.
 7. **Review Gate:** Stop. Summarize what was deployed, the smoke-test and V&V results, and the rollback path. Ask the user to review and comment, and wait for explicit approval before declaring the lifecycle complete.
+8. **Memory Update (mandatory, after approval):** Distill new atomic facts from the Deployment Report into `{ai_output_folder}/memory/entries/` using the entry template — `lesson` entries (serving, packaging, and rollout learnings not already captured by `inference-pipeline`) — and append one index row each to `{ai_output_folder}/memory/index.md`. Write only facts a future cycle would need; link back to the source document.
 
 ## Output Template
 

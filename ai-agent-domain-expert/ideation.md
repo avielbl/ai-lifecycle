@@ -7,6 +7,7 @@ Produces the Research Thesis and Product Requirements Document (PRD) by synthesi
 1. Read `{output_folder}/research/Domain_Knowledge_Base.md` (produced by domain-research capability).
 2. If missing, return to **Domain Research** first.
 3. Confirm with the user: "Have there been any developments since the Domain Knowledge Base was written that I should factor in?"
+4. **Memory retrieval:** Scan the memory index for `background` and `finding` entries whose tags match the domain, and read the matching entry files before framing the thesis.
 
 ## Phase 2: Research Thesis
 Produce `docs/Research_Thesis.md` containing:
@@ -38,6 +39,8 @@ Every functional requirement must reference a finding in the Domain Knowledge Ba
 Determine which frameworks and libraries are likely needed based on the problem framing (not the architecture — that comes later). Write confirmed dependencies to `pyproject.toml` via `uv add --no-sync <package>` as placeholders. Ask the user to confirm before writing. Never run `uv sync` or install anything here — the first installation is Stage 5 (`infra`).
 
 ## Phase 5: Handoff
+**Memory Update (mandatory, after approval):** Distill the initial thesis rationale into `{ai_output_folder}/memory/entries/` using the entry template — an `evolution` entry (why this hypothesis was chosen; the root of the project-evolution chain) — and append one index row to `{ai_output_folder}/memory/index.md`. Write only facts a future cycle would need; link back to the source document.
+
 Point to both output documents. Suggest moving to **EDA** (`ai-agent-data-engineer`, capability: `eda`) to characterize the dataset, or **Architecture** (`ai-agent-researcher`, capability: `architecture`) if EDA was already completed externally.
 
 > **Headless mode:** skip confirmation steps, produce both documents with sensible defaults, output the document paths on completion.

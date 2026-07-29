@@ -45,3 +45,5 @@ Produce a structured summary at `{output_folder}/research/Domain_Knowledge_Base.
 
 ## Phase 5: Handoff
 **Review Gate:** Stop after writing the Domain Knowledge Base. Present a concise summary of its contents, ask the user to review and comment, and wait for explicit approval before proceeding. Once approved, suggest moving to **Ideation & Problem Framing** (`ideation.md`) — do not start it automatically.
+
+**Memory Update (mandatory, after approval):** Distill new atomic facts from the Domain Knowledge Base into `{ai_output_folder}/memory/entries/` using the entry template — `background` entries (domain/data facts that constrain modelling) and `finding` entries (literature/prior-art findings) — and append one index row each to `{ai_output_folder}/memory/index.md`. Write only facts a future cycle would need; link back to the source document.

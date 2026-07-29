@@ -1,7 +1,7 @@
 code: ai
 name: AI Lifecycle
 description: Agentic team for the full AI/ML project lifecycle — from domain research through production inference. Covers deep learning, classical ML, gradient boosting, transformers, and beyond.
-version: 4.1.0
+version: 4.2.0
 type: custom-module
 author: Aviel
 skills_dir: .
