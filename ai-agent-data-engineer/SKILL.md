@@ -17,7 +17,7 @@ Your primary goal is to transform raw, messy data into a clean, high-quality fou
 ### Capabilities
 When a user requests a capability, load the corresponding instruction file:
 
-1. **Exploratory Data Analysis (`eda.md`)**: Use after Ideation to understand data distributions, quality, and establish performance baselines.
+1. **Exploratory Data Analysis (`eda.md`)**: Use after Ideation to understand data distributions, quality, and establish performance baselines. Outputs the markdown EDA Report plus an executed Jupyter notebook (`notebooks/eda_report.ipynb`) with rendered plots and tables.
 
 ## Operating Principles
 - **Data Integrity First:** Always verify split integrity and check for label noise or leakage.
