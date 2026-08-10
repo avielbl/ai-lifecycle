@@ -26,13 +26,26 @@ The user asked: can different prompt flavors coexist, selected by user preferenc
 
 Harness differences are **mechanical, not semantic**: how skills are invoked and which tools exist. The prompt content does not need to change per harness — and after v5.0.0's integrations work, tool-availability differences already degrade gracefully (no MCP → export mode; no web → air-gapped mode).
 
+### Harness profiles
+
+| Harness | Invocation | Rules file | MCP | Custom/local models | Glue the module must provide |
+|---|---|---|---|---|---|
+| Claude Code | `/skill` slash commands | `CLAUDE.md` | yes | Anthropic models | shipped |
+| Antigravity | slash commands (auto-discovered) | — | yes | bundled models | shipped |
+| Cline / Cursor | paste skill path | `.clinerules` | yes | custom OpenAI-compatible endpoints | shipped |
+| **opencode** | native **agent skills** (SKILL.md convention) + custom commands (`.opencode/command/*.md`) | `AGENTS.md` | yes (`opencode.json`) | any provider — ollama, openrouter, azure, **any OpenAI-compatible endpoint** (best on-prem fit) | new `--ide opencode` in `init_project.py`: write `AGENTS.md` with skill paths; copy/link skills where opencode discovers them; optional per-agent custom commands |
+| **VS Code Copilot (native agent mode)** | `.prompt.md` files invoked via `/name` in chat; `.chatmode.md` custom personas with tool sets | `.github/copilot-instructions.md` (always-on) + scoped `.instructions.md` | yes (GA since VS Code 1.102) | BYOK — official Ollama extension for local models; **agent mode hides models without tool-calling support**; BYOK availability varies by Copilot plan | new `--ide copilot` in `init_project.py`: write `.github/copilot-instructions.md` with skill paths + `.github/prompts/ai-agent-*.prompt.md` wrappers (restores slash-command UX); optionally one `.chatmode.md` per agent persona |
+
+opencode is the strongest air-gapped/on-prem pairing: it natively consumes the same SKILL.md convention this module already ships, and points at any OpenAI-compatible endpoint (vLLM/NIM). Copilot agent mode is viable but has two caveats to document: local models must support tool calling to appear in agent mode at all, and BYOK is plan-dependent in enterprise setups.
+
 **Adjustments (small, no flavor mechanism):**
 
 1. **Harness compatibility audit** — one pass over all capability files for Claude-Code-specific assumptions (e.g., subagent references, tool names). Replace with neutral phrasing ("search the web" not "use WebSearch").
-2. **Compatibility matrix in README** — per harness: invocation method, slash commands (y/n), MCP support, notes. Extends the existing "Invoking Agents" section.
+2. **Compatibility matrix in README** — the table above, user-facing. Extends the existing "Invoking Agents" section.
 3. **Degradation note in each SKILL.md On Activation** — one line: "If a required tool (shell, web, MCP) is unavailable in this environment, tell the user what is missing and offer the manual alternative rather than skipping the step."
+4. **`init_project.py`**: add `opencode` and `copilot` IDE options with the glue files from the table.
 
-**Recommendation:** do NOT key prompt flavors on harness. One config key fewer; the capability files stay harness-neutral by rule.
+**Recommendation:** do NOT key prompt flavors on harness. One config key fewer; the capability files stay harness-neutral by rule. Harness support = glue files only.
 
 ## 4. Axis 2 — Model capability: two flavors
 
@@ -96,11 +109,42 @@ What must **never** differ between flavors (contract invariants):
 2. **Evaluate before writing wave 2:** run the `docs/tutorial.md` fraud-detection scenario end-to-end on a target mid-tier model (e.g., a Sonnet-class or strong local model) in guided mode; log where the model deviates from the artifact contract; write wave-2 overlays (`eda`, `detailed-design`, `analysis`, `deployment`, remaining) against observed failures, not guesses.
 3. BMad Builder ships evaluation utilities — worth adopting for a repeatable flavor regression check once waves stabilize.
 
+### How flavors are implemented — concrete walkthrough
+
+A "flavor" is **not** a separate copy of the module. It is one config value plus optional overlay files:
+
+1. **One config key.** `ai_prompt_flavor: standard | guided` — asked once during BMad installation (module.yaml variable), stored in config, changeable any time by editing config or re-running `ai-setup configure`.
+2. **One overlay folder per non-standard flavor.** The canonical capability files never move or fork. A flavor adds a subfolder: `ai-agent-researcher/guided/architecture.md`, `ai-agent-domain-expert/guided/ideation.md`, … Overlays contain ONLY the extra scaffolding (output skeletons, enumerated choices, checklists) — not a rewrite.
+3. **One loading rule** in each SKILL.md: *"Load `<capability>.md`. If `ai_prompt_flavor` is `guided` and `guided/<capability>.md` exists, load it too; where they conflict, the guided file wins."*
+4. **Everything ships together.** The installer always copies the whole skill folder, so every install contains all flavors; the config value decides which text the agent actually reads at runtime. Two users on the same repo can run different flavors (per-user key).
+
+Example: a user on Nemotron Super sets `ai_prompt_flavor: guided`. When Maya runs `architecture`, she loads `architecture.md` (canonical, ~30 lines) **plus** `guided/architecture.md` (~40 lines: a literal Architecture.md skeleton to fill in, a closed paradigm-choice list, a pre-gate checklist). A teammate on Opus in the same repo, with `standard` in their own `config.user.yaml`, loads only the canonical file.
+
+**"Flavor count" decision restated:** the recommendation is to ship exactly these two named profiles. A third (`minimal`, for very small models ≤ ~14B) would just be a second overlay folder (`minimal/`) with even tighter scaffolding — mechanically trivial to add later, but every flavor multiplies prompt-maintenance and testing surface. So: don't create it speculatively; create it only if guided-mode evaluation on small models shows they still break the artifact contract.
+
+## 4b. Case study: Nemotron Super 49B (v1.5)
+
+Target profile for on-prem/air-gapped use. What's known: derivative of Llama-3.3-70B, post-trained specifically for reasoning, tool calling, RAG, and instruction following; 128K context; single-GPU-class serving; **reasoning toggle** — reasoning ON by default, disabled via `/no_think` (or "detailed thinking off") in the system prompt; vLLM ≥ 0.9.2 with the model repo's tool parser for function calling; also served via NIM (OpenAI-compatible either way).
+
+Required modifications to run this module on it:
+
+| Area | Modification | Where |
+|---|---|---|
+| Prompt flavor | `ai_prompt_flavor: guided` as the recommended starting point. Nemotron's agentic post-training may let mechanical stages run fine on `standard` — the wave-1 evaluation (§rollout) should run on exactly this model and prune overlays that prove unnecessary | config |
+| Serving | vLLM ≥ 0.9.2 + the repo's tool parser (function calling), or NIM. Document the launch flags | `docs/air-gapped.md` |
+| Script LLM calls | already works: `provider: openai-compatible`, `base_url: http://<vllm-host>/v1` — add a Nemotron example block | `scripts/llm_config.yaml.template`, README |
+| Reasoning toggle | guidance doc: reasoning ON (default) for judgment-heavy capabilities (ideation, architecture, techspec, analysis, deployment Phase A); `/no_think` for mechanical ones (results collection, memory updates, scaffolding) to cut latency/tokens. The system prompt is harness-controlled, so this lands in docs + a one-line note in guided overlays ("if your model has a reasoning toggle, enable it for this capability") | docs + overlays |
+| Harness pairing | recommend opencode (native SKILL.md + any OpenAI-compatible endpoint) or Cline/Cursor with custom base URL; Copilot agent mode only if the served model's tool calling is exposed through the BYOK provider | README matrix |
+| Context budget | 128K is sufficient given index-first memory retrieval and guided mode's one-capability-per-session rule — no changes needed; noted as a validated assumption to re-check in evaluation | — |
+
 ## 5. Skill-file change list
 
 | File | Change |
 |---|---|
 | `ai-setup/assets/module.yaml` | add `ai_prompt_flavor` variable |
+| `scripts/init_project.py` | add `opencode` and `copilot` IDE options (AGENTS.md / copilot-instructions.md + prompt-file wrappers) |
+| `scripts/llm_config.yaml.template` | Nemotron-on-vLLM example block |
+| `docs/air-gapped.md` | Nemotron/vLLM serving section (tool parser, reasoning toggle) |
 | `ai-setup/SKILL.md` | Step 2 module keys += flavor (dedup logic applies); confirmation summary shows it |
 | all 5 agent `SKILL.md` | flavor-resolution rule in capability-loading section; harness degradation line (§3.3) |
 | `<agent>/guided/*.md` | wave-1 overlays: ideation, architecture, techspec, experiment |
