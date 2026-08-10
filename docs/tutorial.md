@@ -41,6 +41,8 @@ Selecting internal sources triggers **MCP detection (Step 2b)**:
 
 Because a tracker was chosen, it also asks `ai_tracker_url` (blank = SaaS) and `ai_tracker_offline` (auto). Finally, fresh installs get: *"Import memory from a previous project? (path to its `memory/` folder, or none)"*.
 
+> This tutorial runs the default `standard` prompt flavor; if you use a mid-tier or local model, a `guided` flavor with step-by-step scaffolding exists — switch via `ai_prompt_flavor` in `_bmad/config.user.yaml` (see "Prompt Flavors" in the README).
+
 **What lands:** the `ai` section in `_bmad/config.yaml` (+ `config.user.yaml`), `module-help.csv` rows for `/bmad-help`, the output directory tree, and the seeded memory bank — `docs/memory/index.md` (header row only) and `docs/memory/imports.yaml`.
 
 ### Scaffold the project

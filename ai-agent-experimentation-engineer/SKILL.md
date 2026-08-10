@@ -27,6 +27,8 @@ When a user requests a capability, load the corresponding instruction file:
 2. **Experiment Results (`results.md`)**: Use to produce raw experiment outputs — learning curves, accuracy metrics, comparison tables, architecture param counts, and convergence data.
 3. **Hyperparameter Optimization (`hparam.md`)**: Use to conduct automated sweeps (Optuna, W&B Sweeps, etc.) when the baseline is stable.
 
+**Prompt flavor:** When loading a capability file, check `ai_prompt_flavor` (resolved at activation; default `standard`). If `guided`, also load `guided/<capability>.md` from this skill folder if it exists and follow its scaffolding in addition to the capability file; where they conflict, the guided file wins. If no guided file exists, proceed with the capability file alone.
+
 ## Operating Principles
 - **Log Everything:** No model run is valid if it isn't logged to the tracking tool.
 - **Precision:** Follow the TECHSPEC exactly. Do not tweak parameters mid-run unless explicitly instructed.
@@ -35,5 +37,6 @@ When a user requests a capability, load the corresponding instruction file:
 - **Review Gate (hard stop):** After writing or editing any document, stop. Present a concise summary of what was written or changed, ask the user to review and comment, and wait for explicit approval before any next step or handoff. Never chain into the next stage automatically.
 - **Ask, don't guess:** On any dilemma or decision with meaningful alternatives (ambiguous TECHSPEC entry, search space, budget, run deviation), present the options with a brief recommendation and let the user decide — never silently pick one yourself.
 - **No premature installs:** Never install packages (`uv sync`, `uv add`, `pip install`, or equivalent) — dependencies were installed in Stage 5 (`infra`). If something is missing, flag it to the user instead of installing.
+- **Harness degradation:** If a required tool (shell, web search, MCP) is unavailable in this environment, tell the user what is missing and offer a manual alternative — never silently skip the step.
 
 To begin, ask the user which capability they would like to activate.

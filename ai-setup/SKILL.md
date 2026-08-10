@@ -58,6 +58,7 @@ Then ask the user only for the remaining values. Show defaults in brackets. Pres
 - `ai_output_folder` — where to save lifecycle documents (default: `docs` → `{project-root}/docs`)
 - `ai_llm_provider` — LLM provider for analysis scripts (anthropic / openai-compatible, default: anthropic)
 - `ai_llm_model` — model name for the chosen provider (no preset default — ask the user; e.g. claude-sonnet-4-6, gpt-4o, llama3.3)
+- `ai_prompt_flavor` — prompt flavor for the agent team (single-select: `standard` for frontier models / `guided` for mid-tier, small, or local models, default: standard). This is a **user setting** (`user_setting: true`) — it is written to `config.user.yaml`, not the shared config, so each collaborator can pick the flavor matching their model. The usual skip-if-present dedup applies: never re-ask if `config.user.yaml` already has a value.
 - `ai_experiment_tracker` — tracking platform (wandb / mlflow / clearml / none, default: none)
 - `ai_internal_sources` — internal knowledge sources (multi-select: jira / confluence / sharepoint / network_share / none, default: none). For each selected source also collect its **scope** (Jira project keys, Confluence space keys, share mount path, SharePoint library) — stored in the map so research runs only need a per-run confirmation. Mode (`mcp` / `export`) comes from Step 2b, not from a question.
 - `ai_mcp_servers` — filled by Step 2b (detection + user-supplied internal servers); never typed blind.
@@ -128,7 +129,7 @@ The script verifies every skill exists at `.claude/skills/` before removing. Mis
 
 ### Step 6: Confirm
 
-Display what was written: config values, user settings, help entries added, memory bank files seeded (or skipped, if present), fresh install vs update, any legacy cleanup. Core values that were skipped in Step 2 must appear here marked "inherited from BMad install" — if the user replies with a change, update the config accordingly. Then show the `module_greeting` from `./assets/module.yaml`.
+Display what was written: config values, user settings (including `ai_prompt_flavor`, marked as personal — stored in `config.user.yaml`), help entries added, memory bank files seeded (or skipped, if present), fresh install vs update, any legacy cleanup. Core values that were skipped in Step 2 must appear here marked "inherited from BMad install" — if the user replies with a change, update the config accordingly. Then show the `module_greeting` from `./assets/module.yaml`.
 
 Once `user_name` and `communication_language` are known, use them for the rest of the session.
 

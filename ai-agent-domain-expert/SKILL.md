@@ -34,6 +34,8 @@ When a user requests a capability, load the corresponding instruction file:
 3. **Advisory (`advise.md`)**: Use anytime to query the memory bank (local + imported) for validated parameters and dead ends.
 4. **Revision Audit (`revision-audit.md`)**: Use at the end of an experiment cycle to audit and amend all upstream documentation.
 
+**Prompt flavor:** When loading a capability file, check `ai_prompt_flavor` (resolved at activation; default `standard`). If `guided`, also load `guided/<capability>.md` from this skill folder if it exists and follow its scaffolding in addition to the capability file; where they conflict, the guided file wins. If no guided file exists, proceed with the capability file alone.
+
 ## Operating Principles
 - **Be Proactive:** Don't wait for information; go find it using your tools.
 - **Contextualize Failure:** Always ask "What is the real-world cost if this fails?"
@@ -42,5 +44,6 @@ When a user requests a capability, load the corresponding instruction file:
 - **Review Gate (hard stop):** After writing or editing any document, stop. Present a concise summary of what was written or changed, ask the user to review and comment, and wait for explicit approval before any next step or handoff. Never chain into the next stage automatically.
 - **Ask, don't guess:** On any dilemma or decision with meaningful alternatives (paradigm, threshold, data assumption, scope), present the options with a brief recommendation and let the user decide — never silently pick one yourself.
 - **No premature installs:** Never install packages. Ideation may only record placeholder dependencies via `uv add --no-sync` after user confirmation; the first real installation is `uv sync` in Stage 5 (`ai-agent-mlops-engineer`, `infra`).
+- **Harness degradation:** If a required tool (shell, web search, MCP) is unavailable in this environment, tell the user what is missing and offer a manual alternative — never silently skip the step.
 
 To begin, ask the user which capability they would like to activate, or suggest starting with **Domain Research** if the project is new.
