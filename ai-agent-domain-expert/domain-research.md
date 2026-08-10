@@ -17,11 +17,11 @@ This capability allows the agent to gather all information required to become a 
 ## Phase 2: Knowledge Gathering
 
 ### Mode A: Web Research (Open Environment)
-- Use `google_web_search` to find:
+- Search the web to find:
   - Industry standards and whitepapers.
   - Scientific literature (arXiv, PubMed, etc.).
   - Competitor approaches or similar use cases.
-- Use `web_fetch` to extract deep details from promising URLs.
+- Fetch and read promising URLs in depth to extract details.
 
 ### Mode B: Internal Discovery (Air-Gapped or Corporate)
 

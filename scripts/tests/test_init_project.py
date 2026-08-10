@@ -86,6 +86,47 @@ def test_write_clinerules_claude_code(tmp_root):
     assert "uv add" in content
 
 
+def test_write_clinerules_opencode(tmp_root):
+    ip.write_clinerules(tmp_root, "opencode", "clearml")
+
+    agents_md = tmp_root / "AGENTS.md"
+    assert agents_md.exists()
+    # opencode must NOT get a .clinerules — AGENTS.md is its native rules file
+    assert not (tmp_root / ".clinerules").exists()
+    content = agents_md.read_text()
+    assert "ai-agent-domain-expert" in content
+    assert "domain-research" in content
+    assert "clearml" in content
+    assert ".claude/skills/" in content       # where opencode discovers the skills
+    assert "opencode" in content
+    assert "uv sync" in content
+    assert "TECHSPEC" in content
+
+
+def test_write_clinerules_copilot(tmp_root):
+    ip.write_clinerules(tmp_root, "copilot", "wandb")
+
+    instructions = tmp_root / ".github" / "copilot-instructions.md"
+    assert instructions.exists()
+    assert not (tmp_root / ".clinerules").exists()
+    content = instructions.read_text()
+    assert "wandb" in content
+    assert "uv sync" in content
+    assert "tool-calling" in content          # agent-mode model caveat documented
+    assert "/ai-agent-domain-expert" in content
+
+    # One prompt-file wrapper per agent → /<name> commands in Copilot chat
+    for name, stages, role in ip.AGENT_ROSTER:
+        pf = tmp_root / ".github" / "prompts" / f"{name}.prompt.md"
+        assert pf.exists(), f"missing prompt file for {name}"
+        body = pf.read_text()
+        assert body.startswith("---")         # YAML front matter
+        assert "description:" in body
+        assert f".claude/skills/{name}/SKILL.md" in body
+        assert "which capability to activate" in body
+    assert len(list((tmp_root / ".github" / "prompts").glob("*.prompt.md"))) == len(ip.AGENT_ROSTER)
+
+
 def test_write_gitignore(tmp_root):
     ip.write_gitignore(tmp_root)
 
@@ -210,6 +251,16 @@ def test_parse_args_defaults_to_none():
 def test_parse_args_rejects_invalid_choice():
     with pytest.raises(SystemExit):
         ip.parse_args(["--compute", "quantum"])
+
+
+def test_parse_args_accepts_new_ide_choices():
+    assert ip.parse_args(["--ide", "opencode"]).ide == "opencode"
+    assert ip.parse_args(["--ide", "copilot"]).ide == "copilot"
+
+
+def test_parse_args_rejects_unknown_ide():
+    with pytest.raises(SystemExit):
+        ip.parse_args(["--ide", "emacs"])
 
 
 def test_resolve_prefers_flag_over_default():
@@ -429,3 +480,38 @@ def test_main_legacy_stdin_pipe_still_works(tmp_root):
 
     assert (tmp_root / "docker" / "Dockerfile.train").exists()
     assert (tmp_root / ".git").is_dir()
+
+
+@pytest.mark.skipif(not GIT_AVAILABLE, reason="git not available")
+def test_main_opencode_end_to_end(tmp_root):
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--ide", "opencode", "--yes"],
+        cwd=tmp_root, capture_output=True, text=True, timeout=120, env=_git_env(),
+    )
+    assert result.returncode == 0, result.stderr
+
+    assert (tmp_root / "AGENTS.md").exists()
+    assert not (tmp_root / ".clinerules").exists()
+    # Skills copied where opencode discovers Claude-compatible skill dirs
+    assert (tmp_root / ".claude" / "skills" / "ai-agent-domain-expert" / "SKILL.md").exists()
+    assert "ai-agent-domain-expert" in result.stdout  # stage-1 next-step hint
+
+
+@pytest.mark.skipif(not GIT_AVAILABLE, reason="git not available")
+def test_main_copilot_end_to_end(tmp_root):
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--ide", "copilot", "--yes"],
+        cwd=tmp_root, capture_output=True, text=True, timeout=120, env=_git_env(),
+    )
+    assert result.returncode == 0, result.stderr
+
+    assert (tmp_root / ".github" / "copilot-instructions.md").exists()
+    prompts = sorted((tmp_root / ".github" / "prompts").glob("*.prompt.md"))
+    assert len(prompts) == len(ip.AGENT_ROSTER)
+    # Prompt files must point at paths that actually exist in the scaffold
+    for name, _stages, _role in ip.AGENT_ROSTER:
+        assert (tmp_root / ".claude" / "skills" / name / "SKILL.md").exists()
+    # Glue files are committed with the scaffold
+    tracked = subprocess.run(["git", "ls-files", ".github"],
+                             cwd=tmp_root, capture_output=True, text=True)
+    assert ".github/copilot-instructions.md" in tracked.stdout.split()

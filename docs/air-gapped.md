@@ -84,6 +84,56 @@ api_key_env: OLLAMA_API_KEY   # any non-empty string; Ollama ignores it
 
 Pick `openai-compatible` as `ai_llm_provider` at configure time; the template (`scripts/llm_config.yaml.template`) ships ready-made blocks for Ollama, vLLM, Azure, and others.
 
+## Serving a local model (example: Nemotron Super 49B)
+
+A worked example for running the whole lifecycle — agents *and* scripts — against one on-prem model. [Llama-3.3-Nemotron-Super-49B-v1.5](https://huggingface.co/nvidia/Llama-3_3-Nemotron-Super-49B-v1_5) is a strong fit: post-trained for reasoning, tool calling, and instruction following, 128K context, single-GPU-class serving, OpenAI-compatible either way you serve it.
+
+### vLLM (≥ 0.9.2)
+
+Function calling needs the **tool parser that ships in the model repo** — without it the agents' tool calls won't be parsed:
+
+```bash
+git clone https://huggingface.co/nvidia/Llama-3_3-Nemotron-Super-49B-v1_5  # or carry across
+
+python3 -m vllm.entrypoints.openai.api_server \
+  --model Llama-3_3-Nemotron-Super-49B-v1_5 \
+  --served-model-name "Llama-3_3-Nemotron-Super-49B-v1_5" \
+  --trust-remote-code \
+  --host 0.0.0.0 --port 8000 \
+  --enable-auto-tool-choice \
+  --tool-parser-plugin "Llama-3_3-Nemotron-Super-49B-v1_5/llama_nemotron_toolcall_parser_no_streaming.py" \
+  --tool-call-parser "llama_nemotron_json"
+```
+
+Add `--tensor-parallel-size`, `--max-model-len`, and `--gpu-memory-utilization` to match your hardware (the model card shows a full reference command). Requires vLLM ≥ 0.9.2.
+
+### NIM alternative
+
+NVIDIA NIM serves the same model as a prebuilt container with tool calling wired in — also OpenAI-compatible, so nothing downstream changes. Use it if your org standardises on NIM; use bare vLLM if you want full control of flags.
+
+### Reasoning toggle
+
+Nemotron reasons **by default**; disable it by putting `/no_think` in the system prompt. Recommended split:
+
+- **Reasoning ON (default)** — judgment-heavy stages: `ideation`, `architecture`, `techspec`, `analysis`, deployment Phase A.
+- **Reasoning OFF (`/no_think`)** — mechanical stages: results collection, memory index updates, scaffolding — cuts latency and tokens with nothing lost.
+
+The system prompt is controlled by your harness (opencode/Cline model settings), not by this module — set the toggle there.
+
+### Harness pairing
+
+- **opencode** (recommended): point `opencode.json` at the vLLM/NIM endpoint — any OpenAI-compatible URL works, and opencode consumes this module's skills natively.
+- **Cline / Cursor**: configure a custom OpenAI-compatible base URL in the model settings.
+- **VS Code Copilot (agent mode)**: only viable if your BYOK provider exposes the served model's tool calling — agent mode hides models without tool-calling support, and BYOK is plan-dependent.
+
+### Scripts
+
+`configs/llm_config.yaml` reuses the same endpoint — `scripts/llm_config.yaml.template` ships a ready-made Nemotron block (`provider: openai-compatible`, `base_url: http://<vllm-host>:8000/v1`).
+
+### Prompt flavor
+
+For mid-size models like this one, the **guided prompt flavor** (more explicit step-by-step scaffolding) is the recommended starting point — see [design/prompt-flavors.md](design/prompt-flavors.md) for status and how to enable it once available.
+
 ## Memory bank and scaffold — nothing to do
 
 The per-project memory bank is plain markdown on the filesystem — zero dependencies, fully offline. `imports.yaml` cross-project references work over local mounts and shared network folders. Scaffolding (`new-project`) degrades gracefully too: `git init` and `uv venv` run locally, no packages are installed, and the git remote is optional and never pushed.

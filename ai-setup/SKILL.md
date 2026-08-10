@@ -147,7 +147,7 @@ Ask the user (present all at once):
 
 - **Project name** — used as the Python package name (underscores, no spaces). Default: current directory name.
 - **Project directory** — where to create the project. Default: current working directory.
-- **IDE** — `claude-code` (slash commands), `cline`, `cursor`, or `antigravity`. Default: `claude-code`.
+- **IDE** — `claude-code` (slash commands), `cline`, `cursor`, `antigravity`, `opencode` (native agent skills + `AGENTS.md`), or `copilot` (VS Code Copilot agent mode — `.github/copilot-instructions.md` + `/ai-agent-*` prompt files). Default: `claude-code`.
 - **Python version** — Default: `3.11`.
 - **Experiment tracker** — `wandb`, `mlflow`, `clearml`, or `undecided` (can change at Architecture stage). Default: `undecided`.
 - **Data location** — `local`, `s3`, `gcs`, `azure-blob`, or `nfs`, plus an optional URI/path. Default: `local`.
@@ -170,7 +170,7 @@ Append `--compute-service {vertex-ai|clearml|generic}` when compute is `cloud-ma
 
 The script creates:
 - Full directory structure (`data/`, `src/`, `notebooks/`, `configs/`, `docs/`, `models/`, `outputs/`)
-- `.clinerules` or `CLAUDE.md` with agent skill paths (based on IDE)
+- IDE glue files (based on IDE): `CLAUDE.md` (claude-code), `.clinerules` (cline/cursor/antigravity), `AGENTS.md` (opencode), or `.github/copilot-instructions.md` + `.github/prompts/ai-agent-*.prompt.md` (copilot)
 - `pyproject.toml` and `.python-version` (uv project)
 - An empty `.venv` via `uv venv` — no packages installed
 - A git repository on `main` (`git init -b main`) with the scaffold committed; `origin` registered if a remote URL was given (never pushed — the push command is printed as a next step)
@@ -178,7 +178,7 @@ The script creates:
 - `configs/llm_config.yaml` (from template using configured LLM provider/model)
 - `configs/project_infra.yaml` — data location, artifact registry, compute topology (read by TECHSPEC Stage 4.5 and infra Stage 5)
 - `docker/Dockerfile.train` + `docker/README.md` — dockerized training templates (image built at Stage 5+, not now)
-- Copies skills to `.claude/skills/` if `ide=claude-code`
+- Copies skills to `.claude/skills/` if `ide` is `claude-code`, `opencode` (native Claude-compatible skill discovery), or `copilot` (paths referenced by the prompt files)
 
 **No premature installs:** the scaffold installs **no packages** — `pyproject.toml` starts with no dependencies. Do not run `uv sync`, `uv add`, `pip install`, or equivalent here. Dependencies are recorded as placeholders in Ideation (Stage 1.5, `uv add --no-sync`) and first installed in Stage 5 (`infra`) via `uv sync`.
 
