@@ -54,6 +54,18 @@ temperature: 0.0               # 0.0 = deterministic; recommended for structured
 # max_tokens: 8192
 # temperature: 0.0
 
+# --- Nemotron Super 49B on vLLM (on-prem / air-gapped) ---
+# Serving setup (launch flags, tool parser, reasoning toggle):
+#   docs/air-gapped.md → "Serving a local model (example: Nemotron Super 49B)"
+# provider: openai-compatible
+# model: Llama-3_3-Nemotron-Super-49B-v1_5   # must match vLLM's --served-model-name
+# base_url: http://<vllm-host>:8000/v1
+# api_key_env: VLLM_API_KEY      # bare vLLM ignores the key (set any non-empty
+#                                # string); point this at the real key env var if
+#                                # you serve through a gateway (LiteLLM, NIM, ...)
+# max_tokens: 8192
+# temperature: 0.0
+
 # --- Together.ai ---
 # provider: openai-compatible
 # model: meta-llama/Llama-3.1-70B-Instruct-Turbo
