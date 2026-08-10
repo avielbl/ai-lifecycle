@@ -56,6 +56,17 @@ variables:
     default: ""
     user_setting: false
 
+  - key: ai_prompt_flavor
+    prompt: Prompt flavor for the agent team?
+    type: single-select
+    options:
+      - value: standard
+        label: Standard — frontier models (Claude Opus-class, GPT-5-class and better)
+      - value: guided
+        label: Guided — mid-tier, small, or local models (more explicit step-by-step scaffolding)
+    default: standard
+    user_setting: true   # per-user (config.user.yaml) — mixed teams can run different flavors in one repo
+
   - key: ai_experiment_tracker
     prompt: Experiment tracking platform?
     type: single-select

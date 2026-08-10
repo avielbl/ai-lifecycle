@@ -283,6 +283,19 @@ The API key lives in the env var — never in the config file.
 
 ---
 
+## Prompt Flavors
+
+The capability prompts ship in two flavors, selected by the `ai_prompt_flavor` config key:
+
+- **`standard`** (default) — the canonical prompts, written for frontier models (Claude Opus-class, GPT-5-class and better).
+- **`guided`** — for mid-tier, small, or local models (e.g. served via Ollama/vLLM). Same stages, same artifacts, same review gates — with more explicit scaffolding: numbered micro-steps, literal copy-this output skeletons, enumerated closed choices, and pre-gate self-check checklists.
+
+The flavor is a **per-user setting**: it lives in `_bmad/config.user.yaml` (gitignored), so teammates sharing one repo can each run the flavor matching their model. Mechanically, the canonical capability files never change — `guided` mode additionally loads an overlay from `<agent>/guided/<capability>.md` when one exists (currently: `ideation`, `architecture`, `techspec`, `experiment`), and falls back to the canonical file alone otherwise. Artifact names, paths, review gates, and the memory protocol are identical in both flavors.
+
+To switch: edit `ai_prompt_flavor` in `_bmad/config.user.yaml`, or re-run `ai-setup configure` and change it there. No reinstall needed.
+
+---
+
 ## Key Principles
 
 - **Configure first.** Run `ai-setup configure` before invoking any agent.

@@ -28,6 +28,8 @@ When a user requests a capability, load the corresponding instruction file:
 3. **Detailed Design (`detailed-design.md`)**: Use to break down the architecture into INF-* (infra) and EXP-* (experiment) tasks.
 4. **Experiment Analysis (`analysis.md`)**: Use after experiments to interpret results against TECHSPEC tiers and research thesis. Includes root-cause analysis, lessons learned, and follow-up recommendations (subsumes retrospective).
 
+**Prompt flavor:** When loading a capability file, check `ai_prompt_flavor` (resolved at activation; default `standard`). If `guided`, also load `guided/<capability>.md` from this skill folder if it exists and follow its scaffolding in addition to the capability file; where they conflict, the guided file wins. If no guided file exists, proceed with the capability file alone.
+
 ## Operating Principles
 - **Thesis-Driven Design:** Every architectural choice must be justified by the Research Thesis and EDA findings.
 - **Measurable Goals:** Ensure every experiment has a clear pass/fail tier defined in advance.
@@ -36,5 +38,6 @@ When a user requests a capability, load the corresponding instruction file:
 - **Review Gate (hard stop):** After writing or editing any document, stop. Present a concise summary of what was written or changed, ask the user to review and comment, and wait for explicit approval before any next step or handoff. Never chain into the next stage automatically.
 - **Ask, don't guess:** On any dilemma or decision with meaningful alternatives (paradigm choice, model family, tracking tool, tier threshold, scope call), present the options with a brief recommendation and let the user decide — never silently pick one yourself.
 - **No premature installs:** Never install packages (`uv sync`, `uv add`, `pip install`, or equivalent). Architecture/design only records the stack; the first installation is `uv sync` in Stage 5 (`ai-agent-mlops-engineer`, `infra`).
+- **Harness degradation:** If a required tool (shell, web search, MCP) is unavailable in this environment, tell the user what is missing and offer a manual alternative — never silently skip the step.
 
 To begin, ask the user which capability they would like to activate.
