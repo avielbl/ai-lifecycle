@@ -1,18 +1,17 @@
 # Design: Automated Flavor Evaluation — Validating the guided/standard Mechanism
 
-**Status:** Approved with descope (2026-09-01) — **no model serving in this plan**. The evaluation validates the guided/standard *mechanism* using API-served models only; model-specific verification (e.g. Nemotron on vLLM) is run by the module owner inside the air-gapped network, reusing this plan's rig (§7.4). Companion to [prompt-flavors.md](prompt-flavors.md) §4 (rollout step 2: "evaluate before writing wave 2").
+**Status:** Redesigned per owner direction (2026-09-01) — **local two-run design**: both arms run on the owner's dev VM; arm A drives Claude Code, arm B drives opencode against Nemotron Super 49B deployed through Vertex AI Model Garden (deploy-from-Hugging-Face). The endpoint is the plan's only provisioned resource. In-network (air-gapped) verification remains a rerun of the same rig against a local vLLM host (§7.4). Companion to [prompt-flavors.md](prompt-flavors.md) §4 (rollout step 2: "evaluate before writing wave 2").
 
 ## 1. Objective & hypotheses
 
-Run the [tutorial](../tutorial.md) fraud-detection lifecycle end-to-end, headlessly, once per arm of a model×flavor matrix — every arm on a **serverless API model** (nothing to deploy, nothing to babysit). The mid-tier arm uses Claude Haiku 4.5 as a *proxy* for any capability-constrained model: if guided overlays measurably close the mid-tier gap here, the mechanism works, and per-model calibration (Nemotron et al.) is a repeat of the same rig against a different endpoint.
+Run the [tutorial](../tutorial.md) fraud-detection lifecycle end-to-end, headlessly, once per arm of a harness×model×flavor matrix, entirely from the owner's dev machine. Arm A (Claude Code + frontier Claude, standard flavor) is the baseline profile the prompts were written on; arm B (opencode + Nemotron Super, guided flavor) is the exact target profile the overlays exist for — validating the mechanism directly on the motivating model rather than through a proxy.
 
 Two outputs: (1) **calibration data** — observed contract deviations that wave-2 guided overlays get written against; (2) **a stakeholder demo** — a reproducible, scored side-by-side of the module on a frontier vs a mid-tier model.
 
 | # | Hypothesis | Falsifiable claim |
 |---|---|---|
-| H1 | Standard flavor + frontier model completes the lifecycle with high artifact-contract compliance | Opus+standard passes ≥ 95% of L1 checks and completes all 9 in-scope stages, all 3 seeds |
-| H2 | Guided flavor closes most of the mid-tier gap | Haiku+guided recovers ≥ 60% of the L1 gap between Haiku+standard and Opus+standard (absolute floor: ≥ 85% L1, ≥ 7/9 stages) |
-| H3 | Guided overlays don't degrade frontier output (sanity, optional arm) | Opus+guided L1/L2 within noise (±1 L1 check, ±0.3 L2 points) of Opus+standard |
+| H1 | Standard flavor + Claude Code baseline completes the lifecycle with high artifact-contract compliance | Arm A passes ≥ 95% of L1 checks and completes all 9 in-scope stages, all 3 seeds |
+| H2 | Guided flavor closes most of the Nemotron gap | Arm B recovers ≥ 60% of the L1 gap between arm C (Nemotron+standard) and arm A (absolute floor: ≥ 85% L1, ≥ 7/9 stages) |
 
 ## 2. Demo challenge
 
@@ -32,57 +31,59 @@ Reuse the tutorial scenario unchanged: a card-transaction fraud classifier, `ai_
 
 ## 3. Arms matrix
 
-| Arm | Model | `ai_prompt_flavor` | Purpose | Priority |
-|---|---|---|---|---|
-| A | Claude Opus 4.8 (Vertex, serverless) | standard | H1 baseline — the profile the prompts were written for | required |
-| B | Claude Haiku 4.5 (Vertex, serverless) | guided | H2 — the arm the overlays exist for | required |
-| C | Claude Haiku 4.5 | standard | Ablation — proves the overlays cause the improvement, not the model | recommended |
-| D | Claude Opus 4.8 | guided | H3 sanity — overlays don't hurt frontier output | optional |
+| Arm | Harness | Model | `ai_prompt_flavor` | Purpose | Priority |
+|---|---|---|---|---|---|
+| A | Claude Code (`claude -p`) | Claude (this machine's existing Claude Code auth) | standard | H1 baseline — the harness+model the prompts were written on | required |
+| B | opencode (`opencode run`) | Nemotron Super 49B v1.5 — Model Garden HF-deploy → Vertex endpoint | guided | H2 — the arm the overlays exist for, on the model that motivates them | required |
+| C | opencode | same Nemotron endpoint | standard | Ablation — proves the overlays cause the improvement, not the model | recommended (one more local run against the already-deployed endpoint — nearly free) |
 
-The mid-tier model is swappable: any OpenAI-compatible hosted endpoint can stand in for arms B/C by changing one provider block (§5) — this is exactly how the air-gapped Nemotron rerun works (§7.4).
+**Known confound, accepted:** arms A and B differ in harness as well as model+flavor. For this campaign's purpose (mechanism validation + demo) that is acceptable; if attribution ever matters, the cheap de-confound is re-running arm A under opencode pointed at Claude on Vertex (one provider block).
 
 N = 3 seeded runs per arm (fresh workspace each; seed varies the harness RNG and the dataset split seed passed at ideation). 3 is enough to separate systematic contract failures from one-off flakes; report per-seed and median.
 
-## 4. GCP architecture
+## 4. Architecture — one machine, two runs
 
-One dedicated project (e.g. `ai-lifecycle-eval`), fully torn down after each campaign. **No GPUs, no model deployment, no managed endpoints** — every arm is a serverless API call.
+Everything runs on the existing dev VM (verified: GCE `e2-standard-4`, project `internal-project-470910`, service-account ADC active, Claude Code 2.1.237 and gcloud installed). No orchestrator VM, no central GCS staging — workspaces are local project dirs, optionally synced to GCS at campaign end.
 
 ```
-ai-lifecycle-eval (GCP project)
-├── Vertex AI: Anthropic publisher models (serverless — all arms + judge)
-├── GCE: orchestrator — e2-standard-4, runs the harness, one arm at a time
-└── GCS: gs://ai-lifecycle-eval/{dataset,fixtures,runs/<arm>/<seed>/{workspace,transcripts},reports}
+this VM (GCE e2-standard-4)
+├── ~/eval/arm-a-<seed>/   fresh scaffold, driven by claude -p          (arm A)
+├── ~/eval/arm-b-<seed>/   fresh scaffold, driven by opencode run      (arms B/C)
+└── Vertex AI endpoint: Nemotron Super 49B v1.5
+    deployed via Model Garden deploy-from-Hugging-Face (prebuilt vLLM container,
+    2×A100-80GB or 1×H200 class), OpenAI-compatible chat/completions route
 ```
 
-**Model access (all arms)** — Vertex AI Anthropic partner models, serverless (no deploy step). Verified: model is in the endpoint URL (`…/locations/global/publishers/anthropic/models/<id>:rawPredict`), `anthropic_version: "vertex-2023-10-16"` in the body; the official SDKs support this via `AnthropicVertex` (`pip install "anthropic[vertex]"`); current IDs include `claude-opus-4-8` and `claude-haiku-4-5@20251001`. Use the **global endpoint** (max availability, no 10% regional premium). Fallback: direct Anthropic API — the harness config differs by provider block only. ([Claude on Vertex AI docs](https://platform.claude.com/docs/en/api/claude-on-vertex-ai))
+**Arm A model access** — Claude Code's own auth on this machine; no extra setup. (`claude -p` can alternatively target Vertex Anthropic models via `CLAUDE_CODE_USE_VERTEX=1` if token accounting should stay inside GCP.)
 
-**Orchestrator** — a plain GCE VM running the harness sequentially per arm (open decision 4 weighs Cloud Build/Batch; with no GPU instance to coordinate, even a laptop with `gcloud` credentials suffices for a first campaign). Per run: pull fixtures from GCS → scaffold workspace (`init_project.py`) → execute the run manifest (§5) → sync workspace + transcripts to GCS → next seed. **Teardown**: delete the orchestrator at campaign end; the project itself is deletable because nothing durable lives outside GCS.
+**Arms B/C model access** — deploy once per campaign window: `gcloud ai model-garden models deploy` from the HF model id, then call the endpoint's **OpenAI-compatible `chat/completions` route** with a bearer token. On this VM the token comes from the service account (`gcloud auth print-access-token`, 60-min TTL) — the runner exports a fresh token into opencode's provider env at each stage launch, which suffices because every stage is a fresh session. **Undeploy the endpoint at campaign end** — it bills per GPU-hour while deployed.
 
-**Indicative cost per full campaign** (4 arms × 3 seeds; verify against current pricing before running):
+**Preconditions** (the only two): `npm i -g opencode-ai` on this VM; GPU quota for Vertex online prediction in the chosen region (`custom_model_serving_nvidia_a100_80gb_gpus` ≥ 2 or an H200 equivalent) in `internal-project-470910`.
+
+**Indicative cost per full campaign** (3 arms × 3 seeds; verify pricing before running):
 
 | Item | Basis | Estimate |
 |---|---|---|
-| Opus tokens (arms A/D + judge) | ~6 runs × Opus-class agentic session + L2 judging | $150–400 |
-| Haiku tokens (arms B/C) | ~6 runs × Haiku-class agentic session | $10–40 |
-| Orchestrator + GCS | e2-standard-4 ~30 h + <10 GB | ~$10 |
-| **Total** | | **~$170–450** — no GPU line item |
+| Nemotron endpoint | ~2×A100-80GB managed, on-demand, deployed only for the B/C window (~12–24 h) | $120–300 |
+| Claude usage (arm A + judge) | existing Claude Code plan/API | plan-dependent |
+| VM + storage | already running | ~$0 marginal |
+| **Total incremental** | | **~$120–300 + Claude tokens** |
 
 ## 5. Automation harness
 
-**Verified harness options:** (a) **opencode** — non-interactive `opencode run` for CI/scripting, natively consumes the SKILL.md convention this module ships, and supports both Vertex/Anthropic providers and any OpenAI-compatible endpoint ([CLI docs](https://opencode.ai/docs/cli/)); (b) **Claude Code headless** — `claude -p` with the Vertex backend via `CLAUDE_CODE_USE_VERTEX=1`, `ANTHROPIC_VERTEX_PROJECT_ID`, `CLOUD_ML_REGION` ([Claude Code on Vertex docs](https://code.claude.com/docs/en/google-vertex-ai)).
-
-**Recommendation: opencode for all arms.** One harness for both models removes harness capability as a confound — the matrix then varies exactly two things: model and flavor. `claude -p` stays as the fallback driver if opencode's Vertex-Anthropic path proves flaky in the pilot (if it's used, note the harness asymmetry in the report). Using opencode also makes the rig portable to the air-gapped rerun unchanged (§7.4).
+**Two drivers, both verified:** (a) **Claude Code headless** — `claude -p "<stage prompt>"` per stage in the arm-A workspace (installed on this VM; [headless docs](https://code.claude.com/docs/en/google-vertex-ai) cover the optional Vertex backend); (b) **opencode** — non-interactive `opencode run` for arms B/C, natively consumes the SKILL.md convention this module ships and takes any OpenAI-compatible endpoint ([CLI docs](https://opencode.ai/docs/cli/)). A single bash runner iterates the manifest for both arms; arms can run in parallel (both are API-bound; stage 6's local training is small enough for the 4-vCPU VM, but stagger the two arms' stage-6 windows if contention shows).
 
 **Per-arm configuration** (all existing mechanisms, nothing new to build):
 
-- `ai_prompt_flavor` in `config.user.yaml`: `standard` (A/C) or `guided` (B/D) — the prompt-flavors loading rule does the rest.
-- Harness model: `opencode.json` provider block — Vertex Anthropic `claude-opus-4-8` (A/D) or `claude-haiku-4-5@20251001` (B/C). For an air-gapped rerun, this block becomes an OpenAI-compatible `base_url` — nothing else in the rig changes.
+- `ai_prompt_flavor` in each workspace's `config.user.yaml`: `standard` (A/C) or `guided` (B) — the prompt-flavors loading rule does the rest.
+- Arm A: Claude Code as configured on this machine.
+- Arms B/C: opencode provider block — OpenAI-compatible, `base_url` = the Vertex endpoint's chat/completions URL, api key injected per stage from `gcloud auth print-access-token`. For the in-network air-gapped rerun (§7.4), only the `base_url` changes to the local vLLM host.
 - `configs/llm_config.yaml` (script calls): matching provider block per backend, `temperature: 0.0`.
 
 **Run manifest** — one YAML per run, executed stage-by-stage:
 
 ```yaml
-arm: haiku-guided            # A|B|C|D name
+arm: nemotron-guided         # A|B|C name
 seed: 1
 stages:                      # order = ai-lifecycle.csv phase order
   - {capability: ideation,        agent: ai-agent-domain-expert,            timeout_min: 30}
@@ -129,6 +130,6 @@ Score = checks passed / checks applicable (~40–50 checks). **This is the layer
 ## 8. Open decisions
 
 1. **Dataset** — ULB credit-card CSV (real, recognizable, matches the tutorial's numbers) vs synthetic generator (fully hermetic). **Recommend ULB pinned in GCS** for the demo's credibility; ship the synthetic generator as the documented air-gapped fallback.
-2. **Arm count** — 2 required vs 3 vs 4. **Recommend 3 (A, B, C)**: without the C ablation, H2 can't attribute improvement to the overlays. D is cheap to add later if H3 becomes contested.
+2. **Arm count** — 2 vs 3. **Recommend 3 (A, B, C)**: without the C ablation, H2 can't attribute improvement to the overlays, and C reuses the already-deployed endpoint.
 3. **Judge model** — Claude Opus-class (strongest rubric-following; already provisioned) vs a third-family judge (no self-preference toward arm A). **Recommend Claude Opus 4.8 with strict blinding** (identifiers stripped, order randomized), plus a Gemini-family cross-check on a 10% artifact sample; escalate to full dual-judging only if the two disagree by >0.5 on that sample.
-4. **Orchestrator** — GCE VM (simple, inspectable mid-run, SSH debugging) vs Cloud Build/Batch (serverless, but agentic sessions are long-lived) vs a local machine with `gcloud` credentials (zero infra; fine now that no GPU instance needs coordinating). **Recommend the GCE VM for v1**, local machine acceptable for a pilot; revisit Batch when the rig becomes the recurring regression check (deliverable 4).
+4. **Harness de-confound arm** — add an opencode+Claude-on-Vertex run to separate harness effects from model+flavor effects, or accept the confound for v1. **Recommend accept for v1** (this campaign is mechanism validation + demo); add the de-confound arm only if arm A vs B differences look harness-shaped (e.g., tool-call formatting failures rather than content failures).
