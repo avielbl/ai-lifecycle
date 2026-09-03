@@ -25,7 +25,7 @@ The BMad installer collects the **core** settings (your name, languages, output 
 
 Because the installer already owns the core keys, `configure` **never re-asks them** — it only prompts for module keys that are still missing:
 
-> **ai-setup:** Fresh install detected. Core settings (user_name: Aviel, output_folder: `{project-root}/_bmad-output`) are inherited from the BMad install — I'll show them in the summary where you can still override them. I only need the module settings:
+> **ai-setup:** Fresh install detected. Core settings (user_name: Dana, output_folder: `{project-root}/_bmad-output`) are inherited from the BMad install — I'll show them in the summary where you can still override them. I only need the module settings:
 > 1. Where should lifecycle documents be saved? [docs]
 > 2. LLM provider for analysis scripts? [anthropic] — and which model name?
 > 3. Experiment tracking platform? [none]
